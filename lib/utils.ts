@@ -15,13 +15,17 @@ export function generateSlug(text: string): string {
 }
 
 // Format currency
-export function formatCurrency(amount: number, currency: string = "INR"): string {
+export function formatCurrency(amount: number, currency: string = "PKR"): string {
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency,
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount)
+}
+
+export function formatNumber(num: number): string {
+  return new Intl.NumberFormat('en-PK').format(num);
 }
 
 // Format date

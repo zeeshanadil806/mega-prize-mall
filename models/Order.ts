@@ -31,7 +31,7 @@ export const AddressSchema = z.object({
 // Order Schema
 export const OrderSchema = z.object({
   // Core Order Info
-  orderNumber: z.string().min(1), // e.g., "MPM-20241225-001"
+  // orderNumber: z.string().min(1), // e.g., "MPM-20241225-001"
   userId: z.string().min(1),
   
   // Order Items
@@ -103,7 +103,7 @@ export interface IOrder extends Document, Order {}
 
 // Mongoose Schema
 const OrderSchemaMongoose = new Schema<IOrder>({
-  orderNumber: { type: String, required: true, unique: true, index: true },
+  // orderNumber: { type: String, required: true, unique: true, index: true },
   userId: { type: String, required: true, ref: 'User', index: true },
   
   items: [{
@@ -214,26 +214,26 @@ OrderSchemaMongoose.index({ paymentStatus: 1, status: 1 });
 OrderSchemaMongoose.index({ 'items.productId': 1 });
 
 // Pre-save middleware for order number generation
-OrderSchemaMongoose.pre('save', async function() {
-  if (this.isNew) {
-    // Generate order number: MPM-YYYYMMDD-XXX
-    const date = new Date();
-    const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '');
+// OrderSchemaMongoose.pre('save', async function() {
+//   if (this.isNew) {
+//     // Generate order number: MPM-YYYYMMDD-XXX
+//     const date = new Date();
+//     const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '');
     
-    // Get count of today's orders
-    const count = await mongoose.models.Order?.countDocuments({
-      createdAt: {
-        $gte: new Date(date.setHours(0, 0, 0, 0)),
-        $lt: new Date(date.setHours(23, 59, 59, 999))
-      }
-    }) || 0;
+//     // Get count of today's orders
+//     const count = await mongoose.models.Order?.countDocuments({
+//       createdAt: {
+//         $gte: new Date(date.setHours(0, 0, 0, 0)),
+//         $lt: new Date(date.setHours(23, 59, 59, 999))
+//       }
+//     }) || 0;
     
-    this.orderNumber = `MPM-${dateStr}-${(count + 1).toString().padStart(3, '0')}`;
-  }
+//     this.orderNumber = `MPM-${dateStr}-${(count + 1).toString().padStart(3, '0')}`;
+//   }
   
-  this.updatedAt = new Date();
-//   next();
-});
+//   this.updatedAt = new Date();
+// //   next();
+// });
 
 // Virtual for formatted order date
 OrderSchemaMongoose.virtual('formattedDate').get(function() {

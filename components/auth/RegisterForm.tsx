@@ -13,12 +13,25 @@ interface ApiErrorResponse {
   details?: unknown
 }
 
-// Define registration request type
+// Updated registration request type with referral code
 interface RegisterRequest {
   name: string
   email: string
   password: string
   role: "customer" | "admin" | "support"
+  referralCode?: string | null
+}
+
+// Success response type with referral bonus
+interface SuccessResponse {
+  message: string
+  user: {
+    id: string
+    name?: string
+    email: string
+    role: string
+  }
+  referralBonus?: number
 }
 
 export default function RegisterForm() {
@@ -29,6 +42,7 @@ export default function RegisterForm() {
     email: "",
     password: "",
     confirmPassword: "",
+    referralCode: "", // NEW: Referral code field
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -50,17 +64,25 @@ export default function RegisterForm() {
           email: formData.email,
           password: formData.password,
           role: "customer",
+          referralCode: formData.referralCode.trim() || null, // Send null if empty
         } as RegisterRequest),
       })
 
-      const data: ApiErrorResponse | { message: string; user: unknown } = await response.json()
+      const data: ApiErrorResponse | SuccessResponse = await response.json()
 
       if (!response.ok) {
         const errorData = data as ApiErrorResponse
         throw new Error(errorData.error || "Registration failed")
       }
 
-      toast.success("Account created! Signing you in...")
+      const successData = data as SuccessResponse
+      
+      // Show success message with referral bonus if applicable
+      if (successData.referralBonus) {
+        toast.success(`Account created! You earned ${successData.referralBonus} bonus points!`)
+      } else {
+        toast.success("Account created! Signing you in...")
+      }
       
       // Auto login after registration
       const result = await signIn("credentials", {
@@ -103,7 +125,6 @@ export default function RegisterForm() {
       setLoading(false)
     }
   }
-
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -160,6 +181,28 @@ export default function RegisterForm() {
             required
             disabled={loading}
           />
+        </div>
+
+        {/* NEW: Referral Code Field */}
+        <div>
+          <Label htmlFor="referralCode">
+            Referral Code (Optional)
+            <span className="text-xs text-gray-500 font-normal ml-1">
+              Get 200 bonus points!
+            </span>
+          </Label>
+          <Input
+            id="referralCode"
+            type="text"
+            placeholder="Enter referral code if you have one"
+            value={formData.referralCode}
+            onChange={(e) => setFormData({ ...formData, referralCode: e.target.value.toUpperCase() })}
+            disabled={loading}
+            className="uppercase"
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Enter a valid referral code to receive 200 bonus points
+          </p>
         </div>
       </div>
 

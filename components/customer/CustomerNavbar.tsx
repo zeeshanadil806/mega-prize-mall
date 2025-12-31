@@ -47,7 +47,7 @@ export default function CustomerNavbar({ user }: CustomerNavbarProps) {
 
   const navLinks = [
     { name: "Dashboard", href: "/dashboard", icon: User },
-    { name: "My Orders", href: "/orders", icon: ShoppingBag },
+    { name: "My Orders", href: "/dashboard/orders", icon: ShoppingBag },
     { name: "My Points", href: "/points", icon: Gift },
     { name: "My Bargains", href: "/bargains", icon: Ticket },
   ]

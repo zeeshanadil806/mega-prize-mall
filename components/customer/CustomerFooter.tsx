@@ -21,7 +21,7 @@ export default function CustomerFooter() {
 
   const features = [
     { icon: Shield, title: "Secure Payments", desc: "100% secure transactions" },
-    { icon: Truck, title: "Free Shipping", desc: "On orders above ₹999" },
+    { icon: Truck, title: "Free Shipping", desc: "On orders above Rs999" },
     { icon: CreditCard, title: "Easy Returns", desc: "30-day return policy" },
   ]
 

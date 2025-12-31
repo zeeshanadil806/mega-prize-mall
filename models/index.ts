@@ -5,5 +5,6 @@ export { VariantSchema, type Variant } from './Variant';
 export { BargainRequestModel, type IBargainRequest, BargainRequestSchema } from './BargainRequest';
 export { BargainCouponModel, type IBargainCoupon, BargainCouponSchema } from './BargainCoupon';
 export { WalletTransactionModel, type IWalletTransaction, WalletTransactionSchema } from './WalletTransaction';
+export { AddressModel } from './Address';
 
 // We'll add more models as we progress

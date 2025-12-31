@@ -623,7 +623,7 @@ export default function ProductForm({
             <CardContent className="space-y-6">
               <div className="grid md:grid-cols-3 gap-6">
                 <div>
-                  <Label htmlFor="price">Regular Price (₹) *</Label>
+                  <Label htmlFor="price">Regular Price (Rs) *</Label>
                   <Input
                     id="price"
                     type="number"
@@ -633,7 +633,7 @@ export default function ProductForm({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="discountedPrice">Discounted Price (₹)</Label>
+                  <Label htmlFor="discountedPrice">Discounted Price (Rs)</Label>
                   <Input
                     id="discountedPrice"
                     type="number"
@@ -648,7 +648,7 @@ export default function ProductForm({
                   )}
                 </div>
                 <div>
-                  <Label htmlFor="costPrice">Cost Price (₹)</Label>
+                  <Label htmlFor="costPrice">Cost Price (Rs)</Label>
                   <Input
                     id="costPrice"
                     type="number"
@@ -750,7 +750,7 @@ export default function ProductForm({
                   >
                     <div className="grid md:grid-cols-3 gap-4">
                       <div>
-                        <Label htmlFor="minBargainPrice">Minimum Bargain Price (₹)</Label>
+                        <Label htmlFor="minBargainPrice">Minimum Bargain Price (Rs)</Label>
                         <Input
                           id="minBargainPrice"
                           type="number"

@@ -308,7 +308,7 @@ console.log('Generated public URL:', publicUrl) // Check this in logs
       : 'R2 upload failed'
     
     log.error('R2 upload error', {
-      error: errorMessage,
+      error: error as Error,
       filename: metadata.filename
     })
     throw new Error(errorMessage)

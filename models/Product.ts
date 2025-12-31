@@ -144,7 +144,7 @@ ProductSchemaMongoose.index({ tags: 1, isActive: 1 });
 ProductSchemaMongoose.index({ 'specifications': 1 });
 
 // Update timestamps on save
-ProductSchemaMongoose.pre('save', function(next) {
+ProductSchemaMongoose.pre('save', function() {
   this.updatedAt = new Date();
   if (!this.createdAt) {
     this.createdAt = new Date();

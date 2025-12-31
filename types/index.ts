@@ -157,3 +157,146 @@ export interface CartItem {
   bargainCouponId?: string;
   bargainDiscount?: number;
 }
+
+
+
+// types/checkout.ts (Recommended) OR top of CheckoutClient.tsx
+
+export interface Address {
+  _id: string;
+  fullName: string;
+  phone: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  label?: string;
+  isDefault: boolean;
+}
+
+export interface AppliedCoupon {
+  code: string;
+  type: 'bargain' | 'global';
+  discount: number;
+}
+
+export interface CheckoutState {
+  shippingAddress: Address | null;
+  billingAddress: Address | null;
+  useSameAddress: boolean;
+  shippingMethod: string;
+  pointsToUse: number;
+  appliedCoupons: AppliedCoupon[];
+  notes: string;
+}
+
+// The shape of the User object passed from the Server
+export interface CheckoutUser {
+  _id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  addresses: Address[];
+}
+
+
+export interface OrderDetails {
+  _id: string;
+  // orderNumber: string;
+  createdAt: string | Date; // Can accept ISO string or Date object
+  shippingMethod: string;
+  shippingAddress: Address;
+  subtotal: number;
+  discountTotal: number;
+  shippingFee: number;
+  grandTotal: number;
+  pointsEarned: number;
+}
+
+
+export interface ClientAddress {
+  fullName: string;
+  phone: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  isDefault: boolean;
+}
+
+export interface ClientOrderItem {
+  _id: string;
+  productId: string;
+  productName: string;
+  productSlug: string;
+  productImage: string;
+  quantity: number;
+  price: number;
+  discountAmount: number;
+  finalPrice: number;
+  bargainCouponId?: string;
+}
+
+export interface ClientOrder {
+  _id: string;
+  userId: string;
+  items: ClientOrderItem[];
+  subtotal: number;
+  discountTotal: number;
+  pointsRedeemed: number;
+  pointsValue: number;
+  shippingFee: number;
+  taxAmount: number;
+  grandTotal: number;
+  couponCodes: string[];
+  bargainCouponIds: string[];
+  shippingAddress: ClientAddress;
+  billingAddress: ClientAddress;
+  shippingMethod: string;
+  paymentMethod: string;
+  paymentStatus: string;
+  status: string;
+  pointsEarned: number;
+  luckyDrawEntries: number;
+  luckyDrawEntryIds: string[];
+  notes?: string;
+  transactionId?: string;
+  estimatedDelivery?: string;
+  createdAt: string; 
+  updatedAt: string;
+}
+
+
+export interface WalletTransaction {
+  _id: string;
+  userId: string;
+  type: 'earn' | 'redeem' | 'adjustment' | 'expiry' | 'refund';
+  points: number;
+  balanceAfter: number;
+  rate: number;
+  orderId?: string;
+  productId?: string;
+  description: string;
+  status: 'pending' | 'completed' | 'cancelled';
+  // metadata: Record<string, any>;
+  expiresAt?: string; // ISO date string
+  processedAt?: string; // ISO date string
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+}
+
+
+export interface CompletedDraw {
+  _id: string;
+  title: string;
+  prizeName: string;
+  prizeImage?: string;
+  resultDate?: Date;
+  winnerName?: string;
+  winnerEmail?: string;
+  status: 'completed';
+}

@@ -218,7 +218,7 @@ export default function CustomerDashboard() {
                       <span className="text-gray-500 line-through">{bargain.original}</span>
                       <span className="font-bold text-[#7C2C78]">{bargain.offer}</span>
                       <span className="text-green-600 font-medium">
-                        Save ₹{(parseInt(bargain.original.replace("₹", "")) - parseInt(bargain.offer.replace("₹", ""))).toLocaleString()}
+                        Save Rs{(parseInt(bargain.original.replace("Rs", "")) - parseInt(bargain.offer.replace("Rs", ""))).toLocaleString()}
                       </span>
                     </div>
                   </motion.div>

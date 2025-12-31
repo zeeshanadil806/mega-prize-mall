@@ -1,10 +1,10 @@
 // Mega Prize Mall Brand Colors
 export const brandColors = {
-  primary: '#7C2C78', // Deep Purple
-  secondary: '#EAB75F', // Gold
-  accent: '#A43875', // Pink
-  dark: '#2E297D', // Navy Blue
-  light: '#F8F9FA', // Light Gray
+  primary: '#7C2C78',
+  secondary: '#EAB75F',
+  accent: '#A43875',
+  dark: '#2E297D',
+  light: '#F8F9FA',
   white: '#FFFFFF',
   black: '#171717',
 }

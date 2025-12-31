@@ -17,6 +17,7 @@ export const BargainCouponSchema = z.object({
   usedAt: z.date().optional(),
   orderId: z.string().optional(), // If used in an order
   isActive: z.boolean().default(true),
+  reminderSent: z.boolean().default(false),
   createdAt: z.date().default(() => new Date()),
   updatedAt: z.date().default(() => new Date()),
 });
@@ -48,6 +49,7 @@ const BargainCouponSchemaMongoose = new Schema<IBargainCoupon>({
   isActive: { type: Boolean, default: true, index: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
+  reminderSent: { type: Boolean, default: false, index: true },
 });
 
 // Indexes
