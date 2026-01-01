@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
       ? error.message 
       : "Upload failed"
     
-    log.error("Upload API error", { error: errorMessage })
+    log.error("Upload API error", { error: error as Error })
     
     return NextResponse.json(
       { 

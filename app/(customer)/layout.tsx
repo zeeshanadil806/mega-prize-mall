@@ -4,6 +4,7 @@ import CustomerNavbar from "@/components/customer/CustomerNavbar"
 import CustomerFooter from "@/components/customer/CustomerFooter"
 import { Toaster } from "sonner"
 import { auth } from "@/auth"
+import Header from "@/components/customer/Header"
 // import { redirect } from "next/navigation"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -39,9 +40,10 @@ export default async function CustomerLayout({
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-linear-to-r from-[#EAB75F]/10 to-[#2E297D]/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
         </div>
 
-        <CustomerNavbar user={session ? session.user : null} />
+        {/* <CustomerNavbar user={session ? session.user : null} /> */}
+        <Header />
         
-        <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8 mx-auto">
+        <main className="px-4 sm:px-6 lg:px-8 mx-auto">
           <div className="animate-in fade-in duration-700">
             {children}
           </div>
