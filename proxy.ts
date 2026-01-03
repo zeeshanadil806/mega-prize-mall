@@ -219,8 +219,14 @@ export async function proxy(request: NextRequest) {
   const token = await getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET!,
+    // Force secureCookie to true if we are in production
+    secureCookie: process.env.NODE_ENV === 'production',
   })
-
+// Debugging: If token is null in prod, log what cookies we actually see
+  if (!token && process.env.NODE_ENV === 'production') {
+    console.log(`[Middleware] No token found for path: ${pathname}`)
+    console.log(`[Middleware] Cookies present:`, request.cookies.getAll().map(c => c.name))
+  }
   // Debug token
   console.log(`🔐 Token exists: ${!!token}, Role: ${token?.role || 'none'}`)
 
