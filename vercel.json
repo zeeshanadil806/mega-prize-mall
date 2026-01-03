@@ -2,8 +2,7 @@
   "crons": [
     {
       "path": "/api/cron/bargain-expiry",
-      "schedule": "0 0 * * *",
-      "timeZone": "Asia/Karachi"
+      "schedule": "0 0 * * *"
     }
   ]
 }
