@@ -27,7 +27,7 @@ export interface ICouponUsage extends Document, CouponUsage {
 }
 
 const CouponUsageSchemaMongoose = new Schema<ICouponUsage>({
-  couponCode: { type: String, required: true, index: true },
+  couponCode: { type: String, required: true },
   couponType: { type: String, enum: ['global', 'bargain'], required: true },
   userId: { type: String, required: true, ref: 'User', index: true },
   orderId: { type: String, required: true, ref: 'Order', index: true },

@@ -1310,3 +1310,166 @@ export async function sendWelcomeEmail(
     html,
   });
 }
+
+
+export async function sendGoogleWelcomeEmail(options: {
+  to: string;
+  name: string;
+  points?: number;
+  loginMethod?: 'google' | 'credentials';
+}): Promise<boolean> {
+  const brandColors = {
+    primary: '#7C2C78',
+    secondary: '#A43875',
+    accent: '#EAB75F',
+    dark: '#1f2937',
+    light: '#f9fafb',
+    white: '#ffffff'
+  };
+
+  const isGoogleLogin = options.loginMethod === 'google';
+  const bonusPoints = options.points || 0;
+  
+  const content = `
+    <div style="max-width: 600px; margin: 0 auto; background: ${brandColors.white}; border-radius: 16px; overflow: hidden;">
+      <!-- Header with Brand Gradient -->
+      <div style="background: linear-gradient(135deg, ${brandColors.primary}, ${brandColors.secondary}); padding: 2.5rem 2rem; text-align: center;">
+        <div style="background: rgba(255, 255, 255, 0.2); width: 80px; height: 80px; border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1.5rem;">
+          <div style="font-size: 2.5rem; color: white;">🎉</div>
+        </div>
+        <h1 style="color: white; font-size: 2rem; font-weight: 800; margin: 0 0 0.5rem 0;">
+          Welcome to Mega Prize Mall!
+        </h1>
+        <p style="color: rgba(255, 255, 255, 0.9); font-size: 1.125rem; margin: 0;">
+          Your Electronics Accessories Destination
+        </p>
+      </div>
+      
+      <!-- Welcome Message -->
+      <div style="padding: 2rem;">
+        <p style="font-size: 1.125rem; color: ${brandColors.dark}; line-height: 1.6; margin: 0 0 1.5rem 0;">
+          Hi <strong>${options.name}</strong>,<br>
+          We're thrilled to welcome you to Mega Prize Mall! Your account has been successfully created ${isGoogleLogin ? 'via Google' : ''}.
+        </p>
+        
+        <!-- Account Details Card -->
+        <div style="background: ${brandColors.light}; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; border-left: 4px solid ${brandColors.primary};">
+          <h3 style="color: ${brandColors.primary}; margin: 0 0 1rem 0; font-size: 1.25rem;">
+            📋 Your Account Details
+          </h3>
+          <div style="display: grid; gap: 0.75rem;">
+            <div style="display: flex; justify-content: space-between; padding-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb;">
+              <span style="color: #6b7280;">Email</span>
+              <span style="font-weight: 600; color: ${brandColors.dark};">${options.to}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb;">
+              <span style="color: #6b7280;">Account Type</span>
+              <span style="font-weight: 600; color: ${brandColors.primary};">Customer Account</span>
+            </div>
+            ${bonusPoints > 0 ? `
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: #6b7280;">Welcome Bonus</span>
+              <span style="font-weight: 600; color: ${brandColors.accent};">+${bonusPoints} Points</span>
+            </div>
+            ` : ''}
+          </div>
+        </div>
+        
+        <!-- Points Section (if bonus points) -->
+        ${bonusPoints > 0 ? `
+        <div style="background: linear-gradient(135deg, rgba(234, 183, 95, 0.1), rgba(255, 159, 69, 0.1)); 
+                    border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; border: 2px solid ${brandColors.accent};">
+          <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+            <div style="background: ${brandColors.accent}; width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+              <div style="font-size: 1.5rem; color: white;">🏆</div>
+            </div>
+            <div>
+              <h3 style="color: ${brandColors.dark}; margin: 0; font-size: 1.25rem;">
+                You've Earned ${bonusPoints} Welcome Points!
+              </h3>
+              <p style="color: #6b7280; margin: 0.25rem 0 0 0;">
+                Redeem points for discounts on your purchases
+              </p>
+            </div>
+          </div>
+          <p style="color: #6b7280; margin: 0; font-size: 0.875rem;">
+            Points have been credited to your wallet. Start shopping to earn more!
+          </p>
+        </div>
+        ` : ''}
+        
+        <!-- Features Grid -->
+        <div style="margin: 2rem 0;">
+          <h3 style="color: ${brandColors.primary}; text-align: center; margin: 0 0 1.5rem 0; font-size: 1.25rem;">
+            🚀 Get Started with Mega Prize Mall
+          </h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+            <div style="text-align: center; padding: 1rem; background: ${brandColors.light}; border-radius: 10px;">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">💎</div>
+              <div style="font-weight: 600; color: ${brandColors.dark}; margin-bottom: 0.25rem;">Bargain Deals</div>
+              <div style="font-size: 0.875rem; color: #6b7280;">Negotiate prices</div>
+            </div>
+            <div style="text-align: center; padding: 1rem; background: ${brandColors.light}; border-radius: 10px;">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎁</div>
+              <div style="font-weight: 600; color: ${brandColors.dark}; margin-bottom: 0.25rem;">Lucky Draw</div>
+              <div style="font-size: 0.875rem; color: #6b7280;">Win amazing prizes</div>
+            </div>
+            <div style="text-align: center; padding: 1rem; background: ${brandColors.light}; border-radius: 10px;">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">💰</div>
+              <div style="font-weight: 600; color: ${brandColors.dark}; margin-bottom: 0.25rem;">Wallet</div>
+              <div style="font-size: 0.875rem; color: #6b7280;">Earn & redeem points</div>
+            </div>
+            <div style="text-align: center; padding: 1rem; background: ${brandColors.light}; border-radius: 10px;">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">⚡</div>
+              <div style="font-weight: 600; color: ${brandColors.dark}; margin-bottom: 0.25rem;">Fast Delivery</div>
+              <div style="font-size: 0.875rem; color: #6b7280;">Quick shipping</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- CTA Button -->
+        <div style="text-align: center; margin: 2rem 0;">
+          <a href="${process.env.NEXTAUTH_URL}" 
+             style="display: inline-block; background: linear-gradient(135deg, ${brandColors.primary}, ${brandColors.secondary}); 
+                    color: white; padding: 1rem 2.5rem; border-radius: 50px; text-decoration: none; 
+                    font-weight: 600; font-size: 1.125rem; box-shadow: 0 4px 15px rgba(124, 44, 120, 0.3);">
+            Start Shopping Now →
+          </a>
+        </div>
+        
+        <!-- Tips -->
+        <div style="background: rgba(124, 44, 120, 0.05); border-radius: 10px; padding: 1.25rem; margin: 1.5rem 0;">
+          <h4 style="color: ${brandColors.primary}; margin: 0 0 0.75rem 0; font-size: 1rem;">
+            💡 Quick Tips for New Users
+          </h4>
+          <ul style="color: #6b7280; padding-left: 1.25rem; margin: 0; font-size: 0.875rem;">
+            <li>Complete your profile to get personalized recommendations</li>
+            <li>Check the "Bargain Zone" for negotiable deals</li>
+            <li>Participate in Lucky Draws for a chance to win free products</li>
+            <li>Share your referral code to earn bonus points</li>
+          </ul>
+        </div>
+        
+        <!-- Closing -->
+        <div style="text-align: center; color: #6b7280; font-size: 0.875rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;">
+          <p style="margin: 0 0 1rem 0;">
+            Need help? <a href="mailto:${process.env.GMAIL_USER}" style="color: ${brandColors.primary}; text-decoration: none;">Contact our support team</a>
+          </p>
+          <p style="margin: 0; font-size: 0.75rem;">
+            This email was sent to ${options.to} because you created an account at Mega Prize Mall.
+            <br>
+            © ${new Date().getFullYear()} Mega Prize Mall. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const html = baseEmailTemplate(content, `Welcome to Mega Prize Mall, ${options.name.split(' ')[0]}!`);
+
+  return await sendEmail({
+    to: options.to,
+    subject: `🎉 Welcome to Mega Prize Mall, ${options.name.split(' ')[0]}! ${bonusPoints > 0 ? `(+${bonusPoints} Bonus Points!)` : ''}`,
+    html,
+  });
+}

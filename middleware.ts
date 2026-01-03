@@ -7,23 +7,24 @@ const publicPatterns = [
   '/',
   '/login',
   '/register',
-  '/products(.*)',
+  '/categories',           // Add this
+  '/not-found',           // Add this
+  '/products/(.*)',
   '/product(.*)',
   '/api/auth(.*)',
 ]
 
 const adminPatterns = [
-  '/products(.*)',
   '/admin(.*)',
 ]
 
 const customerPatterns = [
-  '/dashboard(.*)',
-  '/products(.*)',
-  '/profile(.*)',
-  '/orders(.*)',
-  '/points(.*)',
-  '/bargains(.*)',
+  '/dashboard',
+  '/dashboard/(.*)',
+  '/cart',
+  '/checkout',
+  '/checkout/success',
+  '/addresses',
 ]
 
 // Helper to match patterns

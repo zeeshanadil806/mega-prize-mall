@@ -117,13 +117,13 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
       
       {/* Quick Action Button (Appears on hover) */}
-      <div className="absolute inset-x-4 bottom-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      {/* <div className="absolute inset-x-4 bottom-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-2">
           <button className="w-full py-2 text-sm font-medium text-white bg-linear-to-r from-[#7C2C78] to-[#A43875] rounded-md hover:from-[#6A2566] hover:to-[#8D2F6A] transition-all">
             Quick Add to Cart
           </button>
         </div>
-      </div>
+      </div> */}
     </Link>
   );
 }

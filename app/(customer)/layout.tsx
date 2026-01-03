@@ -1,9 +1,9 @@
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
-import CustomerNavbar from "@/components/customer/CustomerNavbar"
+// import CustomerNavbar from "@/components/customer/CustomerNavbar"
 import CustomerFooter from "@/components/customer/CustomerFooter"
 import { Toaster } from "sonner"
-import { auth } from "@/auth"
+// import { auth } from "@/auth"
 import Header from "@/components/customer/Header"
 // import { redirect } from "next/navigation"
 
@@ -19,7 +19,7 @@ export default async function CustomerLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const session = await auth()
+  // const session = await auth()
   
   // Redirect to login if not authenticated
   // if (!session?.user) {

@@ -6,7 +6,7 @@ import { motion, useInView } from 'framer-motion';
 import { 
   Tag, 
   Zap, 
-  TrendingDown, 
+  // TrendingDown, 
   Clock, 
   Smartphone,
   Headphones,
@@ -270,13 +270,13 @@ const BargainZone = () => {
 
         {/* Bargain Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <div className="bg-white rounded-2xl p-6 text-center border border-gray-200 shadow-lg">
+          {/* <div className="bg-white rounded-2xl p-6 text-center border border-gray-200 shadow-lg">
             <TrendingDown className="h-8 w-8 text-green-500 mx-auto mb-3" />
             <div className="text-2xl font-bold bg-linear-to-r from-[#A43875] to-[#EAB75F] bg-clip-text text-transparent">
               ₹{Math.floor(stats.totalCustomerSavings / 1000000)}M+
             </div>
             <div className="text-sm text-gray-600">Total Customer Savings</div>
-          </div>
+          </div> */}
           
           <div className="bg-white rounded-2xl p-6 text-center border border-gray-200 shadow-lg">
             <Zap className="h-8 w-8 text-[#EAB75F] mx-auto mb-3" />

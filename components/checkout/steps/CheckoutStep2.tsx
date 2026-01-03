@@ -1,13 +1,17 @@
 // components/checkout/steps/CheckoutStep2.tsx
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { useCartStore } from '@/stores/cart-store';
-import { formatCurrency, calculateMaxRedeemablePoints } from '@/lib/bargain-utils';
-import { Wallet, Ticket, Check, X } from 'lucide-react';
-import { toast } from 'sonner';
-import { AppliedCoupon, CheckoutState } from '@/types';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { useCartStore } from "@/stores/cart-store";
+import {
+  formatCurrency,
+  calculateMaxRedeemablePoints,
+} from "@/lib/bargain-utils";
+import { Wallet, Ticket, Check, X, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { AppliedCoupon, CheckoutState } from "@/types";
+import { Button } from "@/components/ui/button";
 
 interface CheckoutStep2Props {
   checkoutData: CheckoutState;
@@ -15,89 +19,96 @@ interface CheckoutStep2Props {
   userId: string;
 }
 
-export default function CheckoutStep2({ checkoutData, setCheckoutData, userId }: CheckoutStep2Props) {
+export default function CheckoutStep2({
+  checkoutData,
+  setCheckoutData,
+  userId,
+}: CheckoutStep2Props) {
   const { getSubtotal, getGrandTotal } = useCartStore();
   const [userPoints, setUserPoints] = useState(0);
-  const [couponInput, setCouponInput] = useState('');
+  const [couponInput, setCouponInput] = useState("");
   const [applyingCoupon, setApplyingCoupon] = useState(false);
-  
+
   const subtotal = getSubtotal();
-//   const discountTotal = getDiscountTotal();
+  //   const discountTotal = getDiscountTotal();
   const grandTotal = getGrandTotal();
-  
+
   // Calculate shipping
   const shippingFee = subtotal > 1000 ? 0 : 150;
-  
+
   // Points calculations
-  const maxPointsData = calculateMaxRedeemablePoints(grandTotal - shippingFee, userPoints);
-  const pointsDiscount = (checkoutData.pointsToUse * 0.1); // 10 points = Rs 1
-  
+  const maxPointsData = calculateMaxRedeemablePoints(
+    grandTotal - shippingFee,
+    userPoints
+  );
+  const pointsDiscount = checkoutData.pointsToUse * 0.1; // 10 points = Rs 1
+
   // Final total
-//   const couponDiscount = checkoutData.appliedCoupons.reduce((sum: number, coupon: any) => sum + coupon.discount, 0);
-//   const finalTotal = Math.max(0, grandTotal + shippingFee - couponDiscount - pointsDiscount);
-  
+  //   const couponDiscount = checkoutData.appliedCoupons.reduce((sum: number, coupon: any) => sum + coupon.discount, 0);
+  //   const finalTotal = Math.max(0, grandTotal + shippingFee - couponDiscount - pointsDiscount);
+
   useEffect(() => {
     // Fetch user points
     const fetchUserPoints = async () => {
       try {
-        const response = await fetch('/api/user/points');
+        const response = await fetch("/api/user/points");
         if (response.ok) {
           const data = await response.json();
           setUserPoints(data.points || 0);
         }
       } catch (error) {
-        console.error('Failed to fetch user points:', error);
+        console.error("Failed to fetch user points:", error);
       }
     };
-    
+
     fetchUserPoints();
   }, []);
-  
+
   const handleApplyCoupon = async () => {
     if (!couponInput.trim()) {
-      toast.error('Please enter a coupon code');
+      toast.error("Please enter a coupon code");
       return;
     }
-    
+
     setApplyingCoupon(true);
-    
+
     try {
-      const response = await fetch('/api/coupons/validate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/coupons/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           couponCode: couponInput.trim(),
           orderAmount: grandTotal + shippingFee,
           userId,
         }),
       });
-      
+
       const data = await response.json();
-      
+
       if (data.valid) {
         // Check if coupon already applied
         const alreadyApplied = checkoutData.appliedCoupons.some(
           (c: AppliedCoupon) => c.code === data.couponCode
         );
-        
+
         if (alreadyApplied) {
-          toast.error('Coupon already applied');
+          toast.error("Coupon already applied");
           return;
         }
-        
+
         // Check coupon compatibility
-        if (data.couponType === 'bargain') {
+        if (data.couponType === "bargain") {
           // Check if already have bargain coupon applied
           const hasBargain = checkoutData.appliedCoupons.some(
-            (c: AppliedCoupon) => c.type === 'bargain'
+            (c: AppliedCoupon) => c.type === "bargain"
           );
-          
+
           if (hasBargain) {
-            toast.error('Only one bargain coupon can be used per order');
+            toast.error("Only one bargain coupon can be used per order");
             return;
           }
         }
-        
+
         setCheckoutData((prev: CheckoutState) => ({
           ...prev,
           appliedCoupons: [
@@ -106,62 +117,77 @@ export default function CheckoutStep2({ checkoutData, setCheckoutData, userId }:
               code: data.couponCode,
               type: data.couponType,
               discount: data.discountAmount,
-            }
-          ]
+            },
+          ],
         }));
-        
-        setCouponInput('');
+
+        setCouponInput("");
         toast.success(data.message);
       } else {
         toast.error(data.message);
       }
     } catch (error) {
-      console.error('Coupon validation error:', error);
-      toast.error('Failed to validate coupon');
+      console.error("Coupon validation error:", error);
+      toast.error("Failed to validate coupon");
     } finally {
       setApplyingCoupon(false);
     }
   };
-  
+
   const handleRemoveCoupon = (code: string) => {
     setCheckoutData((prev: CheckoutState) => ({
       ...prev,
-      appliedCoupons: prev.appliedCoupons.filter((c: AppliedCoupon) => c.code !== code)
+      appliedCoupons: prev.appliedCoupons.filter(
+        (c: AppliedCoupon) => c.code !== code
+      ),
     }));
-    toast.info('Coupon removed');
+    toast.info("Coupon removed");
   };
-  
+
   const handleUsePoints = (points: number) => {
     setCheckoutData((prev: CheckoutState) => ({
       ...prev,
       pointsToUse: points,
     }));
   };
-  
+
   const handleUseMaxPoints = () => {
     setCheckoutData((prev: CheckoutState) => ({
       ...prev,
       pointsToUse: maxPointsData.maxPoints,
     }));
   };
-  
+
   return (
     <div>
       <h2 className="text-2xl font-bold text-gray-900 mb-6">
         Review & Payment
       </h2>
-      
+
       {/* Shipping Method */}
       <div className="mb-8">
         <h3 className="font-medium text-gray-900 mb-4">Shipping Method</h3>
         <div className="grid gap-3">
           {[
-            { id: 'standard', name: 'Standard Shipping', price: 150, time: '3-5 business days', freeOver: 1001 },
-            { id: 'express', name: 'Express Shipping', price: 300, time: '1-2 business days' },
+            {
+              id: "standard",
+              name: "Standard Shipping",
+              price: 150,
+              time: "3-5 business days",
+              freeOver: 1001,
+            },
+            {
+              id: "express",
+              name: "Express Shipping",
+              price: 300,
+              time: "1-2 business days",
+            },
           ].map((method) => {
-            const isFree = method.id === 'standard' && subtotal >= (method.freeOver || Infinity);
+            const isFree =
+              method.id === "standard" &&
+              subtotal >= (method.freeOver || Infinity);
             const price = isFree ? 0 : method.price;
-            
+
             return (
               <motion.label
                 key={method.id}
@@ -174,15 +200,24 @@ export default function CheckoutStep2({ checkoutData, setCheckoutData, userId }:
                   name="shippingMethod"
                   value={method.id}
                   checked={checkoutData.shippingMethod === method.id}
-                  onChange={(e) => setCheckoutData((prev: CheckoutState) => ({ ...prev, shippingMethod: e.target.value }))}
+                  onChange={(e) =>
+                    setCheckoutData((prev: CheckoutState) => ({
+                      ...prev,
+                      shippingMethod: e.target.value,
+                    }))
+                  }
                   className="sr-only"
                 />
-                <div className={`
+                <div
+                  className={`
                   p-4 border-2 rounded-xl transition-all
-                  ${checkoutData.shippingMethod === method.id
-                    ? 'border-[#7C2C78] bg-[#7C2C78]/5'
-                    : 'border-gray-200 hover:border-gray-300'}
-                `}>
+                  ${
+                    checkoutData.shippingMethod === method.id
+                      ? "border-[#7C2C78] bg-[#7C2C78]/5"
+                      : "border-gray-200 hover:border-gray-300"
+                  }
+                `}
+                >
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="font-medium text-gray-900">
@@ -190,11 +225,15 @@ export default function CheckoutStep2({ checkoutData, setCheckoutData, userId }:
                       </div>
                       <div className="text-sm text-gray-600 mt-1">
                         {method.time}
-                        {isFree && <span className="ml-2 text-green-600 font-medium">FREE</span>}
+                        {isFree && (
+                          <span className="ml-2 text-green-600 font-medium">
+                            FREE
+                          </span>
+                        )}
                       </div>
                     </div>
                     <div className="text-lg font-bold">
-                      {isFree ? 'FREE' : formatCurrency(price)}
+                      {isFree ? "FREE" : formatCurrency(price)}
                     </div>
                   </div>
                 </div>
@@ -203,13 +242,18 @@ export default function CheckoutStep2({ checkoutData, setCheckoutData, userId }:
           })}
         </div>
       </div>
-      
+
       {/* Payment Method */}
       <div className="mb-8">
         <h3 className="font-medium text-gray-900 mb-4">Payment Method</h3>
         <div className="grid gap-3">
           {[
-            { id: 'cod', name: 'Cash on Delivery', icon: Wallet, description: 'Pay when you receive your order' },
+            {
+              id: "cod",
+              name: "Cash on Delivery",
+              icon: Wallet,
+              description: "Pay when you receive your order",
+            },
             // { id: 'card', name: 'Credit/Debit Card', icon: CreditCard, description: 'Pay securely with your card' },
           ].map((method) => (
             <motion.label
@@ -217,7 +261,7 @@ export default function CheckoutStep2({ checkoutData, setCheckoutData, userId }:
               whileHover={{ scale: 1.01 }}
               className="block cursor-pointer"
             >
-              <div className="p-4 border-2 border-gray-200 rounded-xl hover:border-gray-300">
+              <div className="p-4 border-2 border-[#7C2C78] rounded-xl hover:border-[#7C2C78]">
                 <div className="flex items-start gap-3">
                   <div className="h-10 w-10 rounded-lg bg-gray-100 flex items-center justify-center">
                     <method.icon className="h-5 w-5 text-gray-600" />
@@ -230,8 +274,8 @@ export default function CheckoutStep2({ checkoutData, setCheckoutData, userId }:
                       {method.description}
                     </div>
                   </div>
-                  <div className="h-6 w-6 rounded-full border-2 border-gray-300 flex items-center justify-center">
-                    <Check className="h-3 w-3 text-white" />
+                  <div className="h-6 w-6 rounded-full border-2 border-[#7C2C78] flex items-center justify-center">
+                    <Check className="h-3 w-3 text-[#7C2C78]" />
                   </div>
                 </div>
               </div>
@@ -239,7 +283,7 @@ export default function CheckoutStep2({ checkoutData, setCheckoutData, userId }:
           ))}
         </div>
       </div>
-      
+
       {/* Points Redemption */}
       <div className="mb-8">
         <h3 className="font-medium text-gray-900 mb-4 flex items-center gap-2">
@@ -257,21 +301,26 @@ export default function CheckoutStep2({ checkoutData, setCheckoutData, userId }:
               </div>
             </div>
             <div className="text-sm text-gray-600">
-              Max {maxPointsData.maxPoints.toLocaleString()} points ({formatCurrency(maxPointsData.maxDiscount)})
+              Max {maxPointsData.maxPoints.toLocaleString()} points (
+              {formatCurrency(maxPointsData.maxDiscount)})
             </div>
           </div>
-          
+
           <div className="grid grid-cols-3 gap-2 mb-3">
             {[100, 500, 1000].map((points) => (
               <button
                 key={points}
                 onClick={() => handleUsePoints(points)}
-                disabled={points > maxPointsData.maxPoints || points > userPoints}
+                disabled={
+                  points > maxPointsData.maxPoints || points > userPoints
+                }
                 className={`
                   p-2 border rounded-lg text-center transition-all
-                  ${checkoutData.pointsToUse === points
-                    ? 'border-[#7C2C78] bg-[#7C2C78]/10 text-[#7C2C78]'
-                    : 'border-gray-300 hover:border-gray-400'}
+                  ${
+                    checkoutData.pointsToUse === points
+                      ? "border-[#7C2C78] bg-[#7C2C78]/10 text-[#7C2C78]"
+                      : "border-gray-300 hover:border-gray-400"
+                  }
                   disabled:opacity-50 disabled:cursor-not-allowed
                 `}
               >
@@ -282,15 +331,16 @@ export default function CheckoutStep2({ checkoutData, setCheckoutData, userId }:
               </button>
             ))}
           </div>
-          
+
           <button
             onClick={handleUseMaxPoints}
             disabled={maxPointsData.maxPoints === 0}
             className="w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Use Maximum ({maxPointsData.maxPoints.toLocaleString()} points = {formatCurrency(maxPointsData.maxDiscount)})
+            Use Maximum ({maxPointsData.maxPoints.toLocaleString()} points ={" "}
+            {formatCurrency(maxPointsData.maxDiscount)})
           </button>
-          
+
           {checkoutData.pointsToUse > 0 && (
             <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
               <div className="flex items-center justify-between text-green-700">
@@ -314,31 +364,38 @@ export default function CheckoutStep2({ checkoutData, setCheckoutData, userId }:
           )}
         </div>
       </div>
-      
+
       {/* Coupon Codes */}
       <div className="mb-8">
-        <h3 className="font-medium text-gray-900 mb-4 flex items-center gap-2">
-          <Ticket className="h-5 w-5 text-[#A43875]" />
+        <h3 className="font-medium text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
+          <Ticket className="h-4 w-4 sm:h-5 sm:w-5 text-[#A43875]" />
           Apply Coupon
         </h3>
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
           <input
             type="text"
             value={couponInput}
             onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
             placeholder="Enter coupon code"
-            className="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
+            className="flex-1 border border-gray-300 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent disabled:bg-gray-50 disabled:cursor-not-allowed"
             disabled={applyingCoupon}
           />
-          <button
+          <Button
             onClick={handleApplyCoupon}
             disabled={applyingCoupon || !couponInput.trim()}
-            className="px-6 py-3 bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white rounded-lg hover:from-[#6A2566] hover:to-[#8D2F6A] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-11 sm:h-12 px-4 sm:px-6 text-sm sm:text-base bg-linear-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] text-white whitespace-nowrap"
           >
-            {applyingCoupon ? 'Applying...' : 'Apply'}
-          </button>
+            {applyingCoupon ? (
+              <>
+                <Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2 animate-spin" />
+                Applying...
+              </>
+            ) : (
+              "Apply"
+            )}
+          </Button>
         </div>
-        
+
         {/* Applied Coupons */}
         {checkoutData.appliedCoupons.length > 0 && (
           <div className="mt-4 space-y-2">
@@ -369,13 +426,20 @@ export default function CheckoutStep2({ checkoutData, setCheckoutData, userId }:
           </div>
         )}
       </div>
-      
+
       {/* Order Notes */}
       <div>
-        <h3 className="font-medium text-gray-900 mb-4">Order Notes (Optional)</h3>
+        <h3 className="font-medium text-gray-900 mb-4">
+          Order Notes (Optional)
+        </h3>
         <textarea
           value={checkoutData.notes}
-          onChange={(e) => setCheckoutData((prev: CheckoutState) => ({ ...prev, notes: e.target.value }))}
+          onChange={(e) =>
+            setCheckoutData((prev: CheckoutState) => ({
+              ...prev,
+              notes: e.target.value,
+            }))
+          }
           placeholder="Special instructions, delivery preferences, etc."
           className="w-full h-32 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent resize-none"
           maxLength={500}

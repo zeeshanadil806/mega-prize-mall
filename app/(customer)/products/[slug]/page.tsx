@@ -20,8 +20,10 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   
   const product = await ProductModel.findOne({ slug, isActive: true })
     .select('name description metaTitle metaDescription keywords images')
-    .lean();
-  
+    .lean()
+      .exec();
+  // const plainProduct = JSON.parse(JSON.stringify(product));
+
   if (!product) {
     return {
       title: 'Product Not Found - Mega Prize Mall',
@@ -105,7 +107,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
         <div className="container mx-auto px-4 py-8">
           {/* Product Detail */}
           <ProductDetailClient 
-            product={product}
+            product={JSON.parse(JSON.stringify(product))}
             userId={sessionData?.user?.id}
             // userBargainHistory={updatedBargainHistory}
           />

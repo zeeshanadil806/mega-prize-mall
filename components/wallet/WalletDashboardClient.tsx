@@ -3,46 +3,46 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+// import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import {
   CreditCard,
   TrendingUp,
-  Calendar,
-  Filter,
-  Download,
+  // Calendar,
+  // Filter,
+  // Download,
 //   ChevronRight,
   Sparkles,
   Clock,
   Award,
   Gift,
   AlertCircle,
-  Coins,
+  // Coins,
   Zap,
   Wallet,
 //   BarChart3,
   History,
-  ArrowUpRight,
-  ArrowDownRight,
+  // ArrowUpRight,
+  // ArrowDownRight,
   RefreshCw,
-  CheckCircle,
-  XCircle,
+  // CheckCircle,
+  // XCircle,
 } from 'lucide-react';
 import { formatCurrency } from '@/lib/bargain-utils';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from '@/components/ui/select';
+// import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+// import { Progress } from '@/components/ui/progress';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Skeleton } from '@/components/ui/skeleton';
-import Link from 'next/link';
+// import { Skeleton } from '@/components/ui/skeleton';
+// import Link from 'next/link';
 import { WalletTransaction } from '@/types';
 
 interface WalletDashboardClientProps {
@@ -64,77 +64,77 @@ interface WalletDashboardClientProps {
   userId: string;
 }
 
-const typeConfig: Record<string, { 
-  label: string; 
-  color: string;
-  bgColor: string;
-  icon: React.ReactNode;
-  sign: string;
-}> = {
-  earn: { 
-    label: 'Earned', 
-    color: 'text-green-600',
-    bgColor: 'bg-green-100',
-    icon: <ArrowUpRight className="h-4 w-4" />,
-    sign: '+',
-  },
-  redeem: { 
-    label: 'Redeemed', 
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-100',
-    icon: <ArrowDownRight className="h-4 w-4" />,
-    sign: '-',
-  },
-  adjustment: { 
-    label: 'Adjustment', 
-    color: 'text-purple-600',
-    bgColor: 'bg-purple-100',
-    icon: <RefreshCw className="h-4 w-4" />,
-    sign: '±',
-  },
-  expiry: { 
-    label: 'Expired', 
-    color: 'text-red-600',
-    bgColor: 'bg-red-100',
-    icon: <XCircle className="h-4 w-4" />,
-    sign: '-',
-  },
-  refund: { 
-    label: 'Refunded', 
-    color: 'text-amber-600',
-    bgColor: 'bg-amber-100',
-    icon: <CheckCircle className="h-4 w-4" />,
-    sign: '+',
-  },
-};
+// const typeConfig: Record<string, { 
+//   label: string; 
+//   color: string;
+//   bgColor: string;
+//   icon: React.ReactNode;
+//   sign: string;
+// }> = {
+//   earn: { 
+//     label: 'Earned', 
+//     color: 'text-green-600',
+//     bgColor: 'bg-green-100',
+//     icon: <ArrowUpRight className="h-4 w-4" />,
+//     sign: '+',
+//   },
+//   redeem: { 
+//     label: 'Redeemed', 
+//     color: 'text-blue-600',
+//     bgColor: 'bg-blue-100',
+//     icon: <ArrowDownRight className="h-4 w-4" />,
+//     sign: '-',
+//   },
+//   adjustment: { 
+//     label: 'Adjustment', 
+//     color: 'text-purple-600',
+//     bgColor: 'bg-purple-100',
+//     icon: <RefreshCw className="h-4 w-4" />,
+//     sign: '±',
+//   },
+//   expiry: { 
+//     label: 'Expired', 
+//     color: 'text-red-600',
+//     bgColor: 'bg-red-100',
+//     icon: <XCircle className="h-4 w-4" />,
+//     sign: '-',
+//   },
+//   refund: { 
+//     label: 'Refunded', 
+//     color: 'text-amber-600',
+//     bgColor: 'bg-amber-100',
+//     icon: <CheckCircle className="h-4 w-4" />,
+//     sign: '+',
+//   },
+// };
 
 export function WalletDashboardClient({
-  transactions,
-  currentPage,
-  totalPages,
-  currentType,
-  currentMonth,
-  monthOptions,
+  // transactions,
+  // currentPage,
+  // totalPages,
+  // currentType,
+  // currentMonth,
+  // monthOptions,
   stats,
   userId,
 }: WalletDashboardClientProps) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedType, setSelectedType] = useState(currentType);
-  const [selectedMonth, setSelectedMonth] = useState(currentMonth);
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [selectedType, setSelectedType] = useState(currentType);
+  // const [selectedMonth, setSelectedMonth] = useState(currentMonth);
   const [showRedeemDialog, setShowRedeemDialog] = useState(false);
   const [redeemAmount, setRedeemAmount] = useState('');
   const [isRedeeming, setIsRedeeming] = useState(false);
 
-  const handleFilterChange = () => {
-    setIsLoading(true);
-    const params = new URLSearchParams();
-    if (selectedType !== 'all') params.set('type', selectedType);
-    if (selectedMonth !== 'all') params.set('month', selectedMonth);
-    params.set('page', '1');
+  // const handleFilterChange = () => {
+  //   setIsLoading(true);
+  //   const params = new URLSearchParams();
+  //   if (selectedType !== 'all') params.set('type', selectedType);
+  //   if (selectedMonth !== 'all') params.set('month', selectedMonth);
+  //   params.set('page', '1');
     
-    router.push(`/dashboard/wallet?${params.toString()}`);
-  };
+  //   router.push(`/dashboard/wallet?${params.toString()}`);
+  // };
 
   const handleRedeemPoints = async () => {
     if (!redeemAmount || parseInt(redeemAmount) <= 0) return;
@@ -167,28 +167,28 @@ export function WalletDashboardClient({
     }
   };
 
-  const handleExportTransactions = async () => {
-    try {
-      const params = new URLSearchParams();
-      if (selectedType !== 'all') params.set('type', selectedType);
-      if (selectedMonth !== 'all') params.set('month', selectedMonth);
+  // const handleExportTransactions = async () => {
+  //   try {
+  //     const params = new URLSearchParams();
+  //     // if (selectedType !== 'all') params.set('type', selectedType);
+  //     // if (selectedMonth !== 'all') params.set('month', selectedMonth);
       
-      const response = await fetch(`/api/wallet/export?${params.toString()}`);
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `wallet-transactions-${new Date().toISOString().split('T')[0]}.csv`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-      }
-    } catch (error) {
-      console.error('Export error:', error);
-    }
-  };
+  //     const response = await fetch(`/api/wallet/export?${params.toString()}`);
+  //     if (response.ok) {
+  //       const blob = await response.blob();
+  //       const url = window.URL.createObjectURL(blob);
+  //       const a = document.createElement('a');
+  //       a.href = url;
+  //       a.download = `wallet-transactions-${new Date().toISOString().split('T')[0]}.csv`;
+  //       document.body.appendChild(a);
+  //       a.click();
+  //       document.body.removeChild(a);
+  //       window.URL.revokeObjectURL(url);
+  //     }
+  //   } catch (error) {
+  //     console.error('Export error:', error);
+  //   }
+  // };
 
   const maxRedeemable = Math.floor(stats.currentPoints);
   const redeemValue = parseInt(redeemAmount) * 0.1 || 0;
@@ -208,10 +208,10 @@ export function WalletDashboardClient({
             <RefreshCw className="h-4 w-4 mr-2" />
             Refresh
           </Button>
-          <Button variant="outline" onClick={handleExportTransactions}>
+          {/* <Button variant="outline" onClick={handleExportTransactions}>
             <Download className="h-4 w-4 mr-2" />
             Export
-          </Button>
+          </Button> */}
         </div>
       </div>
 
@@ -312,7 +312,7 @@ export function WalletDashboardClient({
       </div>
 
       {/* Progress Bar */}
-      <Card className="mb-8">
+      {/* <Card className="mb-8">
         <CardContent className="pt-6">
           <div className="space-y-4">
             <div className="flex justify-between items-center">
@@ -337,227 +337,7 @@ export function WalletDashboardClient({
             </div>
           </div>
         </CardContent>
-      </Card>
-
-      {/* Filters */}
-      <Card className="mb-6">
-        <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-            {/* Type Tabs */}
-            <Tabs 
-              value={selectedType} 
-              onValueChange={setSelectedType}
-              className="w-full md:w-auto"
-            >
-              <TabsList className="grid grid-cols-3 md:flex">
-                <TabsTrigger value="all">All</TabsTrigger>
-                <TabsTrigger value="earn">Earned</TabsTrigger>
-                <TabsTrigger value="redeem">Redeemed</TabsTrigger>
-              </TabsList>
-            </Tabs>
-
-            {/* Month Selector */}
-            <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-              <SelectTrigger className="w-full md:w-48">
-                <Calendar className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="All Months" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Months</SelectItem>
-                {monthOptions.map(month => (
-                  <SelectItem key={month.value} value={month.value}>
-                    {month.label} ({month.count})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* Apply Filters Button */}
-            <Button onClick={handleFilterChange} disabled={isLoading}>
-              <Filter className="h-4 w-4 mr-2" />
-              Apply Filters
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Transactions Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Transaction History</CardTitle>
-          <CardDescription>
-            {transactions.length} transaction{transactions.length !== 1 ? 's' : ''} found
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {isLoading ? (
-              // Loading Skeletons
-              Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="space-y-2">
-                    <Skeleton className="h-4 w-32" />
-                    <Skeleton className="h-3 w-48" />
-                  </div>
-                  <Skeleton className="h-6 w-20" />
-                </div>
-              ))
-            ) : transactions.length === 0 ? (
-              // Empty State
-              <div className="text-center py-12">
-                <Coins className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No transactions found</h3>
-                <p className="text-muted-foreground mb-6">
-                  {selectedType !== 'all' || selectedMonth !== 'all'
-                    ? 'Try adjusting your filters'
-                    : 'Start earning points by shopping!'}
-                </p>
-                {selectedType === 'all' && selectedMonth === 'all' && (
-                  <Button asChild>
-                    <Link href="/products">Start Shopping</Link>
-                  </Button>
-                )}
-              </div>
-            ) : (
-              // Transactions List
-              transactions.map((transaction) => {
-                const config = typeConfig[transaction.type] || typeConfig.earn;
-                const isPositive = transaction.points > 0;
-                
-                return (
-                  <div 
-                    key={transaction._id} 
-                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className={`h-10 w-10 rounded-full ${config.bgColor} flex items-center justify-center`}>
-                        <div className={config.color}>
-                          {config.icon}
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">{config.label}</span>
-                          {transaction.expiresAt && new Date(transaction.expiresAt) > new Date() && (
-                            <Badge variant="outline" className="text-xs">
-                              <Clock className="h-3 w-3 mr-1" />
-                              Expires {new Date(transaction.expiresAt).toLocaleDateString()}
-                            </Badge>
-                          )}
-                        </div>
-                        
-                        <p className="text-sm text-muted-foreground">
-                          {transaction.description}
-                        </p>
-                        
-                        <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
-                          <span>{new Date(transaction.createdAt).toLocaleDateString()}</span>
-                          {transaction.orderId && (
-                            <span className="font-mono">
-                              Order: {transaction.orderId.slice(-8).toUpperCase()}
-                            </span>
-                          )}
-                          {transaction.balanceAfter !== undefined && (
-                            <span>Balance: {transaction.balanceAfter.toLocaleString()}</span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="text-right">
-                      <div className={`text-lg font-bold ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                        {isPositive ? '+' : '-'}{Math.abs(transaction.points).toLocaleString()} points
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {formatCurrency(Math.abs(transaction.points) * transaction.rate)}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
-
-          {/* Pagination */}
-          {totalPages > 1 && !isLoading && (
-            <div className="flex justify-center items-center gap-2 mt-8 pt-8 border-t">
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={currentPage === 1}
-                onClick={() => {
-                  const params = new URLSearchParams();
-                  if (selectedType !== 'all') params.set('type', selectedType);
-                  if (selectedMonth !== 'all') params.set('month', selectedMonth);
-                  params.set('page', (currentPage - 1).toString());
-                  router.push(`/dashboard/wallet?${params.toString()}`);
-                }}
-              >
-                Previous
-              </Button>
-              
-              <div className="flex items-center gap-1">
-                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                  const pageNum = i + 1;
-                  return (
-                    <Button
-                      key={pageNum}
-                      variant={currentPage === pageNum ? "default" : "outline"}
-                      size="sm"
-                      className="min-w-9"
-                      onClick={() => {
-                        const params = new URLSearchParams();
-                        if (selectedType !== 'all') params.set('type', selectedType);
-                        if (selectedMonth !== 'all') params.set('month', selectedMonth);
-                        params.set('page', pageNum.toString());
-                        router.push(`/dashboard/wallet?${params.toString()}`);
-                      }}
-                    >
-                      {pageNum}
-                    </Button>
-                  );
-                })}
-                
-                {totalPages > 5 && (
-                  <>
-                    <span className="text-muted-foreground">...</span>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="min-w-9"
-                      onClick={() => {
-                        const params = new URLSearchParams();
-                        if (selectedType !== 'all') params.set('type', selectedType);
-                        if (selectedMonth !== 'all') params.set('month', selectedMonth);
-                        params.set('page', totalPages.toString());
-                        router.push(`/dashboard/wallet?${params.toString()}`);
-                      }}
-                    >
-                      {totalPages}
-                    </Button>
-                  </>
-                )}
-              </div>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={currentPage === totalPages}
-                onClick={() => {
-                  const params = new URLSearchParams();
-                  if (selectedType !== 'all') params.set('type', selectedType);
-                  if (selectedMonth !== 'all') params.set('month', selectedMonth);
-                  params.set('page', (currentPage + 1).toString());
-                  router.push(`/dashboard/wallet?${params.toString()}`);
-                }}
-              >
-                Next
-              </Button>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      </Card> */}
 
       {/* How to Earn More */}
       <Card className="mt-8">
@@ -577,7 +357,7 @@ export function WalletDashboardClient({
               <p className="text-sm text-muted-foreground mt-1">
                 Earn points for every spend
               </p>
-              <p className="text-sm font-medium text-primary mt-2">+10 pts / Rs 100</p>
+              {/* <p className="text-sm font-medium text-primary mt-2">+10 pts / Rs 100</p> */}
             </div>
             
             <div className="p-4 border rounded-lg">
@@ -588,7 +368,7 @@ export function WalletDashboardClient({
               <p className="text-sm text-muted-foreground mt-1">
                 Bonus points on order completion
               </p>
-              <p className="text-sm font-medium text-green-600 mt-2">+50 pts / order</p>
+              {/* <p className="text-sm font-medium text-green-600 mt-2">+50 pts / order</p> */}
             </div>
             
             <div className="p-4 border rounded-lg">

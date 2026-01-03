@@ -390,7 +390,6 @@ export async function POST(request: NextRequest) {
         {
           success: true,
           orderId: order?._id,
-          // orderNumber: order?.orderNumber,
           message: "Order placed successfully",
         },
         { status: 201 }

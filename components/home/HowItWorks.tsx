@@ -106,7 +106,7 @@ const HowItWorks = () => {
   return (
     <section 
       ref={ref}
-      className="py-12 sm:py-16 md:py-20 bg-linear-to-b from-white to-gray-50 overflow-hidden"
+      className="py-12 bg-linear-to-b from-white to-gray-50 overflow-hidden"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
@@ -271,7 +271,7 @@ const HowItWorks = () => {
                     <Button
                       size="default"
                       variant="outline"
-                      className="w-full sm:w-auto border border-white sm:border-2 text-white hover:bg-white/10 px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 text-sm sm:text-base md:text-lg backdrop-blur-sm"
+                      className="w-full sm:w-auto border border-white sm:border-2 text-white hover:bg-white/10 px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 text-sm sm:text-base md:text-lg backdrop-blur-sm bg-transparent"
                     >
                       Watch Demo Video
                     </Button>
