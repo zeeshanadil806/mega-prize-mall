@@ -207,7 +207,7 @@ export async function sendOrderConfirmationEmail(
           </span>
         </p>
         <p style="margin-top: 0.5rem; font-size: 0.875rem;">
-          Use points for discounts in future orders! (10 points = ₹1)
+          Use points for discounts in future orders! (10 points = Rs 1)
         </p>
       </div>
     </div>
@@ -223,7 +223,7 @@ export async function sendOrderConfirmationEmail(
     <ul style="padding-left: 1.5rem; margin-bottom: 1.5rem;">
       <li>We'll notify you when your order ships</li>
       <li>You'll earn points after delivery</li>
-      <li>Orders over ₹3000 get automatic lucky draw entries!</li>
+      <li>Orders over Rs 3000 get automatic lucky draw entries!</li>
     </ul>
     
     <p>Thank you for choosing Mega Prize Mall!<br>
@@ -283,7 +283,7 @@ export async function sendAdminOrderNotification(order: ClientOrder): Promise<bo
       ${order.pointsRedeemed > 0 ? `
       <div style="background: rgba(234, 183, 95, 0.1); padding: 0.75rem; border-radius: 6px; margin-top: 1rem;">
         <p class="mb-1"><strong>🪙 Points Redeemed:</strong></p>
-        <p style="margin: 0;">${order.pointsRedeemed} points (₹${(order.pointsRedeemed * 0.1).toFixed(2)})</p>
+        <p style="margin: 0;">${order.pointsRedeemed} points (Rs ${(order.pointsRedeemed * 0.1).toFixed(2)})</p>
       </div>
       ` : ''}
       
@@ -450,14 +450,14 @@ export async function sendOrderDeliveredEmail(
       
       <p style="text-align: center; margin-bottom: 0;">
         <strong>💰 Value:</strong> ${formatCurrency(pointsEarned * 0.1)} 
-        <span style="color: #6b7280; margin-left: 0.5rem;">(10 points = ₹1)</span>
+        <span style="color: #6b7280; margin-left: 0.5rem;">(10 points = Rs 1)</span>
       </p>
       
       <div style="background: ${BRAND_COLORS.white}; border-radius: 8px; padding: 1rem; margin-top: 1rem;">
         <p class="mb-2"><strong>🎯 How to Use Points:</strong></p>
         <ul style="padding-left: 1.5rem; margin: 0;">
           <li>Redeem in checkout (max 10% of order value)</li>
-          <li>1 point = ₹0.10 discount</li>
+          <li>1 point = Rs 0.10 discount</li>
           <li>No minimum redemption</li>
           <li>Points never expire</li>
         </ul>
@@ -475,7 +475,7 @@ export async function sendOrderDeliveredEmail(
         <div>
           <p style="margin: 0; font-weight: 600;">You've earned an automatic entry!</p>
           <p style="margin: 0.25rem 0 0 0; color: #6b7280; font-size: 0.875rem;">
-            For orders over ₹3000
+            For orders over Rs 3000
           </p>
         </div>
       </div>
@@ -544,7 +544,7 @@ export async function sendPointsEarnedEmail(
       
       <p class="mb-2"><strong>Points Value:</strong></p>
       <p style="color: ${BRAND_COLORS.accent}; font-weight: 600;">
-        ${formatCurrency(points * 0.1)} (10 points = ₹1)
+        ${formatCurrency(points * 0.1)} (10 points = Rs 1)
       </p>
     </div>
     
@@ -867,7 +867,7 @@ export async function sendLuckyDrawEntryEmail(
         You're in the Draw!
       </div>
       <div style="font-size: 0.875rem; color: #6b7280;">
-        For orders over ₹3000
+        For orders over Rs 3000
       </div>
     </div>
     
@@ -898,7 +898,7 @@ export async function sendLuckyDrawEntryEmail(
       <p class="mb-2"><strong>Qualifying Order:</strong></p>
       <p>
         Order #MPM-${order._id.toString().slice(-6).toUpperCase()}<br>
-        <span style="color: #6b7280; font-size: 0.875rem;">${orderTotal} (₹3000+ order)</span>
+        <span style="color: #6b7280; font-size: 0.875rem;">${orderTotal} (Rs 3000+ order)</span>
       </p>
     </div>
     
@@ -1128,7 +1128,7 @@ export async function sendLuckyDrawResultsEmail(
       <p class="mb-2"><strong>🎯 Next Draw Coming Soon!</strong></p>
       <p style="margin: 0;">Keep shopping to earn more automatic entries:</p>
       <ul style="padding-left: 1.5rem; margin: 0.5rem 0;">
-        <li>Orders over ₹3000 get automatic entry</li>
+        <li>Orders over Rs 3000 get automatic entry</li>
         <li>No limit on entries per customer</li>
         <li>Draws announced regularly</li>
       </ul>
@@ -1255,7 +1255,7 @@ export async function sendWelcomeEmail(
           <div style="font-size: 2rem; margin-bottom: 0.5rem;">📈</div>
           <div style="font-weight: 600;">Earn More Points</div>
           <p style="margin: 0.5rem 0 0 0; font-size: 0.875rem; color: #6b7280;">
-            1 point per ₹10 spent
+            1 point per Rs 10 spent
           </p>
         </div>
       </div>
@@ -1263,7 +1263,7 @@ export async function sendWelcomeEmail(
       <div style="background: ${BRAND_COLORS.white}; border-radius: 8px; padding: 1rem; margin-top: 1rem;">
         <p style="margin: 0; font-weight: 600; color: ${BRAND_COLORS.primary};">💡 Points Value:</p>
         <p style="margin: 0.5rem 0 0 0;">
-          <strong>10 points = ₹1 discount</strong><br>
+          <strong>10 points = Rs 1 discount</strong><br>
           Your ${totalPoints} points = ${formatCurrency(totalPoints * 0.1)} discount
         </p>
       </div>

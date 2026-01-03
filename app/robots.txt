@@ -1,0 +1,64 @@
+// Alternative: More granular robots.txt
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: [
+      // Allow all good bots
+      {
+        userAgent: [
+          'Googlebot',
+          'Bingbot',
+          'Slurp',
+          'DuckDuckBot',
+          'Baiduspider',
+          'YandexBot',
+          'Sogou',
+          'Exabot',
+          'facebot',
+        ],
+        allow: '/',
+        disallow: [
+          '/dashboard/',
+          '/admin/',
+          '/api/',
+          '/cart',
+          '/checkout',
+        ],
+        crawlDelay: 1,
+      },
+      // Block bad/scraping bots
+      {
+        userAgent: [
+          'AhrefsBot',
+          'SemrushBot',
+          'MJ12bot',
+          'DotBot',
+          'PetalBot',
+          'CCBot',
+        ],
+        disallow: '/',
+      },
+      // Default rule for all other bots
+      {
+        userAgent: '*',
+        allow: [
+          '/',
+          '/products/',
+          '/categories/',
+          '/about',
+          '/contact',
+        ],
+        disallow: [
+          '/dashboard/',
+          '/admin/',
+          '/api/',
+          '/cart',
+          '/checkout',
+          '/login',
+          '/register',
+        ],
+      },
+    ],
+    sitemap: `${BASE_URL}/sitemap.xml`,
+    host: BASE_URL,
+  };
+}

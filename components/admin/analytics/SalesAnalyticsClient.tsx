@@ -497,7 +497,7 @@ export default function SalesAnalyticsClient() {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Customer Acquisition Cost</span>
-              <span className="font-semibold text-amber-600">₹450</span>
+              <span className="font-semibold text-amber-600">Rs 450</span>
             </div>
           </CardContent>
         </Card>

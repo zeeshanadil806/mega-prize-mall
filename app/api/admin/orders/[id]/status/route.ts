@@ -156,7 +156,7 @@ export async function PATCH(
           );
         }
         // ============ ADD THIS PART FOR LUCKY DRAW ============
-        // Create lucky draw entry if order qualifies (₹3000+ delivered order)
+        // Create lucky draw entry if order qualifies (Rs 3000+ delivered order)
         if (status === "delivered" && order.grandTotal >= 3000) {
           try {
             const { createLuckyDrawEntry } = await import(

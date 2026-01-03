@@ -440,7 +440,7 @@ export function AdminLuckyDrawClient({
                             <p className="font-medium">{draw.prizeName}</p>
                             {draw.prizeValue && (
                               <p className="text-sm text-muted-foreground">
-                                Value: ₹{draw.prizeValue.toLocaleString()}
+                                Value: Rs {draw.prizeValue.toLocaleString()}
                               </p>
                             )}
                           </div>

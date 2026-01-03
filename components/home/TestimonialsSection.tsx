@@ -28,7 +28,7 @@ const TestimonialsSection = () => {
     {
       name: 'Sara Khan',
       role: 'Content Creator',
-      comment: 'Bargained for my vlogging mic and saved ₹2,000. The process was so smooth!',
+      comment: 'Bargained for my vlogging mic and saved Rs 2,000. The process was so smooth!',
       rating: 5,
       product: 'Vlogging Microphone',
       icon: <Headphones className="h-5 w-5" />,

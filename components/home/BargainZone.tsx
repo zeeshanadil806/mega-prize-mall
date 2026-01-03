@@ -273,7 +273,7 @@ const BargainZone = () => {
           {/* <div className="bg-white rounded-2xl p-6 text-center border border-gray-200 shadow-lg">
             <TrendingDown className="h-8 w-8 text-green-500 mx-auto mb-3" />
             <div className="text-2xl font-bold bg-linear-to-r from-[#A43875] to-[#EAB75F] bg-clip-text text-transparent">
-              ₹{Math.floor(stats.totalCustomerSavings / 1000000)}M+
+              Rs {Math.floor(stats.totalCustomerSavings / 1000000)}M+
             </div>
             <div className="text-sm text-gray-600">Total Customer Savings</div>
           </div> */}
@@ -344,14 +344,14 @@ const BargainZone = () => {
                     <div className="text-center p-3 rounded-lg bg-gray-50">
                       <div className="text-sm text-gray-500 mb-1">Original</div>
                       <div className="text-lg font-bold text-gray-400 line-through">
-                        ₹{product.price.toLocaleString()}
+                        Rs {product.price.toLocaleString()}
                       </div>
                     </div>
                     
                     <div className="text-center p-3 rounded-lg bg-linear-to-r from-[#EAB75F]/10 to-[#FF9F45]/10">
                       <div className="text-sm text-[#EAB75F] font-medium mb-1">Bargain Price</div>
                       <div className="text-2xl font-bold text-[#EAB75F]">
-                        ₹{bargainPrice.toLocaleString()}
+                        Rs {bargainPrice.toLocaleString()}
                       </div>
                     </div>
                   </div>
@@ -359,7 +359,7 @@ const BargainZone = () => {
                   <div className="flex items-center justify-between">
                     <div className="text-sm">
                       <span className="text-green-600 font-bold">
-                        Save ₹{saving.toLocaleString()}
+                        Save Rs {saving.toLocaleString()}
                       </span>
                     </div>
                     

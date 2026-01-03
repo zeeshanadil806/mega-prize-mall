@@ -12,11 +12,124 @@ import Link from "next/link";
 import MobileFilterTrigger from "@/components/products/MobileFilterTrigger";
 import MobileFilterDrawer from "@/components/products/MobileFilterDrawer";
 
-export const metadata: Metadata = {
-  title: "Products - Mega Prize Mall",
-  description:
-    "Browse our amazing collection of products with exclusive bargains and deals.",
-};
+// ✅ DYNAMIC METADATA FUNCTION
+export async function generateMetadata(props: {
+  searchParams: Promise<{
+    page?: string;
+    category?: string;
+    minPrice?: string;
+    maxPrice?: string;
+    sortBy?: string;
+    search?: string;
+  }>;
+}): Promise<Metadata> {
+  const searchParams = await props.searchParams;
+  
+  // For category pages
+  if (searchParams.category) {
+    const category = decodeURIComponent(searchParams.category);
+    const categoryFormatted = category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
+    
+    return {
+      title: `${categoryFormatted} Mobile Accessories | Best ${categoryFormatted} Online | Mega Prize Mall`,
+      description: `Shop best ${categoryFormatted} for mobile phones. Premium quality ${categoryFormatted.toLowerCase()} with bargain option. Make offers, earn lucky draw entries. Price match guarantee. Free shipping available.`,
+      keywords: `${categoryFormatted}, ${categoryFormatted} online, buy ${categoryFormatted}, ${categoryFormatted} for mobile, ${categoryFormatted} with bargain, mobile ${categoryFormatted}`,
+      
+      openGraph: {
+        title: `${categoryFormatted} Collection - Bargain Available | Mega Prize Mall`,
+        description: `Browse ${categoryFormatted} collection with price negotiation feature. Premium quality with bargain options.`,
+        type: "website",
+        url: `https://megaprizemall.com/products?category=${encodeURIComponent(category)}`,
+        images: [
+          {
+            url: `/og-${category.toLowerCase()}.jpg`,
+            width: 1200,
+            height: 630,
+            alt: `${categoryFormatted} Collection - Mega Prize Mall`,
+          },
+        ],
+      },
+      
+      twitter: {
+        card: "summary_large_image",
+        title: `${categoryFormatted} Collection - Bargain Feature`,
+        description: `Browse ${categoryFormatted} with price negotiation option`,
+        images: [`/twitter-${category.toLowerCase()}.jpg`],
+      },
+      
+      alternates: {
+        canonical: `https://megaprizemall.com/products?category=${encodeURIComponent(category)}`,
+      },
+      
+      other: {
+        'og:type': 'product.group',
+        'product:category': categoryFormatted,
+      },
+    };
+  }
+  
+  // For search results
+  if (searchParams.search) {
+    const query = decodeURIComponent(searchParams.search);
+    
+    return {
+      title: `"${query}" Mobile Accessories | Search Results | Mega Prize Mall`,
+      description: `Find ${query} mobile accessories with bargain option. Shop best ${query} online with price negotiation & lucky draw rewards. Free shipping across India.`,
+      keywords: `${query}, ${query} mobile accessories, buy ${query} online, ${query} with bargain`,
+      
+      openGraph: {
+        title: `Search Results for "${query}" - Mobile Accessories`,
+        description: `Find ${query} mobile accessories with price negotiation feature.`,
+        type: "website",
+        url: `https://megaprizemall.com/products?search=${encodeURIComponent(query)}`,
+      },
+    };
+  }
+  
+  // Default - All products
+  return {
+    title: "Shop All Mobile Accessories | Phone Cases, Chargers, Earbuds | Mega Prize Mall",
+    description: "Browse 1000+ mobile accessories with bargain option. Choose from phone cases, wireless chargers, earbuds, screen protectors, power banks. Make offers on prices & earn lucky draw entries. Free shipping across India.",
+    keywords: "mobile accessories online, phone accessories, buy phone cases, wireless earbuds, mobile chargers, screen protectors, power banks, cables, smartphone gadgets, bargain prices, negotiate prices",
+    
+    // Open Graph
+    openGraph: {
+      title: "Mobile Accessories Collection - Bargain Prices Available",
+      description: "Shop complete range of mobile accessories. Use bargain feature to negotiate prices on phone cases, chargers, earbuds and more.",
+      type: "website",
+      url: "https://megaprizemall.com/products",
+      images: [
+        {
+          url: "/og-products.jpg",
+          width: 1200,
+          height: 630,
+          alt: "Mega Prize Mall Mobile Accessories Collection",
+        },
+      ],
+    },
+    
+    // Twitter
+    twitter: {
+      card: "summary_large_image",
+      title: "Mobile Accessories Collection - Bargain Feature",
+      description: "Browse all mobile accessories with price negotiation option",
+      images: ["/twitter-products.jpg"],
+    },
+    
+    // Canonical
+    alternates: {
+      canonical: "https://megaprizemall.com/products",
+    },
+    
+    // Additional
+    other: {
+      'og:type': 'product.group',
+      'product:category': 'Mobile Accessories',
+      'product:price:amount': '199',
+      'product:price:currency': 'PKR',
+    },
+  };
+}
 
 interface ProductsPageProps {
   searchParams: Promise<{
@@ -40,112 +153,204 @@ export default async function ProductsPage(props: ProductsPageProps) {
     getPriceRange(),
   ]);
 
+  // ✅ Prepare structured data
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@type": "Product",
+          "name": "Premium Phone Case",
+          "url": "https://megaprizemall.com/products/premium-phone-case",
+          "offers": {
+            "@type": "Offer",
+            "price": "599",
+            "priceCurrency": "PKR",
+            "availability": "https://schema.org/InStock",
+            "additionalProperty": {
+              "@type": "PropertyValue",
+              "name": "Bargain Available",
+              "value": "true"
+            }
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "item": {
+          "@type": "Product",
+          "name": "Wireless Earbuds",
+          "url": "https://megaprizemall.com/products/wireless-earbuds",
+          "offers": {
+            "@type": "Offer",
+            "price": "1299",
+            "priceCurrency": "PKR",
+            "availability": "https://schema.org/InStock",
+            "additionalProperty": {
+              "@type": "PropertyValue",
+              "name": "Bargain Available",
+              "value": "true"
+            }
+          }
+        }
+      }
+      // Note: In production, you would dynamically generate this from actual products
+    ],
+    "numberOfItems": 1000,
+    "name": "Mobile Accessories Collection",
+    "description": "Complete range of mobile accessories with bargain option"
+  };
+
+  const breadcrumbData = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://megaprizemall.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": searchParams.category 
+          ? decodeURIComponent(searchParams.category).charAt(0).toUpperCase() + decodeURIComponent(searchParams.category).slice(1).toLowerCase()
+          : "Products",
+        "item": searchParams.category 
+          ? `https://megaprizemall.com/products?category=${encodeURIComponent(searchParams.category)}`
+          : "https://megaprizemall.com/products"
+      }
+    ]
+  };
+
   return (
-    <div className="min-h-screen bg-linear-to-b from-gray-50 to-white">
-      <div className="container mx-auto px-4 py-8">
-        {/* Page Header with Mobile Filter Button */}
-        <div className="mb-6 sm:mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            {/* Title Section */}
-            <div className="flex-1">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2 leading-tight">
-                Discover Amazing Products
-              </h1>
-              <p className="text-gray-600 text-sm sm:text-base lg:text-lg">
-                Browse our collection and bargain for the best prices
-              </p>
-            </div>
+    <>
+      {/* ✅ Structured Data Scripts */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
+      />
+      
+      <div className="min-h-screen bg-linear-to-b from-gray-50 to-white">
+        <div className="container mx-auto px-4 py-8">
+          {/* Page Header with Mobile Filter Button */}
+          <div className="mb-6 sm:mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              {/* Title Section */}
+              <div className="flex-1">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2 leading-tight">
+                  {searchParams.category 
+                    ? `${decodeURIComponent(searchParams.category).charAt(0).toUpperCase() + decodeURIComponent(searchParams.category).slice(1).toLowerCase()} Collection`
+                    : "Discover Amazing Products"
+                  }
+                </h1>
+                <p className="text-gray-600 text-sm sm:text-base lg:text-lg">
+                  {searchParams.category 
+                    ? `Premium ${decodeURIComponent(searchParams.category).toLowerCase()} with bargain option`
+                    : "Browse our collection and bargain for the best prices"
+                  }
+                </p>
+              </div>
 
-            {/* Mobile Filter Button - Perfectly aligned */}
-            <div className="flex justify-end lg:hidden">
-              <MobileFilterTrigger />
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Filters Sidebar - Hidden on mobile, shown on desktop */}
-          <aside className="hidden lg:block lg:w-1/4">
-            <ProductFilters
-              categories={categories}
-              priceRange={priceRange}
-              selectedCategory={searchParams.category}
-              selectedMinPrice={searchParams.minPrice}
-              selectedMaxPrice={searchParams.maxPrice}
-              selectedSortBy={searchParams.sortBy}
-              searchQuery={searchParams.search}
-            />
-          </aside>
-
-          {/* Main Content */}
-          <main className="lg:w-3/4">
-            {/* Search Bar */}
-            <div className="mb-6">
-              <div className="mb-6">
-                <form
-                  action="/products"
-                  method="GET"
-                  className="flex flex-col sm:flex-row gap-2 sm:gap-3"
-                >
-                  <div className="flex-1 relative">
-                    <input
-                      type="text"
-                      name="search"
-                      defaultValue={searchParams.search}
-                      placeholder="Search products by name, category, or keywords..."
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent text-sm sm:text-base"
-                    />
-                    {/* Optional: Add a search icon on mobile */}
-                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 sm:hidden text-gray-400">
-                      <svg
-                        className="h-5 w-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                  <button
-                    type="submit"
-                    className="px-4 sm:px-6 py-3 bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white rounded-lg hover:from-[#6A2566] hover:to-[#8D2F6A] transition-all text-sm sm:text-base font-medium whitespace-nowrap"
-                  >
-                    <span className="hidden sm:inline">Search</span>
-                    <span className="sm:hidden">🔍 Search</span>
-                  </button>
-                </form>
+              {/* Mobile Filter Button - Perfectly aligned */}
+              <div className="flex justify-end lg:hidden">
+                <MobileFilterTrigger />
               </div>
             </div>
+          </div>
 
-            {/* Active Filters */}
-            <ActiveFilters searchParams={searchParams} />
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Filters Sidebar - Hidden on mobile, shown on desktop */}
+            <aside className="hidden lg:block lg:w-1/4">
+              <ProductFilters
+                categories={categories}
+                priceRange={priceRange}
+                selectedCategory={searchParams.category}
+                selectedMinPrice={searchParams.minPrice}
+                selectedMaxPrice={searchParams.maxPrice}
+                selectedSortBy={searchParams.sortBy}
+                searchQuery={searchParams.search}
+              />
+            </aside>
 
-            {/* Mobile Filter Drawer */}
-            <MobileFilterDrawer
-              categories={categories}
-              priceRange={priceRange}
-              searchParams={searchParams}
-            />
+            {/* Main Content */}
+            <main className="lg:w-3/4">
+              {/* Search Bar */}
+              <div className="mb-6">
+                <div className="mb-6">
+                  <form
+                    action="/products"
+                    method="GET"
+                    className="flex flex-col sm:flex-row gap-2 sm:gap-3"
+                  >
+                    <div className="flex-1 relative">
+                      <input
+                        type="text"
+                        name="search"
+                        defaultValue={searchParams.search}
+                        placeholder="Search products by name, category, or keywords..."
+                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent text-sm sm:text-base"
+                      />
+                      {/* Optional: Add a search icon on mobile */}
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2 sm:hidden text-gray-400">
+                        <svg
+                          className="h-5 w-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <button
+                      type="submit"
+                      className="px-4 sm:px-6 py-3 bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white rounded-lg hover:from-[#6A2566] hover:to-[#8D2F6A] transition-all text-sm sm:text-base font-medium whitespace-nowrap"
+                    >
+                      <span className="hidden sm:inline">Search</span>
+                      <span className="sm:hidden">🔍 Search</span>
+                    </button>
+                  </form>
+                </div>
+              </div>
 
-            {/* Product Grid with Suspense */}
-            <Suspense fallback={<ProductGridSkeleton />}>
-              <ProductGrid searchParams={searchParams} />
-            </Suspense>
-          </main>
+              {/* Active Filters */}
+              <ActiveFilters searchParams={searchParams} />
+
+              {/* Mobile Filter Drawer */}
+              <MobileFilterDrawer
+                categories={categories}
+                priceRange={priceRange}
+                searchParams={searchParams}
+              />
+
+              {/* Product Grid with Suspense */}
+              <Suspense fallback={<ProductGridSkeleton />}>
+                <ProductGrid searchParams={searchParams} />
+              </Suspense>
+            </main>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
 // Active Filters Component
-// Update the component signature and logic
 function ActiveFilters({
   searchParams,
 }: {

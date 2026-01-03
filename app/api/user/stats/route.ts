@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
     const recentOrders = orders.slice(0, 3).map(order => ({
       id: order._id.toString().slice(-8).toUpperCase(),
       date: formatDate(order.createdAt),
-      amount: `₹${order.grandTotal.toLocaleString('en-IN')}`,
+      amount: `Rs ${order.grandTotal.toLocaleString('en-IN')}`,
       status: formatStatus(order.status),
       fullId: order._id.toString(),
     }));
@@ -84,8 +84,8 @@ export async function GET(request: NextRequest) {
         return {
           product: product?.name || 'Unknown Product',
           productId: product?._id || '',
-          offer: `₹${br.offeredPrice.toLocaleString('en-IN')}`,
-          original: `₹${br.originalPrice.toLocaleString('en-IN')}`,
+          offer: `Rs ${br.offeredPrice.toLocaleString('en-IN')}`,
+          original: `Rs ${br.originalPrice.toLocaleString('en-IN')}`,
           status: br.status.charAt(0).toUpperCase() + br.status.slice(1),
           savingAmount: br.originalPrice - br.offeredPrice,
           bargainId: br._id.toString(),

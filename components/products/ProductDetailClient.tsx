@@ -36,6 +36,7 @@ import { useCartStore } from '@/stores/cart-store';
 import { ImageProps, CustomerProductProps } from '@/types';
 import Link from 'next/link';
 import Image from 'next/image';
+import ProductStructuredData from './ProductStructuredData';
 
 interface ProductDetailClientProps {
   product: CustomerProductProps; // Product document from MongoDB
@@ -116,6 +117,7 @@ export default function ProductDetailClient({
       transition={{ duration: 0.5 }}
       className="w-full"
     >
+      <ProductStructuredData product={product}/>
       {/* Breadcrumb */}
       <div className="mb-4 sm:mb-6 text-xs sm:text-sm text-gray-600 flex items-center flex-wrap gap-1 sm:gap-2">
         <Link href="/" className="hover:text-[#7C2C78] transition-colors">Home</Link>

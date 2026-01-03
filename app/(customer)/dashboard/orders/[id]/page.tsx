@@ -23,7 +23,7 @@ export async function generateMetadata({
   const { id } = await params;
   
   return {
-    title: `Order #${id.slice(-8).toUpperCase()} - Mega Prize Mall`,
+    title: `Order #${id} - Mega Prize Mall`,
     description: 'View order details, track shipment, and manage your order.',
   };
 }

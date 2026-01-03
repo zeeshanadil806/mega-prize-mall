@@ -29,6 +29,7 @@ import {
   Award,
   UserCircle,
   CreditCard,
+  Map,
 } from "lucide-react";
 import { useCartStore } from "@/stores/cart-store";
 import { Button } from "@/components/ui/button";
@@ -118,6 +119,12 @@ const Header = () => {
           name: "My Profile",
           href: "/dashboard",
           icon: <UserCircle className="h-4 w-4" />,
+          type: "link",
+        },
+        {
+          name: "My Addresses",
+          href: "/addresses",
+          icon: <Map className="h-4 w-4" />,
           type: "link",
         },
         {

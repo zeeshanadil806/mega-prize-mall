@@ -41,48 +41,54 @@ const BargainZone = dynamic(() => import("@/components/home/BargainZone"), {
 // });
 
 export const metadata: Metadata = {
-  title: "Mega Prize Mall | Win Amazing Deals & Bargain Prices",
-  description:
-    "Shop premium products at bargain prices. Play lucky draws, win prizes, and get exclusive deals. Pakistan's most exciting shopping experience.",
-  keywords: [
-    "online shopping",
-    "bargain deals",
-    "lucky draw",
-    "discounts",
-    "premium products",
-  ],
+  title: "Mega Prize Mall - Mobile Accessories with Bargain & Lucky Draw | Shop Now",
+  description: "India's first mobile accessories store where you can bargain prices & win prizes! Shop phone cases, chargers, earbuds, screen protectors. Negotiate deals, earn lucky draw entries on every purchase. Free shipping across India.",
+  keywords: "mobile accessories, bargain shopping, lucky draw, phone cases, wireless earbuds, chargers, screen protectors, online shopping India, price negotiation, shopping rewards",
+  
+  // Open Graph
   openGraph: {
-    title: "Mega Prize Mall | Win Amazing Deals",
-    description:
-      "Experience shopping like never before with bargain prices and lucky draws.",
+    title: "Mega Prize Mall - Bargain Prices & Win Prizes on Mobile Accessories",
+    description: "Shop mobile accessories with unique bargain feature! Make offers, win lucky draw entries. Best prices on phone cases, chargers & more.",
     type: "website",
-    locale: "en_PK",
+    url: "https://megaprizemall.com",
     siteName: "Mega Prize Mall",
     images: [
       {
-        url: "/og-image.png",
+        url: "/og-home.jpg",
         width: 1200,
         height: 630,
-        alt: "Mega Prize Mall",
+        alt: "Mega Prize Mall - Mobile Accessories with Bargain Feature",
       },
     ],
+    locale: "en_IN",
   },
+  
+  // Twitter
   twitter: {
     card: "summary_large_image",
-    title: "Mega Prize Mall",
-    description: "Shop, Bargain, Win!",
-    images: ["/og-image.png"],
+    title: "Mega Prize Mall - Bargain & Win Mobile Accessories",
+    description: "Unique shopping experience: Negotiate prices & earn lucky draw entries on mobile accessories!",
+    images: ["/twitter-home.jpg"],
+    creator: "@megaprizemall",
+    site: "@megaprizemall",
   },
+  
+  // Additional SEO
   robots: {
     index: true,
     follow: true,
     googleBot: {
       index: true,
       follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
     },
+  },
+  
+  // Canonical
+  alternates: {
+    canonical: "https://megaprizemall.com",
   },
   verification: {
     google: "your-google-verification-code",
@@ -92,6 +98,7 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <div className="min-h-screen">
+      
       <LuckyDrawPopup /> {/* Add this line */}
       {/* Hero Section - Above the fold */}
       <HeroSection />

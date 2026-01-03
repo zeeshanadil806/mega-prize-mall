@@ -103,9 +103,9 @@ export default function LuckyDrawPopup() {
               <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-lg p-4">
                 <Gift className="h-6 w-6 text-amber-600 shrink-0" />
                 <div>
-                  <h3 className="font-semibold text-gray-900">Spend ₹3000+ & Get Entries</h3>
+                  <h3 className="font-semibold text-gray-900">Spend Rs 3000+ & Get Entries</h3>
                   <p className="text-sm text-gray-600 mt-1">
-                    Every order above ₹3000 gives you automatic lucky draw entries
+                    Every order above Rs 3000 gives you automatic lucky draw entries
                   </p>
                 </div>
               </div>
@@ -127,7 +127,7 @@ export default function LuckyDrawPopup() {
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="h-2 w-2 bg-[#EAB75F] rounded-full" />
-                    <span className="text-sm text-gray-700">🎧 Bluetooth Earbuds + ₹500 Voucher</span>
+                    <span className="text-sm text-gray-700">🎧 Bluetooth Earbuds + Rs 500 Voucher</span>
                   </li>
                 </ul>
               </div> */}
@@ -140,7 +140,7 @@ export default function LuckyDrawPopup() {
                     <div className="h-10 w-10 mx-auto bg-linear-to-br from-blue-100 to-cyan-100 rounded-full flex items-center justify-center">
                       <ShoppingBag className="h-5 w-5 text-blue-600" />
                     </div>
-                    <p className="text-xs text-gray-600">Shop for ₹3000+</p>
+                    <p className="text-xs text-gray-600">Shop for Rs 3000+</p>
                   </div>
                   <div className="space-y-2">
                     <div className="h-10 w-10 mx-auto bg-linear-to-br from-purple-100 to-pink-100 rounded-full flex items-center justify-center">

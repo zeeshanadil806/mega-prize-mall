@@ -1,75 +1,117 @@
 // app/(customer)/categories/page.tsx
-import { connectToDatabase } from '@/lib/mongodb';
-import { ProductModel } from '@/models/Product';
-import { Metadata } from 'next';
-import Link from 'next/link';
-import { 
-  Smartphone, 
-  Headphones, 
-  Gamepad2, 
-  Laptop, 
+import { connectToDatabase } from "@/lib/mongodb";
+import { ProductModel } from "@/models/Product";
+import { Metadata } from "next";
+import Link from "next/link";
+import {
+  Smartphone,
+  Headphones,
+  Gamepad2,
+  Laptop,
   Zap,
   Tag,
   ArrowRight,
   ShoppingBag,
   Star,
-  TrendingUp
-} from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+  TrendingUp,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 export const metadata: Metadata = {
-  title: 'Categories - TechBargain',
-  description: 'Browse electronics accessories by category. Mobile accessories, audio, gaming, PC/laptop, power & charging.',
+  title:
+    "Electronics Accessories Categories | Shop by Device Type - Mega Prize Mall",
+  description:
+    "Browse electronics accessories organized by category. Mobile accessories, audio gear, gaming peripherals, PC/laptop accessories, power & charging solutions. Find products for your specific devices.",
+  keywords:
+    "electronics categories, mobile accessories, audio gear, gaming accessories, PC accessories, laptop accessories, power banks, chargers, smartphone cases, headphones, gaming controllers",
+  openGraph: {
+    title: "Electronics Accessories Categories | Mega Prize Mall",
+    description:
+      "Browse electronics accessories by category - Mobile, Audio, Gaming, PC/Laptop, Power & Charging",
+    type: "website",
+    url: "https://megaprizemall.com/categories",
+    siteName: "Mega Prize Mall",
+    images: [
+      {
+        url: "/og-categories.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Electronics Accessories Categories at Mega Prize Mall",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Electronics Accessories Categories | Mega Prize Mall",
+    description:
+      "Browse electronics accessories by category - Mobile, Audio, Gaming, PC/Laptop, Power & Charging",
+    images: ["/og-categories.jpg"],
+    creator: "@megaprizemall",
+  },
+  alternates: {
+    canonical: "https://megaprizemall.com/categories",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 // Your categories from Header
 const categoryData = [
-  { 
-    id: 'mobile-accessories',
-    name: 'Mobile Accessories', 
+  {
+    id: "mobile-accessories",
+    name: "Mobile Accessories",
     icon: Smartphone,
-    description: 'Cases, screen protectors, chargers, stands for smartphones',
-    color: 'from-blue-500 to-cyan-500',
-    bgColor: 'bg-blue-50',
-    borderColor: 'border-blue-200'
+    description: "Cases, screen protectors, chargers, stands for smartphones",
+    color: "from-blue-500 to-cyan-500",
+    bgColor: "bg-blue-50",
+    borderColor: "border-blue-200",
   },
-  { 
-    id: 'audio-and-multimedia',
-    name: 'Audio and Multimedia', 
+  {
+    id: "audio-and-multimedia",
+    name: "Audio and Multimedia",
     icon: Headphones,
-    description: 'Headphones, earphones, speakers, audio accessories',
-    color: 'from-purple-500 to-pink-500',
-    bgColor: 'bg-purple-50',
-    borderColor: 'border-purple-200'
+    description: "Headphones, earphones, speakers, audio accessories",
+    color: "from-purple-500 to-pink-500",
+    bgColor: "bg-purple-50",
+    borderColor: "border-purple-200",
   },
-  { 
-    id: 'gaming-accessories',
-    name: 'Gaming Accessories', 
+  {
+    id: "gaming-accessories",
+    name: "Gaming Accessories",
     icon: Gamepad2,
-    description: 'Gaming controllers, headsets, keyboards, mouse pads',
-    color: 'from-green-500 to-emerald-500',
-    bgColor: 'bg-green-50',
-    borderColor: 'border-green-200'
+    description: "Gaming controllers, headsets, keyboards, mouse pads",
+    color: "from-green-500 to-emerald-500",
+    bgColor: "bg-green-50",
+    borderColor: "border-green-200",
   },
-  { 
-    id: 'pc-and-laptop-accessories',
-    name: 'PC and Laptop Accessories', 
+  {
+    id: "pc-and-laptop-accessories",
+    name: "PC and Laptop Accessories",
     icon: Laptop,
-    description: 'Laptop stands, cooling pads, keyboards, mice, webcams',
-    color: 'from-orange-500 to-red-500',
-    bgColor: 'bg-orange-50',
-    borderColor: 'border-orange-200'
+    description: "Laptop stands, cooling pads, keyboards, mice, webcams",
+    color: "from-orange-500 to-red-500",
+    bgColor: "bg-orange-50",
+    borderColor: "border-orange-200",
   },
-  { 
-    id: 'power-and-charging',
-    name: 'Power and Charging', 
+  {
+    id: "power-and-charging",
+    name: "Power and Charging",
     icon: Zap,
-    description: 'Power banks, chargers, cables, adapters, wireless chargers',
-    color: 'from-yellow-500 to-amber-500',
-    bgColor: 'bg-yellow-50',
-    borderColor: 'border-yellow-200'
+    description: "Power banks, chargers, cables, adapters, wireless chargers",
+    color: "from-yellow-500 to-amber-500",
+    bgColor: "bg-yellow-50",
+    borderColor: "border-yellow-200",
   },
 ];
 
@@ -79,32 +121,32 @@ export default async function CategoriesPage() {
   // Get product counts for each category
   const categoryCounts = await Promise.all(
     categoryData.map(async (category) => {
-      const count = await ProductModel.countDocuments({ 
+      const count = await ProductModel.countDocuments({
         category: category.name,
-        isActive: true 
+        isActive: true,
       });
-      
+
       // Get featured products for this category
       const featuredProducts = await ProductModel.find({
         category: category.name,
         isActive: true,
-        isFeatured: true
+        isFeatured: true,
       })
-        .select('name price discountedPrice images slug bargainEnabled')
+        .select("name price discountedPrice images slug bargainEnabled")
         .limit(3)
         .lean();
-      
+
       return {
         ...category,
         productCount: count,
-        featuredProducts: featuredProducts.map(p => ({
+        featuredProducts: featuredProducts.map((p) => ({
           ...p,
           _id: p._id.toString(),
           finalPrice: p.discountedPrice || p.price,
-          discountPercentage: p.discountedPrice 
+          discountPercentage: p.discountedPrice
             ? Math.round(((p.price - p.discountedPrice) / p.price) * 100)
-            : 0
-        }))
+            : 0,
+        })),
       };
     })
   );
@@ -112,14 +154,79 @@ export default async function CategoriesPage() {
   // Get bargain products count
   const bargainCount = await ProductModel.countDocuments({
     bargainEnabled: true,
-    isActive: true
+    isActive: true,
   });
 
   // Get total products count
   const totalProducts = await ProductModel.countDocuments({ isActive: true });
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Electronics Accessories Categories",
+    description:
+      "Browse electronics accessories organized by category at Mega Prize Mall",
+    url: "https://megaprizemall.com/categories",
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: categoryData.length,
+      itemListElement: categoryCounts.map((category, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        item: {
+          "@type": "ProductGroup",
+          name: category.name,
+          description: category.description,
+          url: `https://megaprizemall.com/products?category=${encodeURIComponent(
+            category.name
+          )}`,
+          hasVariant: {
+            "@type": "Product",
+            category: category.name,
+            offers: {
+              "@type": "AggregateOffer",
+              offerCount: category.productCount,
+              lowPrice: 99, // You might want to calculate actual min price
+              highPrice: 9999, // You might want to calculate actual max price
+              priceCurrency: "PKR",
+            },
+          },
+        },
+      })),
+    },
+  };
+
+  // Breadcrumb structured data
+  const breadcrumbStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://megaprizemall.com",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Categories",
+        item: "https://megaprizemall.com/categories",
+      },
+    ],
+  };
 
   return (
     <div className="min-h-screen bg-linear-to-b from-gray-50 to-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbStructuredData),
+        }}
+      />
       {/* Hero Section */}
       <div className="bg-linear-to-r from-[#7C2C78] via-[#8A347D] to-[#A43875] text-white">
         <div className="container mx-auto px-4 py-12">
@@ -132,19 +239,26 @@ export default async function CategoriesPage() {
               Browse by Category
             </h1>
             <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl">
-              Discover electronics accessories organized by category. 
-              Find exactly what you need for your devices.
+              Discover electronics accessories organized by category. Find
+              exactly what you need for your devices.
             </p>
-            
+
             <div className="flex flex-wrap gap-4">
               <Link href="/products">
-                <Button size="lg" className="bg-white text-[#7C2C78] hover:bg-white/90">
+                <Button
+                  size="lg"
+                  className="bg-white text-[#7C2C78] hover:bg-white/90"
+                >
                   <ShoppingBag className="h-4 w-4 mr-2" />
                   View All Products
                 </Button>
               </Link>
               <Link href="/products?bargain=true">
-                <Button size="lg" variant="outline" className="border-white bg-transparent text-white hover:bg-white/10">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-white bg-transparent text-white hover:bg-white/10"
+                >
                   <Tag className="h-4 w-4 mr-2" />
                   Bargain Deals ({bargainCount})
                 </Button>
@@ -160,22 +274,24 @@ export default async function CategoriesPage() {
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
             All Categories
           </h2>
-          <p className="text-gray-600">
-            Select a category to browse products
-          </p>
+          <p className="text-gray-600">Select a category to browse products</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {categoryCounts.map((category) => (
-            <div 
+            <div
               key={category.id}
               className={`rounded-2xl border ${category.borderColor} ${category.bgColor} p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1`}
             >
               <div className="flex items-start justify-between mb-4">
-                <div className={`h-14 w-14 rounded-xl bg-linear-to-r ${category.color} flex items-center justify-center`}>
+                <div
+                  className={`h-14 w-14 rounded-xl bg-linear-to-r ${category.color} flex items-center justify-center`}
+                >
                   <category.icon className="h-6 w-6 text-white" />
                 </div>
-                <Badge className={`bg-linear-to-r ${category.color} text-white border-0`}>
+                <Badge
+                  className={`bg-linear-to-r ${category.color} text-white border-0`}
+                >
                   {category.productCount} products
                 </Badge>
               </div>
@@ -183,25 +299,28 @@ export default async function CategoriesPage() {
               <h3 className="text-xl font-bold text-gray-900 mb-2">
                 {category.name}
               </h3>
-              
-              <p className="text-gray-600 mb-6">
-                {category.description}
-              </p>
+
+              <p className="text-gray-600 mb-6">{category.description}</p>
 
               {/* Featured Products Preview */}
               {category.featuredProducts.length > 0 && (
                 <div className="mb-6">
                   <div className="flex items-center gap-2 mb-3">
                     <Star className="h-4 w-4 text-yellow-500" />
-                    <span className="text-sm font-medium text-gray-700">Featured</span>
+                    <span className="text-sm font-medium text-gray-700">
+                      Featured
+                    </span>
                   </div>
                   <div className="space-y-2">
                     {category.featuredProducts.map((product) => (
-                      <div key={product._id} className="flex items-center gap-3 p-2 rounded-lg bg-white/50">
+                      <div
+                        key={product._id}
+                        className="flex items-center gap-3 p-2 rounded-lg bg-white/50"
+                      >
                         {product.images?.[0]?.url && (
                           <div className="h-10 w-10 rounded-lg bg-gray-100 overflow-hidden">
-                            <img 
-                              src={product.images[0].url} 
+                            <img
+                              src={product.images[0].url}
                               alt={product.name}
                               className="h-full w-full object-cover"
                             />
@@ -213,10 +332,13 @@ export default async function CategoriesPage() {
                           </p>
                           <div className="flex items-center gap-2">
                             <span className="text-sm font-bold text-gray-900">
-                              ₹{product.finalPrice}
+                              Rs {product.finalPrice}
                             </span>
                             {product.discountPercentage > 0 && (
-                              <Badge variant="outline" className="text-xs border-green-200 text-green-700">
+                              <Badge
+                                variant="outline"
+                                className="text-xs border-green-200 text-green-700"
+                              >
                                 {product.discountPercentage}% OFF
                               </Badge>
                             )}
@@ -228,7 +350,9 @@ export default async function CategoriesPage() {
                 </div>
               )}
 
-              <Link href={`/products?category=${encodeURIComponent(category.name)}`}>
+              <Link
+                href={`/products?category=${encodeURIComponent(category.name)}`}
+              >
                 <Button className="w-full group">
                   Browse Category
                   <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -243,7 +367,7 @@ export default async function CategoriesPage() {
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
             Special Collections
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Bargain Zone */}
             <Link href="/products?bargain=true">
@@ -259,7 +383,9 @@ export default async function CategoriesPage() {
                     Negotiate prices and get exclusive discounts
                   </p>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-lg">{bargainCount} Deals</span>
+                    <span className="font-bold text-lg">
+                      {bargainCount} Deals
+                    </span>
                     <ArrowRight className="h-4 w-4 group-hover:translate-x-2 transition-transform" />
                   </div>
                 </div>
@@ -280,7 +406,9 @@ export default async function CategoriesPage() {
                     Curated selection of top-rated products
                   </p>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-lg">Editor&apos;s Pick</span>
+                    <span className="font-bold text-lg">
+                      Editor&apos;s Pick
+                    </span>
                     <ArrowRight className="h-4 w-4 group-hover:translate-x-2 transition-transform" />
                   </div>
                 </div>
@@ -315,15 +443,21 @@ export default async function CategoriesPage() {
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
             Categories Overview
           </h2>
-          
+
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
             {categoryCounts.map((category) => (
               <div key={category.id} className="text-center">
-                <div className={`h-20 w-20 rounded-full bg-linear-to-r ${category.color} flex items-center justify-center mx-auto mb-3`}>
+                <div
+                  className={`h-20 w-20 rounded-full bg-linear-to-r ${category.color} flex items-center justify-center mx-auto mb-3`}
+                >
                   <category.icon className="h-8 w-8 text-white" />
                 </div>
-                <h4 className="font-semibold text-gray-900 mb-1">{category.name}</h4>
-                <p className="text-2xl font-bold text-gray-900">{category.productCount}</p>
+                <h4 className="font-semibold text-gray-900 mb-1">
+                  {category.name}
+                </h4>
+                <p className="text-2xl font-bold text-gray-900">
+                  {category.productCount}
+                </p>
                 <p className="text-xs text-gray-500">products</p>
               </div>
             ))}
@@ -342,7 +476,10 @@ export default async function CategoriesPage() {
                 </Button>
               </Link>
               <Link href="/products?search=">
-                <Button size="lg" className="bg-linear-to-r from-[#7C2C78] to-[#A43875]">
+                <Button
+                  size="lg"
+                  className="bg-linear-to-r from-[#7C2C78] to-[#A43875]"
+                >
                   Use Advanced Search
                 </Button>
               </Link>

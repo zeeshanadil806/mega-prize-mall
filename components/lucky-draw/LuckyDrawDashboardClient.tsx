@@ -157,7 +157,7 @@ export function LuckyDrawDashboardClient({
             <h1 className="text-3xl font-bold tracking-tight">Lucky Draw</h1>
           </div>
           <p className="text-muted-foreground">
-            Win amazing prizes with every purchase over ₹3000!
+            Win amazing prizes with every purchase over Rs 3000!
           </p>
         </div>
         
@@ -411,7 +411,7 @@ export function LuckyDrawDashboardClient({
                 <Ticket className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                 <h3 className="text-lg font-semibold mb-2">No Entries Yet</h3>
                 <p className="text-muted-foreground mb-6">
-                  Make purchases over ₹3000 to get automatic lucky draw entries!
+                  Make purchases over Rs 3000 to get automatic lucky draw entries!
                 </p>
                 <Button asChild>
                   <Link href="/products">Start Shopping</Link>
@@ -601,7 +601,7 @@ export function LuckyDrawDashboardClient({
               </div>
               <h4 className="font-semibold">Shop & Qualify</h4>
               <p className="text-sm text-muted-foreground mt-1">
-                Make purchases worth ₹3000 or more
+                Make purchases worth Rs 3000 or more
               </p>
             </div>
             
@@ -645,7 +645,7 @@ export function LuckyDrawDashboardClient({
                 <h4 className="font-semibold">Important Information</h4>
                 <ul className="text-sm text-muted-foreground mt-2 space-y-1">
                   <li>• Only orders with status &quot;Delivered&quot; qualify</li>
-                  <li>• Minimum order amount: ₹3000 (after discounts)</li>
+                  <li>• Minimum order amount: Rs 3000 (after discounts)</li>
                   <li>• Each qualifying order gets 1 entry</li>
                   <li>• Draws are announced manually by admin</li>
                   <li>• Winners are selected randomly from all entries</li>

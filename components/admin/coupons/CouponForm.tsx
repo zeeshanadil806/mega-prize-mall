@@ -378,7 +378,7 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                                 {...field}
                               />
                               <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                                {watchDiscountType === 'percentage' ? '%' : '₹'}
+                                {watchDiscountType === 'percentage' ? '%' : 'Rs '}
                               </div>
                             </div>
                           </FormControl>
@@ -406,7 +406,7 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                                   onChange={(e) => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}
                                 />
                                 <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                                  ₹
+                                  Rs 
                                 </div>
                               </div>
                             </FormControl>
@@ -590,7 +590,7 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                                 {...field}
                               />
                               <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                                ₹
+                                Rs 
                               </div>
                             </div>
                           </FormControl>

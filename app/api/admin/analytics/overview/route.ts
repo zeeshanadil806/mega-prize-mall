@@ -280,7 +280,7 @@ export async function GET(request: NextRequest) {
           totalCustomers,
           activeProducts,
           conversionRate: `${conversionRate}%`,
-          averageOrderValue: `₹${averageOrderValue}`,
+          averageOrderValue: `Rs ${averageOrderValue}`,
           completedOrders,
           pendingOrders,
           totalPointsEarned: totalPointsEarnedValue,

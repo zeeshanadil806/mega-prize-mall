@@ -243,7 +243,7 @@ const NewsletterSection = () => {
                   <div className="text-sm text-gray-600">Subscribers</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-[#7C2C78]">₹500 OFF</div>
+                  <div className="text-2xl font-bold text-[#7C2C78]">Rs 500 OFF</div>
                   <div className="text-sm text-gray-600">Welcome Coupon</div>
                 </div>
                 <div className="text-center">

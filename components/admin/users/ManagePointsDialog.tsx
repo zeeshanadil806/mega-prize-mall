@@ -232,7 +232,7 @@ export default function ManagePointsDialog({
                   <Gift className="h-4 w-4 mr-2 text-[#EAB75F]" />
                   <span className="text-lg font-bold text-gray-900">{user.points}</span>
                   <span className="text-sm text-gray-500 ml-1">
-                    (₹{(user.points * 0.1).toFixed(2)})
+                    (Rs {(user.points * 0.1).toFixed(2)})
                   </span>
                 </div>
               </div>
@@ -303,7 +303,7 @@ export default function ManagePointsDialog({
                 />
               </div>
               <div className="text-sm text-gray-500 whitespace-nowrap">
-                = ₹{((parseInt(formData.points) || 0) * 0.1).toFixed(2)}
+                = Rs {((parseInt(formData.points) || 0) * 0.1).toFixed(2)}
               </div>
             </div>
           </div>
@@ -347,7 +347,7 @@ export default function ManagePointsDialog({
                       {preview.newBalance} points
                     </span>
                     <span className="text-sm text-gray-500 ml-2">
-                      (₹{(preview.newBalance * 0.1).toFixed(2)})
+                      (Rs {(preview.newBalance * 0.1).toFixed(2)})
                     </span>
                   </div>
                 </div>

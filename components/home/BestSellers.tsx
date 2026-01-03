@@ -305,7 +305,7 @@ const BestSellers = () => {
           </div> */}
           <div className="bg-white rounded-xl p-4 border border-gray-200">
             <div className="text-2xl font-bold text-[#EAB75F]">
-              {formatCurrency(stats.monthlySales).replace("PKR", "₹")}
+              {formatCurrency(stats.monthlySales).replace("PKR", "Rs ")}
             </div>
             <div className="text-sm text-gray-600">Monthly Sales</div>
           </div>

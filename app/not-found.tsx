@@ -170,7 +170,7 @@ export default function NotFound() {
               🎉 Win Amazing Prizes!
             </h3>
             <p className="text-white/80 mb-6 max-w-2xl mx-auto">
-              Every purchase above ₹3000 gives you lucky draw entries. Win wireless headphones, 
+              Every purchase above Rs3000 gives you lucky draw entries. Win wireless headphones, 
               power banks, and more every week!
             </p>
             <div className="flex flex-wrap justify-center gap-4">

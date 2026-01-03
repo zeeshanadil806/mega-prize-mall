@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+// import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 // import CustomerNavbar from "@/components/customer/CustomerNavbar"
 import CustomerFooter from "@/components/customer/CustomerFooter"
@@ -9,10 +9,10 @@ import Header from "@/components/customer/Header"
 
 const inter = Inter({ subsets: ["latin"] })
 
-export const metadata: Metadata = {
-  title: "My Account - Mega Prize Mall",
-  description: "Manage your Mega Prize Mall account, orders, and points",
-}
+// export const metadata: Metadata = {
+//   title: "My Account - Mega Prize Mall",
+//   description: "Manage your Mega Prize Mall account, orders, and points",
+// }
 
 export default async function CustomerLayout({
   children,

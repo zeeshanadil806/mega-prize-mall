@@ -31,7 +31,6 @@ export async function GET() {
         $sort: { count: -1 }
       }
     ]);
-console.log(categoryStats)
     return NextResponse.json(categoryStats);
   } catch (error) {
     console.error('Error fetching categories:', error);

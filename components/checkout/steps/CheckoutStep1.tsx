@@ -151,7 +151,7 @@ export default function CheckoutStep1({ user, checkoutData, setCheckoutData, add
                             </p>
                           </div>
                           {address.isDefault && (
-                            <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
+                            <span className="px-2 py-1 text-gray-700 text-xs rounded-full">
                               Default
                             </span>
                           )}

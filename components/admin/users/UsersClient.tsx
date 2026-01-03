@@ -345,7 +345,7 @@ console.log(users)
               {totalPoints.toLocaleString()}
             </div>
             <div className="text-sm text-gray-500">
-              Total value: ₹{(totalPoints * 0.1).toLocaleString()}
+              Total value: Rs {(totalPoints * 0.1).toLocaleString()}
             </div>
           </CardContent>
         </Card>

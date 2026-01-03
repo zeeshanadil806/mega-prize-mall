@@ -111,7 +111,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           
           {/* View Details */}
           <span className="text-sm font-medium text-[#7C2C78] group-hover:underline">
-            View Details →
+            View →
           </span>
         </div>
       </div>
