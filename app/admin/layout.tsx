@@ -47,7 +47,7 @@ export default async function AdminLayout({
             </main>
           </div>
         </div>
-        <Toaster position="top-right" />
+        {/* <Toaster position="top-right" /> */}
       </body>
     </html>
   )

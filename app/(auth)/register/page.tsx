@@ -6,7 +6,7 @@ import Link from "next/link"
 export const metadata: Metadata = {
   title: 'Create Account | Sign Up for Mega Prize Mall',
   description: 'Join Mega Prize Mall to access exclusive deals, bargains on products, and personalized shopping experience. Create your free account in seconds.',
-  keywords: 'register, sign up, create account, mega prize mall, shopping account, online shopping india',
+  keywords: 'register, sign up, create account, mega prize mall, shopping account, online shopping Pakistan',
   openGraph: {
     title: 'Create Account | Mega Prize Mall',
     description: 'Join Mega Prize Mall for exclusive deals and bargain shopping',

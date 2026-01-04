@@ -181,13 +181,13 @@ export default function LoginForm() {
             <Label htmlFor="password" className="text-sm font-medium text-gray-700">
               Password
             </Label>
-            <button
+            {/* <button
               type="button"
               className="text-xs text-[#7C2C78] hover:text-[#A43875] font-medium transition-colors"
               onClick={() => toast.info("Password reset feature coming soon!")}
             >
               Forgot password?
-            </button>
+            </button> */}
           </div>
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />

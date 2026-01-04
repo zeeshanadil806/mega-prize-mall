@@ -37,7 +37,7 @@ export default function CheckoutStep1({ user, checkoutData, setCheckoutData, add
       shippingAddress: address,
     }));
   };
-  console.log(savedAddresses)
+  // console.log(savedAddresses)
   const handleSaveAddress = async () => {
     // Validate required fields
     const required = ['fullName', 'phone', 'addressLine1', 'city', 'state', 'postalCode'];
@@ -79,7 +79,7 @@ export default function CheckoutStep1({ user, checkoutData, setCheckoutData, add
       });
       
       toast.success('Address saved successfully');
-      
+      window.location.href = "/checkout"
     } catch (error) {
       console.error('Error saving address:', error);
       toast.error('Failed to save address');

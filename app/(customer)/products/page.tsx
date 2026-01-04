@@ -74,7 +74,7 @@ export async function generateMetadata(props: {
     
     return {
       title: `"${query}" Mobile Accessories | Search Results | Mega Prize Mall`,
-      description: `Find ${query} mobile accessories with bargain option. Shop best ${query} online with price negotiation & lucky draw rewards. Free shipping across India.`,
+      description: `Find ${query} mobile accessories with bargain option. Shop best ${query} online with price negotiation & lucky draw rewards. Free shipping across Pakistan.`,
       keywords: `${query}, ${query} mobile accessories, buy ${query} online, ${query} with bargain`,
       
       openGraph: {
@@ -89,7 +89,7 @@ export async function generateMetadata(props: {
   // Default - All products
   return {
     title: "Shop All Mobile Accessories | Phone Cases, Chargers, Earbuds | Mega Prize Mall",
-    description: "Browse 1000+ mobile accessories with bargain option. Choose from phone cases, wireless chargers, earbuds, screen protectors, power banks. Make offers on prices & earn lucky draw entries. Free shipping across India.",
+    description: "Browse 1000+ mobile accessories with bargain option. Choose from phone cases, wireless chargers, earbuds, screen protectors, power banks. Make offers on prices & earn lucky draw entries. Free shipping across Pakistan.",
     keywords: "mobile accessories online, phone accessories, buy phone cases, wireless earbuds, mobile chargers, screen protectors, power banks, cables, smartphone gadgets, bargain prices, negotiate prices",
     
     // Open Graph

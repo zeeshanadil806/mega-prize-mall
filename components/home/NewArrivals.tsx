@@ -224,7 +224,7 @@ const NewArrivals = () => {
   }
 
   return (
-    <section ref={ref} className="py-20 bg-linear-to-b from-white to-gray-50">
+    <section ref={ref} className="py-10 bg-linear-to-b from-white to-gray-50">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <motion.div

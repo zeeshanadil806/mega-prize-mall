@@ -167,11 +167,11 @@ export function AdminInvoiceGenerator({ order }: AdminInvoiceGeneratorProps) {
       
       doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
-      addText('123 Mall Road, Gulberg', 20, companyDetailsY + 14);
-      addText('Lahore, Punjab 54000', 20, companyDetailsY + 19);
+      // addText('123 Mall Road, Gulberg', 20, companyDetailsY + 14);
+      addText('Lahore, Punjab', 20, companyDetailsY + 19);
       addText('Pakistan', 20, companyDetailsY + 24);
       
-      addText('📞 +92 42 123 4567', 20, companyDetailsY + 30);
+      addText('📞 +92 325 4007037', 20, companyDetailsY + 30);
       addText('🌐 www.megaprizemall.com', 20, companyDetailsY + 35);
       addText('✉️ support@megaprizemall.com', 20, companyDetailsY + 40);
 
@@ -428,7 +428,7 @@ export function AdminInvoiceGenerator({ order }: AdminInvoiceGeneratorProps) {
       doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(100, 100, 100);
-      addText('For any queries, contact us at: support@megaprizemall.com | +92 42 123 4567', 
+      addText('For any queries, contact us at: support@megaprizemall.com | +92 325 4007037', 
         105, footerY + 8, { align: 'center' });
       
       addText('Terms & Conditions apply. Points expire 90 days from earning.', 

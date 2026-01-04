@@ -9,9 +9,9 @@ import {
   ShoppingCart,
   Users,
   Ticket,
-  Settings,
+  // Settings,
   BarChart3,
-  MessageSquare,
+  // MessageSquare,
   Gift,
   LogOut,
   ChevronDown,
@@ -74,8 +74,8 @@ const navItems: NavItem[] = [
       },
     ],
   },
-  { name: "Support", href: "/admin/support", icon: MessageSquare },
-  { name: "Settings", href: "/admin/settings", icon: Settings },
+  // { name: "Support", href: "/admin/support", icon: MessageSquare },
+  // { name: "Settings", href: "/admin/settings", icon: Settings },
   { name: "Users", href: "/admin/users", icon: Users },
 ];
 

@@ -57,27 +57,27 @@ const Header = () => {
     {
       name: "Mobile Accessories",
       icon: <Smartphone className="h-4 w-4" />,
-      href: "/products?category=mobile-accessories",
+      href: "/products?category=Mobile+Accessories",
     },
     {
       name: "Audio and Multimedia",
       icon: <Headphones className="h-4 w-4" />,
-      href: "/products?category=audio-and-multimedia",
+      href: "/products?category=Audio+and+Multimedia",
     },
     {
       name: "Gaming Accessories",
       icon: <Gamepad2 className="h-4 w-4" />,
-      href: "/products?category=gaming-accessories",
+      href: "/products?category=Gaming+Accessories",
     },
     {
       name: "PC and Laptop",
       icon: <Laptop className="h-4 w-4" />,
-      href: "/products?category=pc-and-laptop-accessories",
+      href: "/products?category=PC+and+Laptop+Accessories",
     },
     {
       name: "Power and Charging",
       icon: <Zap className="h-4 w-4" />,
-      href: "/products?category=power-and-charging",
+      href: "/products?category+Power+and+Charging",
     },
   ];
 
@@ -90,7 +90,12 @@ const Header = () => {
       icon: <Package className="h-4 w-4" />,
       show: true,
     },
-      { name: 'Categories', href: '/categories', icon: <Tag className="h-4 w-4" />, show: true },
+    {
+      name: "Categories",
+      href: "/categories",
+      icon: <Tag className="h-4 w-4" />,
+      show: true,
+    },
     {
       name: "Bargain Deals",
       href: "/products?bargain=true",
@@ -108,51 +113,78 @@ const Header = () => {
       name: "Wallet",
       href: "/dashboard/wallet",
       icon: <Wallet className="h-4 w-4" />,
-      show: !!session?.user,
+      show: !!session?.user && session.user.role === "customer",
+    },
+    // ✅ Show Admin Dashboard for admin/support roles
+    {
+      name: "Admin",
+      href: "/admin",
+      icon: <Settings className="h-4 w-4" />,
+      show:
+        !!session?.user &&
+        (session.user.role === "admin" || session.user.role === "support"),
     },
   ];
 
   // ✅ User menu items for logged-in users
+  // ✅ User menu items based on role
   const userMenuItems = session?.user
     ? [
-        {
-          name: "My Profile",
-          href: "/dashboard",
-          icon: <UserCircle className="h-4 w-4" />,
-          type: "link",
-        },
-        {
-          name: "My Addresses",
-          href: "/addresses",
-          icon: <Map className="h-4 w-4" />,
-          type: "link",
-        },
-        {
-          name: "My Orders",
-          href: "/dashboard/orders",
-          icon: <ShoppingCart className="h-4 w-4" />,
-          type: "link",
-        },
-        {
-          name: "My Wallet",
-          href: "/dashboard/wallet",
-          icon: <CreditCard className="h-4 w-4" />,
-          type: "link",
-        },
-        {
-          name: "My Points",
-          href: "/dashboard/wallet",
-          icon: <Award className="h-4 w-4" />,
-          subtext: `${session.user.points || 0} points`,
-          type: "link",
-        },
+        // ✅ Items for ALL roles
+
+        // ✅ Items for CUSTOMERS only
+        ...(session.user.role === "customer"
+          ? [
+              {
+                name: "My Profile",
+                href: "/dashboard",
+                icon: <UserCircle className="h-4 w-4" />,
+                type: "link",
+              },
+              {
+                name: "My Addresses",
+                href: "/addresses",
+                icon: <Map className="h-4 w-4" />,
+                type: "link",
+              },
+              {
+                name: "My Orders",
+                href: "/dashboard/orders",
+                icon: <ShoppingCart className="h-4 w-4" />,
+                type: "link",
+              },
+              {
+                name: "My Wallet",
+                href: "/dashboard/wallet",
+                icon: <CreditCard className="h-4 w-4" />,
+                type: "link",
+              },
+              {
+                name: "My Points",
+                href: "/dashboard/wallet",
+                icon: <Award className="h-4 w-4" />,
+                subtext: `${session.user.points || 0} points`,
+                type: "link",
+              },
+            ]
+          : []),
+
+        // ✅ Items for ADMIN/SUPPORT only
+        ...(session.user.role === "admin" || session.user.role === "support"
+          ? [
+              {
+                name: "Admin Dashboard",
+                href: "/admin",
+                icon: <Settings className="h-4 w-4" />,
+                type: "link",
+              },
+            ]
+          : []),
+
+        // ✅ Separator before logout
         { type: "separator" },
-        {
-          name: "Settings",
-          href: "/dashboard/settings",
-          icon: <Settings className="h-4 w-4" />,
-          type: "link",
-        },
+
+        // ✅ Logout for ALL roles
         {
           name: "Logout",
           icon: <LogOut className="h-4 w-4" />,
@@ -394,15 +426,29 @@ const Header = () => {
                               </div>
                             </div>
                             <div className="flex items-center gap-2 text-sm">
-                              <Badge className="bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white border-0">
-                                {session.user.role}
-                              </Badge>
                               <Badge
-                                variant="outline"
-                                className="border-[#EAB75F] text-[#EAB75F]"
+                                className={`
+    ${
+      session.user.role === "admin"
+        ? "bg-linear-to-r from-red-600 to-red-500"
+        : session.user.role === "support"
+        ? "bg-linear-to-r from-blue-600 to-blue-500"
+        : "bg-linear-to-r from-[#7C2C78] to-[#A43875]"
+    } text-white border-0
+  `}
                               >
-                                {session.user.points || 0} points
+                                {session.user.role &&
+                                  session.user.role?.charAt(0).toUpperCase() +
+                                    session.user.role?.slice(1)}
                               </Badge>
+                              {session.user.role === "customer" && (
+                                <Badge
+                                  variant="outline"
+                                  className="border-[#EAB75F] text-[#EAB75F]"
+                                >
+                                  {session.user.points || 0} points
+                                </Badge>
+                              )}
                             </div>
                           </div>
 
@@ -659,6 +705,23 @@ const Header = () => {
                         <div className="text-sm text-gray-600">
                           {session.user.email}
                         </div>
+                        <div className="mt-1">
+                          <Badge
+                            className={`
+            text-xs ${
+              session.user.role === "admin"
+                ? "bg-red-100 text-red-800"
+                : session.user.role === "support"
+                ? "bg-blue-100 text-blue-800"
+                : "bg-[#7C2C78]/10 text-[#7C2C78]"
+            }
+          `}
+                          >
+                            {session.user.role &&
+                              session.user.role.charAt(0).toUpperCase() +
+                                session.user.role.slice(1)}
+                          </Badge>
+                        </div>
                       </div>
 
                       <Link
@@ -670,6 +733,20 @@ const Header = () => {
                           Dashboard
                         </Button>
                       </Link>
+
+                      {/* Show Admin button for admin/support roles */}
+                      {(session.user.role === "admin" ||
+                        session.user.role === "support") && (
+                        <Link
+                          href="/admin"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          <Button className="w-full bg-linear-to-r from-gray-700 to-gray-900 hover:from-gray-800 hover:to-gray-950">
+                            <Settings className="h-4 w-4 mr-2" />
+                            Admin Panel
+                          </Button>
+                        </Link>
+                      )}
 
                       <Button
                         onClick={handleLogout}

@@ -247,7 +247,7 @@ const BargainZone = () => {
   return (
     <section 
       ref={ref}
-      className="py-20 bg-linear-to-r from-[#7C2C78]/5 to-[#A43875]/5"
+      className="py-10 bg-linear-to-r from-[#7C2C78]/5 to-[#A43875]/5"
     >
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">

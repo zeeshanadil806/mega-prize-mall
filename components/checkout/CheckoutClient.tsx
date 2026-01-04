@@ -40,8 +40,8 @@ export default function CheckoutClient({ user, userId, addresses }: CheckoutClie
   // Check if cart is empty
   useEffect(() => {
     if (items.length === 0) {
-      toast.error('Your cart is empty');
-      router.push('/cart');
+      toast.success('Order Placed Successfully and your cart is empty.');
+      // router.push('/cart');
     }
   }, [items, router]);
   

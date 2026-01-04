@@ -42,8 +42,8 @@ const BargainZone = dynamic(() => import("@/components/home/BargainZone"), {
 
 export const metadata: Metadata = {
   title: "Mega Prize Mall - Mobile Accessories with Bargain & Lucky Draw | Shop Now",
-  description: "India's first mobile accessories store where you can bargain prices & win prizes! Shop phone cases, chargers, earbuds, screen protectors. Negotiate deals, earn lucky draw entries on every purchase. Free shipping across India.",
-  keywords: "mobile accessories, bargain shopping, lucky draw, phone cases, wireless earbuds, chargers, screen protectors, online shopping India, price negotiation, shopping rewards",
+  description: "Pakistan's first mobile accessories store where you can bargain prices & win prizes! Shop phone cases, chargers, earbuds, screen protectors. Negotiate deals, earn lucky draw entries on every purchase. Free shipping across Pakistan.",
+  keywords: "mobile accessories, bargain shopping, lucky draw, phone cases, wireless earbuds, chargers, screen protectors, online shopping Pakistan, price negotiation, shopping rewards",
   
   // Open Graph
   openGraph: {

@@ -17,7 +17,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import {
-  X,
+  // X,
   Tag,
   Clock,
   CheckCircle,
@@ -200,7 +200,7 @@ export default function BargainModal({
               <Tag className="h-5 w-5 mr-2 text-[#7C2C78]" />
               Make an Offer
             </DialogTitle>
-            <Button
+            {/* <Button
               variant="ghost"
               size="icon"
               onClick={handleClose}
@@ -208,7 +208,7 @@ export default function BargainModal({
               className="h-8 w-8"
             >
               <X className="h-4 w-4" />
-            </Button>
+            </Button> */}
           </div>
           <DialogDescription>
             Negotiate a better price for {product.name}

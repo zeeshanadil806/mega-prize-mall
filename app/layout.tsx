@@ -7,6 +7,7 @@ import { SessProvider } from "@/components/providers/SessionProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import { ServiceWorkerRegistration } from "@/components/seo/ServiceWorkerRegistration";
+import WhatsAppFloatingButton from "@/components/customer/WhatsAppFloatingButton";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -57,6 +58,15 @@ export default function RootLayout({
           <SpeedInsights />
           <Analytics />
           <ServiceWorkerRegistration />
+          <WhatsAppFloatingButton 
+          phoneNumber="923254007037" // Your WhatsApp number
+          message="Hello Mega Prize Mall! I have a question about your mobile accessories."
+          position="bottom-right"
+          showOnMobile={true}
+          showOnDesktop={true}
+          bounceInterval={5000} // Bounce every 5 seconds
+        />
+
         </SessProvider>
       </body>
       {/* </CartProvider> */}

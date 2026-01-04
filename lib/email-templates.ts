@@ -1030,7 +1030,7 @@ export async function sendLuckyDrawWinnerEmail(
         🏆 View Your Winning Entry
       </a>
       <p style="margin-top: 0.5rem; font-size: 0.875rem; color: #6b7280;">
-        or call us at <strong>${process.env.SUPPORT_PHONE || '+92 XXX XXXXXXX'}</strong>
+        or call us at <strong>${process.env.SUPPORT_PHONE || '+92 325 4007037'}</strong>
       </p>
     </div>
     

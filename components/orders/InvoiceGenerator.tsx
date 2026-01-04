@@ -121,10 +121,10 @@ export function InvoiceGenerator({ order, userId }: InvoiceGeneratorProps) {
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(9);
       doc.text('Mega Prize Mall', col1X + 5, boxY + 15);
-      doc.text('123 Mall Road, Lahore', col1X + 5, boxY + 20);
+      // doc.text('123 Mall Road, Lahore', col1X + 5, boxY + 20);
       doc.text('Pakistan', col1X + 5, boxY + 25);
       doc.text('support@megaprizemall.com', col1X + 5, boxY + 30);
-      doc.text('+92 300 1234567', col1X + 5, boxY + 35);
+      doc.text('+92 325 4007037', col1X + 5, boxY + 35);
 
       // Bill To (Right)
       drawBox(col2X, boxY, boxWidth, 8, COLORS.accent); // Header bg

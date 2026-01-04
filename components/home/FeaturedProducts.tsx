@@ -1,19 +1,17 @@
 // components/home/FeaturedProducts.tsx
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useAnimation, useInView, Variants } from "framer-motion";
+import { motion, useAnimation, useInView, Variants, PanInfo } from "framer-motion";
 import {
-  Star,
   ShoppingBag,
   Tag,
   ChevronLeft,
   ChevronRight,
   Sparkles,
   Eye,
-  Heart,
   Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -52,9 +50,15 @@ const FeaturedProducts = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [itemsPerSlide, setItemsPerSlide] = useState(1);
+  const [isSwiping, setIsSwiping] = useState(false);
+  const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(null);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  
   const controls = useAnimation();
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, amount: 0.1 });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(containerRef, { once: true, amount: 0.1 });
 
   useEffect(() => {
     if (inView) {
@@ -143,6 +147,20 @@ const FeaturedProducts = () => {
         damping: 25,
       },
     },
+    swipeLeft: {
+      x: -100,
+      opacity: 0,
+      transition: {
+        duration: 0.3,
+      },
+    },
+    swipeRight: {
+      x: 100,
+      opacity: 0,
+      transition: {
+        duration: 0.3,
+      },
+    },
   };
 
   const formatCurrency = (amount: number) => {
@@ -153,20 +171,90 @@ const FeaturedProducts = () => {
     }).format(amount);
   };
 
-  const nextSlide = () => {
+  const nextSlide = useCallback(() => {
     if (products.length === 0) return;
-    setCurrentIndex(
-      (prev) => (prev + 1) % Math.ceil(products.length / itemsPerSlide)
+    setCurrentIndex((prev) => 
+      (prev + 1) % Math.ceil(products.length / itemsPerSlide)
     );
+    setSwipeDirection("left");
+    setTimeout(() => setSwipeDirection(null), 300);
+  }, [products.length, itemsPerSlide]);
+
+  const prevSlide = useCallback(() => {
+    if (products.length === 0) return;
+    setCurrentIndex((prev) => 
+      (prev - 1 + Math.ceil(products.length / itemsPerSlide)) % 
+      Math.ceil(products.length / itemsPerSlide)
+    );
+    setSwipeDirection("right");
+    setTimeout(() => setSwipeDirection(null), 300);
+  }, [products.length, itemsPerSlide]);
+
+  // Touch event handlers for mobile swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (window.innerWidth >= 768) return; // Only enable on mobile/tablet
+    setTouchStart(e.targetTouches[0].clientX);
   };
 
-  const prevSlide = () => {
-    if (products.length === 0) return;
-    setCurrentIndex(
-      (prev) =>
-        (prev - 1 + Math.ceil(products.length / itemsPerSlide)) %
-        Math.ceil(products.length / itemsPerSlide)
-    );
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (window.innerWidth >= 768) return; // Only enable on mobile/tablet
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (window.innerWidth >= 768) return; // Only enable on mobile/tablet
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const minSwipeDistance = 50; // Minimum distance for a swipe
+    
+    if (Math.abs(distance) < minSwipeDistance) {
+      setTouchStart(null);
+      setTouchEnd(null);
+      return;
+    }
+    
+    setIsSwiping(true);
+    
+    if (distance > 0) {
+      // Swipe left - go to next slide
+      nextSlide();
+    } else {
+      // Swipe right - go to previous slide
+      prevSlide();
+    }
+    
+    // Reset touch states
+    setTouchStart(null);
+    setTouchEnd(null);
+    
+    // Reset swipe state
+    setTimeout(() => setIsSwiping(false), 300);
+  };
+
+  // Mouse drag handlers for desktop (optional)
+  const handleDragStart = () => {
+    if (window.innerWidth >= 768) return;
+    setIsSwiping(true);
+  };
+
+  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    if (window.innerWidth >= 768) return;
+    
+    const swipeThreshold = 50;
+    const velocityThreshold = 0.5;
+    
+    if (Math.abs(info.offset.x) > swipeThreshold || Math.abs(info.velocity.x) > velocityThreshold) {
+      if (info.offset.x > 0 || info.velocity.x > 0) {
+        // Swipe right
+        prevSlide();
+      } else {
+        // Swipe left
+        nextSlide();
+      }
+    }
+    
+    setTimeout(() => setIsSwiping(false), 300);
   };
 
   const getCategoryIcon = (category: string) => {
@@ -299,8 +387,8 @@ const FeaturedProducts = () => {
 
   return (
     <section
-      ref={ref}
-      className="py-8 sm:py-12 md:py-16 lg:py-20 bg-linear-to-b from-gray-50 to-white"
+      ref={containerRef}
+      className="pt-8 bg-linear-to-b from-gray-50 to-white overflow-hidden"
     >
       <div className="container mx-auto px-3 sm:px-4 md:px-6">
         {/* Section Header */}
@@ -327,8 +415,7 @@ const FeaturedProducts = () => {
           </h2>
 
           <p className="text-sm sm:text-base text-gray-600 max-w-xs sm:max-w-sm md:max-w-lg lg:max-w-2xl mx-auto">
-            Discover our handpicked selection of premium products at unbeatable
-            prices
+            Discover our handpicked selection of premium products at unbeatable prices
           </p>
         </motion.div>
 
@@ -372,212 +459,235 @@ const FeaturedProducts = () => {
           </div>
         )}
 
-        {/* Products Grid */}
-        <motion.div
-          variants={containerVariants}
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
-          initial="hidden"
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6 xl:gap-8"
+        {/* Products Carousel with Swipe Support */}
+        <div
+          ref={carouselRef}
+          className="relative"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
-          {visibleProducts.map((product) => (
-            <motion.div
-              key={product._id}
-              variants={cardVariants}
-              whileHover="hover"
-              initial="hidden"
-              className="group h-full"
-            >
-              <div className="relative bg-white rounded-lg sm:rounded-xl md:rounded-2xl border border-gray-200 overflow-hidden shadow-sm sm:shadow-md md:shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col">
-                {/* Product Badges */}
-                <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10 flex flex-col gap-1 sm:gap-1.5">
-                  {product.discountPercentage > 0 && (
-                    <div className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-linear-to-r from-[#EAB75F] to-[#FF9F45] text-white text-xs font-bold shadow-sm">
-                      -{product.discountPercentage}%
-                    </div>
-                  )}
-
-                  {product.bargainEnabled && (
-                    <div className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white text-xs font-bold shadow-sm flex items-center gap-1">
-                      <Tag className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-                      <span>Bargain</span>
-                    </div>
-                  )}
-
-                  {product.isBestSeller && (
-                    <div className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-linear-to-r from-[#2E297D] to-[#7C2C78] text-white text-xs font-bold shadow-sm flex items-center gap-1">
-                      <Zap className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-                      <span>Best Seller</span>
-                    </div>
-                  )}
-
-                  {product.isNewArrival && (
-                    <div className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-linear-to-r from-[#A43875] to-[#EAB75F] text-white text-xs font-bold shadow-sm">
-                      New
-                    </div>
-                  )}
+          {/* Swipe Hint for Mobile */}
+          {/* {window.innerWidth < 768 && totalSlides > 1 && (
+            <div className="text-center mb-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full">
+                <div className="flex items-center gap-1">
+                  <ChevronLeft className="h-3 w-3 text-gray-500" />
+                  <span className="text-xs text-gray-600">Swipe</span>
+                  <ChevronRight className="h-3 w-3 text-gray-500" />
                 </div>
+              </div>
+            </div>
+          )} */}
 
-                {/* Wishlist Button */}
-                <button
-                  className="absolute top-2 right-2 sm:top-3 sm:right-3 z-10 h-7 w-7 sm:h-8 sm:w-8 md:h-9 md:w-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white transition-colors"
-                  aria-label="Add to wishlist"
-                >
-                  <Heart className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-600 hover:text-red-500" />
-                </button>
-
-                {/* Product Image */}
-                <Link
-                  href={`/products/${product.slug}`}
-                  className="flex-shrink-0"
-                >
-                  <div className="relative h-40 sm:h-44 md:h-48 lg:h-52 xl:h-56 overflow-hidden bg-gray-100">
-                    {product.images?.[0]?.url ? (
-                      <Image
-                        src={product.images[0].url}
-                        alt={product.images[0].alt || product.name}
-                        fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-300"
-                        sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw"
-                        priority={currentIndex === 0}
-                      />
-                    ) : (
-                      <div
-                        className={`absolute inset-0 flex items-center justify-center ${getCategoryColor(
-                          product.category
-                        )}`}
-                      >
-                        <div className="text-3xl sm:text-4xl">
-                          {getCategoryIcon(product.category)}
-                        </div>
+          {/* Products Grid/Carousel */}
+          <motion.div
+            key={currentIndex}
+            initial={{ opacity: 0, x: swipeDirection === "left" ? 50 : swipeDirection === "right" ? -50 : 0 }}
+            animate={{ 
+              opacity: 1, 
+              x: 0,
+              transition: {
+                type: "spring",
+                stiffness: 300,
+                damping: 30,
+              }
+            }}
+            exit={{ opacity: 0, x: swipeDirection === "left" ? -50 : 50 }}
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6 xl:gap-8"
+            variants={containerVariants}
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+          >
+            {visibleProducts.map((product) => (
+              <motion.div
+                key={`${product._id}-${currentIndex}`}
+                variants={cardVariants}
+                whileHover="hover"
+                initial="hidden"
+                animate={swipeDirection === "left" ? "swipeLeft" : swipeDirection === "right" ? "swipeRight" : "visible"}
+                drag={window.innerWidth < 768 ? "x" : false}
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.1}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+                className="group h-full touch-pan-y select-none"
+                style={{ cursor: isSwiping ? 'grabbing' : 'grab' }}
+              >
+                <div className="relative bg-white rounded-lg sm:rounded-xl md:rounded-2xl border border-gray-200 overflow-hidden shadow-sm sm:shadow-md md:shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col">
+                  {/* Product Badges */}
+                  <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10 flex flex-col gap-1 sm:gap-1.5">
+                    {product.discountPercentage > 0 && (
+                      <div className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-linear-to-r from-[#EAB75F] to-[#FF9F45] text-white text-xs font-bold shadow-sm">
+                        -{product.discountPercentage}%
                       </div>
                     )}
 
-                    {/* Quick View Overlay */}
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        className="bg-white text-gray-900 hover:bg-gray-100 text-xs"
-                      >
-                        <Eye className="h-3 w-3 mr-1.5" />
-                        Quick View
-                      </Button>
-                    </div>
-                  </div>
-                </Link>
+                    {product.bargainEnabled && (
+                      <div className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white text-xs font-bold shadow-sm flex items-center gap-1">
+                        <Tag className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                        <span>Bargain</span>
+                      </div>
+                    )}
 
-                {/* Product Info */}
-                <div className="p-3 sm:p-4 md:p-5 flex-grow flex flex-col">
-                  {/* Category & Brand */}
-                  <div className="flex items-center justify-between mb-1.5 sm:mb-2">
-                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wide truncate pr-2">
-                      {product.category}
-                    </span>
-                    <span className="text-xs font-semibold text-[#2E297D] flex-shrink-0">
-                      {product.brand}
-                    </span>
+                    {product.isBestSeller && (
+                      <div className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-linear-to-r from-[#2E297D] to-[#7C2C78] text-white text-xs font-bold shadow-sm flex items-center gap-1">
+                        <Zap className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                        <span>Best Seller</span>
+                      </div>
+                    )}
+
+                    {product.isNewArrival && (
+                      <div className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-linear-to-r from-[#A43875] to-[#EAB75F] text-white text-xs font-bold shadow-sm">
+                        New
+                      </div>
+                    )}
                   </div>
 
-                  {/* Product Name */}
+                  {/* Wishlist Button */}
+                  {/* <button
+                    className="absolute top-2 right-2 sm:top-3 sm:right-3 z-10 h-7 w-7 sm:h-8 sm:w-8 md:h-9 md:w-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white transition-colors"
+                    aria-label="Add to wishlist"
+                  >
+                    <Heart className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-600 hover:text-red-500" />
+                  </button> */}
+
+                  {/* Product Image */}
                   <Link
                     href={`/products/${product.slug}`}
-                    className="mb-1.5 sm:mb-2"
+                    className="shrink-0"
                   >
-                    <h3 className="font-bold text-gray-900 text-sm sm:text-base md:text-lg line-clamp-1 hover:text-[#7C2C78] transition-colors">
-                      {product.name}
-                    </h3>
+                    <div className="relative h-40 sm:h-44 md:h-48 lg:h-52 xl:h-56 overflow-hidden bg-gray-100">
+                      {product.images?.[0]?.url ? (
+                        <Image
+                          src={product.images[0].url}
+                          alt={product.images[0].alt || product.name}
+                          fill
+                          className="object-cover group-hover:scale-110 transition-transform duration-300"
+                          sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw"
+                          priority={currentIndex === 0}
+                        />
+                      ) : (
+                        <div
+                          className={`absolute inset-0 flex items-center justify-center ${getCategoryColor(
+                            product.category
+                          )}`}
+                        >
+                          <div className="text-3xl sm:text-4xl">
+                            {getCategoryIcon(product.category)}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Quick View Overlay */}
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          className="bg-white text-gray-900 hover:bg-gray-100 text-xs"
+                        >
+                          <Eye className="h-3 w-3 mr-1.5" />
+                          Quick View
+                        </Button>
+                      </div>
+                    </div>
                   </Link>
 
-                  {/* Description */}
-                  {/* <p
-                    className="text-gray-600 md:text-lg mb-4 line-clamp-2 grow"
-                    style={{ display: "none" }}
-                    suppressHydrationWarning
-                  >
-                    {product.shortDescription || product.description}
-                  </p> */}
-
-                  {/* Price */}
-                  <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4 md:mb-5">
-                    {product.discountedPrice ? (
-                      <>
-                        <span className="text-base sm:text-lg md:text-xl font-bold text-[#A43875]">
-                          {formatCurrency(product.discountedPrice)}
-                        </span>
-                        <span className="text-sm sm:text-base md:text-lg text-gray-400 line-through">
-                          {formatCurrency(product.price)}
-                        </span>
-                      </>
-                    ) : (
-                      <span className="text-base sm:text-lg md:text-xl font-bold text-[#A43875]">
-                        {formatCurrency(product.price)}
+                  {/* Product Info */}
+                  <div className="p-3 sm:p-4 md:p-5 grow flex flex-col">
+                    {/* Category & Brand */}
+                    <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+                      <span className="text-xs font-medium text-gray-500 uppercase tracking-wide truncate pr-2">
+                        {product.category}
                       </span>
-                    )}
-                  </div>
-
-                  {/* Stock Status */}
-                  <div className="flex items-center justify-between mb-3 sm:mb-4 md:mb-5">
-                    <div className="flex items-center gap-1.5 sm:gap-2">
-                      <div
-                        className={`h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full ${
-                          product.stock > 10
-                            ? "bg-green-500"
-                            : product.stock > 0
-                            ? "bg-yellow-500"
-                            : "bg-red-500"
-                        }`}
-                      />
-                      <span className="text-xs sm:text-sm text-gray-600">
-                        {product.stock > 10
-                          ? "In Stock"
-                          : product.stock > 0
-                          ? `Only ${product.stock} left`
-                          : "Out of Stock"}
+                      <span className="text-xs font-semibold text-[#2E297D] shrink-0">
+                        {product.brand}
                       </span>
                     </div>
 
-                    {/* Ratings */}
-                    {/* <div className="flex items-center gap-1">
-                      <Star className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#EAB75F] fill-current" />
-                      <span className="text-xs sm:text-sm font-medium">
-                        4.5
-                      </span>
-                    </div> */}
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex gap-2 mt-auto">
-                    <Button
-                      size="sm"
-                      className="flex-1 text-xs sm:text-sm bg-linear-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] text-white h-8 sm:h-9 md:h-10"
-                      disabled={product.stock === 0}
+                    {/* Product Name */}
+                    <Link
+                      href={`/products/${product.slug}`}
+                      className="mb-1.5 sm:mb-2"
                     >
-                      <ShoppingBag className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1.5" />
-                      Add to Cart
-                    </Button>
+                      <h3 className="font-bold text-gray-900 text-sm sm:text-base md:text-lg line-clamp-1 hover:text-[#7C2C78] transition-colors">
+                        {product.name}
+                      </h3>
+                    </Link>
 
-                    {product.bargainEnabled && (
-                      <Link
-                        href={`/products/${product.slug}?bargain=true`}
-                        className="flex-1"
+                    {/* Price */}
+                    <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4 md:mb-5">
+                      {product.discountedPrice ? (
+                        <>
+                          <span className="text-base sm:text-lg md:text-xl font-bold text-[#A43875]">
+                            {formatCurrency(product.discountedPrice)}
+                          </span>
+                          <span className="text-sm sm:text-base md:text-lg text-gray-400 line-through">
+                            {formatCurrency(product.price)}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-base sm:text-lg md:text-xl font-bold text-[#A43875]">
+                          {formatCurrency(product.price)}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Stock Status */}
+                    <div className="flex items-center justify-between mb-3 sm:mb-4 md:mb-5">
+                      <div className="flex items-center gap-1.5 sm:gap-2">
+                        <div
+                          className={`h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full ${
+                            product.stock > 10
+                              ? "bg-green-500"
+                              : product.stock > 0
+                              ? "bg-yellow-500"
+                              : "bg-red-500"
+                          }`}
+                        />
+                        <span className="text-xs sm:text-sm text-gray-600">
+                          {product.stock > 10
+                            ? "In Stock"
+                            : product.stock > 0
+                            ? `Only ${product.stock} left`
+                            : "Out of Stock"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-2 mt-auto">
+                      <Button
+                        size="sm"
+                        className="flex-1 text-xs sm:text-sm bg-linear-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] text-white h-8 sm:h-9 md:h-10"
+                        disabled={product.stock === 0}
                       >
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="w-full text-xs sm:text-sm border-[#2E297D] text-[#2E297D] hover:bg-[#2E297D]/10 h-8 sm:h-9 md:h-10"
+                        <ShoppingBag className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1.5" />
+                        Add to Cart
+                      </Button>
+
+                      {product.bargainEnabled && (
+                        <Link
+                          href={`/products/${product.slug}?bargain=true`}
+                          className="flex-1"
                         >
-                          <Tag className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1.5" />
-                          Bargain
-                        </Button>
-                      </Link>
-                    )}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full text-xs sm:text-sm border-[#2E297D] text-[#2E297D] hover:bg-[#2E297D]/10 h-8 sm:h-9 md:h-10"
+                          >
+                            <Tag className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1.5" />
+                            Bargain
+                          </Button>
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
 
         {/* View All Button */}
         <motion.div

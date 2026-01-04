@@ -2,7 +2,7 @@
 import { Inter } from "next/font/google"
 // import CustomerNavbar from "@/components/customer/CustomerNavbar"
 import CustomerFooter from "@/components/customer/CustomerFooter"
-import { Toaster } from "sonner"
+// import { Toaster } from "sonner"
 // import { auth } from "@/auth"
 import Header from "@/components/customer/Header"
 // import { redirect } from "next/navigation"
@@ -50,7 +50,7 @@ export default async function CustomerLayout({
         </main>
 
         <CustomerFooter />
-        <Toaster position="top-center" richColors />
+        {/* <Toaster position="top-center" richColors /> */}
       </body>
     </html>
   )
