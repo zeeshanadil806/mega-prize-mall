@@ -53,7 +53,7 @@ export function MiniCart() {
         {items.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
             <ShoppingCart className="h-16 w-16 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Your cart is empty</h3>
+            <h3 className="text-lg text-[#7C2C78] font-semibold mb-2">Your cart is empty</h3>
             <p className="text-muted-foreground mb-6">
               Add some products to get started
             </p>

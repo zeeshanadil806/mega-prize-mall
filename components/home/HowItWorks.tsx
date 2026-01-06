@@ -267,7 +267,7 @@ const HowItWorks = () => {
                     </Button>
                   </Link>
                   
-                  <Link href="/how-it-works" className="w-full sm:w-auto">
+                  {/* <Link href="/how-it-works" className="w-full sm:w-auto">
                     <Button
                       size="default"
                       variant="outline"
@@ -275,7 +275,7 @@ const HowItWorks = () => {
                     >
                       Watch Demo Video
                     </Button>
-                  </Link>
+                  </Link> */}
                 </div>
               </div>
             </div>

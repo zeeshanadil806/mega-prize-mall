@@ -46,7 +46,7 @@ export default async function AdminOrdersPage({
 
   // Check if user is admin
   const user = await UserModel.findById(session.user.id).lean();
-  if (!user || user.role !== 'admin') {
+  if (!user || (user.role !== "admin" && user.role !== "support")) {
     redirect('/');
   }
 

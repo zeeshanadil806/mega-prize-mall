@@ -55,10 +55,12 @@ export default function ProductCard({ product }: ProductCardProps) {
       {/* Product Image */}
       <div className="relative h-48 w-full mb-4 overflow-hidden rounded-lg bg-gray-100">
         {mainImage ? (
-          <img
+          <Image
             src={mainImage}
             alt={product.name}
-            className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
             loading="lazy"
           />
         ) : (
@@ -87,7 +89,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
         
         {/* Product Name */}
-        <h3 className="font-semibold text-gray-900 group-hover:text-[#7C2C78] line-clamp-2 h-12">
+        <h3 className="font-semibold text-gray-900 group-hover:text-[#7C2C78] line-clamp-2 text-xs sm:text-sm h-8 sm:h-10 mb-1">
           {product.name}
         </h3>
         
@@ -97,23 +99,31 @@ export default function ProductCard({ product }: ProductCardProps) {
         )}
         
         {/* Price */}
-        <div className="flex items-center justify-between pt-2">
-          <div className="flex items-baseline gap-2">
-            <span className="text-xl font-bold text-gray-900">
+        <div className="flex items-center justify-between mb-2 sm:mb-3 mt-auto">
+          <div className="flex flex-col items-baseline">
+            <span className="text-sm sm:text-base font-bold text-gray-900">
               {formatCurrency(finalPrice)}
             </span>
             {product.discountedPrice && (
-              <span className="text-sm text-gray-500 line-through">
+              <span className="text-xs sm:text-sm text-gray-500 line-through hidden sm:block">
                 {formatCurrency(product.price)}
               </span>
             )}
           </div>
           
-          {/* View Details */}
-          <span className="text-sm font-medium text-[#7C2C78] group-hover:underline">
+          {/* View Details - Only on larger screens */}
+          <span className="text-xs sm:text-sm font-medium text-[#7C2C78] group-hover:underline hidden md:inline">
             View →
           </span>
+          
+          {/* Mobile Discount Badge */}
+          {product.discountedPrice && (
+            <span className="text-[10px] sm:hidden bg-green-100 text-green-800 px-1.5 py-0.5 rounded">
+              Save {discountPercentage}%
+            </span>
+          )}
         </div>
+
       </div>
       
       {/* Quick Action Button (Appears on hover) */}

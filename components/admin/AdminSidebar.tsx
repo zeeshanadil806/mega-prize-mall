@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 // Define the type for navigation items
 type NavItem = {
@@ -29,20 +29,46 @@ type NavItem = {
   href: string;
   icon: React.ElementType;
   children?: NavItem[];
+    roles?: ("admin" | "support")[]; // Which roles can see this item
 };
 
 const navItems: NavItem[] = [
-  { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { name: "Products", href: "/admin/products", icon: Package },
-  { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
-  { name: "Customers", href: "/admin/customers", icon: Users },
-  { name: "Bargain Requests", href: "/admin/bargain", icon: Ticket },
-  { name: "Lucky Draw", href: "/admin/lucky-draw", icon: Gift },
+  { 
+    name: "Dashboard", 
+    href: "/admin", 
+    icon: LayoutDashboard,
+    roles: ["admin", "support"] 
+  },
+  { 
+    name: "Products", 
+    href: "/admin/products", 
+    icon: Package,
+    roles: ["admin", "support"] 
+  },
+  { 
+    name: "Orders", 
+    href: "/admin/orders", 
+    icon: ShoppingCart,
+    roles: ["admin", "support"] 
+  },
+  { 
+    name: "Bargain Requests", 
+    href: "/admin/bargain", 
+    icon: Ticket,
+    roles: ["admin", "support"] 
+  },
+  { 
+    name: "Lucky Draw", 
+    href: "/admin/lucky-draw", 
+    icon: Gift,
+    roles: ["admin"] // Only admin
+  },
   // Analytics with sub-menu
   {
     name: "Analytics",
-    href: "/admin", // Parent base path
+    href: "/admin",
     icon: BarChart3,
+    roles: ["admin"], // Only admin
     children: [
       { name: "Dashboard", href: "/admin", icon: BarChart3 },
       { name: "Sales", href: "/admin/analytics/sales", icon: DollarSign },
@@ -51,11 +77,12 @@ const navItems: NavItem[] = [
       { name: "Points", href: "/admin/analytics/points", icon: Gift },
     ],
   },
-  // Add this to your navigation items array:
+  // Coupons management
   {
     name: "Coupons",
     href: "/admin/coupons",
-    icon: Tag, // Import from lucide-react
+    icon: Tag,
+    roles: ["admin", "support"],
     children: [
       {
         name: "All Coupons",
@@ -74,20 +101,42 @@ const navItems: NavItem[] = [
       },
     ],
   },
-  // { name: "Support", href: "/admin/support", icon: MessageSquare },
-  // { name: "Settings", href: "/admin/settings", icon: Settings },
-  { name: "Users", href: "/admin/users", icon: Users },
+  { 
+    name: "Users", 
+    href: "/admin/users", 
+    icon: Users,
+    roles: ["admin"] // Only admin
+  },
+  { 
+    name: "Support Accounts", 
+    href: "/admin/support", 
+    icon: Users,
+    roles: ["admin"] // Only admin
+  },
 ];
+
 
 export default function AdminSidebar() {
   const pathname = usePathname();
+  const { data: session } = useSession();
+  const userRole = session?.user?.role || "customer";
+const getFilteredNavItems = (): NavItem[] => {
+    return navItems.filter(item => {
+      // If no roles specified, show to all
+      if (!item.roles) return true;
+      
+      // Check if user role has permission
+      return item.roles.includes(userRole as "admin" | "support");
+    });
+  };
+  const filteredNavItems = getFilteredNavItems();
 
   // State to track which menu items are expanded
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
   // Effect to automatically expand the menu if the current path is within a child
   useEffect(() => {
-    navItems.forEach((item) => {
+    filteredNavItems.forEach((item) => {
       if (item.children) {
         // Check if any child matches the current path
         const isChildActive = item.children.some(
@@ -103,7 +152,8 @@ export default function AdminSidebar() {
         }
       }
     });
-  }, [pathname]);
+  }, [pathname, filteredNavItems]);
+
 
   const toggleExpand = (name: string) => {
     setExpandedItems((prev) =>
@@ -114,10 +164,10 @@ export default function AdminSidebar() {
   };
 
   return (
-    <aside className="hidden lg:flex lg:w-64 lg:flex-col border-r border-gray-200 bg-white h-screen sticky top-0">
+    <aside className="hidden lg:flex w-64 lg:min-w-64 lg:flex-col border-r border-gray-200 bg-white h-screen sticky top-0">
       {/* Logo */}
       <div className="flex items-center justify-center h-20 px-6 border-b border-gray-200 shrink-0">
-        <div className="flex items-center space-x-3">
+        <Link href={"/"} className="flex items-center space-x-3">
           <div className="relative w-10 h-10">
             <div className="absolute inset-0 bg-linear-to-br from-[#7C2C78] to-[#A43875] rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">M</span>
@@ -127,12 +177,12 @@ export default function AdminSidebar() {
             <h1 className="text-xl font-bold text-gray-900">Mega Prize Mall</h1>
             <p className="text-xs text-gray-500">Admin Panel</p>
           </div>
-        </div>
+        </Link>
       </div>
 
       {/* Navigation */}
       <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-200">
-        {navItems.map((item) => {
+        {filteredNavItems.map((item) => {
           const Icon = item.icon;
           const isExpanded = expandedItems.includes(item.name);
           const hasChildren = item.children && item.children.length > 0;

@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
     const session = await auth();
     
     // Check admin authentication
-    if (!session?.user || session.user.role !== 'admin') {
+if (!session?.user || (session.user.role !== "admin" && session.user.role !== "support")) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }

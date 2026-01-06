@@ -104,15 +104,15 @@ const categoryData = [
     bgColor: "bg-orange-50",
     borderColor: "border-orange-200",
   },
-  {
-    id: "power-and-charging",
-    name: "Power and Charging",
-    icon: Zap,
-    description: "Power banks, chargers, cables, adapters, wireless chargers",
-    color: "from-yellow-500 to-amber-500",
-    bgColor: "bg-yellow-50",
-    borderColor: "border-yellow-200",
-  },
+  // {
+  //   id: "power-and-charging",
+  //   name: "Charging & cables",
+  //   icon: Zap,
+  //   description: "Power banks, chargers, cables, adapters, wireless chargers",
+  //   color: "from-yellow-500 to-amber-500",
+  //   bgColor: "bg-yellow-50",
+  //   borderColor: "border-yellow-200",
+  // },
 ];
 
 export default async function CategoriesPage() {

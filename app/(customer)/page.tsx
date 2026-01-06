@@ -41,14 +41,19 @@ const BargainZone = dynamic(() => import("@/components/home/BargainZone"), {
 // });
 
 export const metadata: Metadata = {
-  title: "Mega Prize Mall - Mobile Accessories with Bargain & Lucky Draw | Shop Now",
-  description: "Pakistan's first mobile accessories store where you can bargain prices & win prizes! Shop phone cases, chargers, earbuds, screen protectors. Negotiate deals, earn lucky draw entries on every purchase. Free shipping across Pakistan.",
-  keywords: "mobile accessories, bargain shopping, lucky draw, phone cases, wireless earbuds, chargers, screen protectors, online shopping Pakistan, price negotiation, shopping rewards",
-  
+  title:
+    "Mega Prize Mall - Mobile Accessories with Bargain & Lucky Draw | Shop Now",
+  description:
+    "Pakistan's first mobile accessories store where you can bargain prices & win prizes! Shop phone cases, chargers, earbuds, screen protectors. Negotiate deals, earn lucky draw entries on every purchase. Free shipping across Pakistan.",
+  keywords:
+    "mobile accessories, bargain shopping, lucky draw, phone cases, wireless earbuds, chargers, screen protectors, online shopping Pakistan, price negotiation, shopping rewards",
+
   // Open Graph
   openGraph: {
-    title: "Mega Prize Mall - Bargain Prices & Win Prizes on Mobile Accessories",
-    description: "Shop mobile accessories with unique bargain feature! Make offers, win lucky draw entries. Best prices on phone cases, chargers & more.",
+    title:
+      "Mega Prize Mall - Bargain Prices & Win Prizes on Mobile Accessories",
+    description:
+      "Shop mobile accessories with unique bargain feature! Make offers, win lucky draw entries. Best prices on phone cases, chargers & more.",
     type: "website",
     url: "https://megaprizemall.com",
     siteName: "Mega Prize Mall",
@@ -62,17 +67,18 @@ export const metadata: Metadata = {
     ],
     locale: "en_IN",
   },
-  
+
   // Twitter
   twitter: {
     card: "summary_large_image",
     title: "Mega Prize Mall - Bargain & Win Mobile Accessories",
-    description: "Unique shopping experience: Negotiate prices & earn lucky draw entries on mobile accessories!",
+    description:
+      "Unique shopping experience: Negotiate prices & earn lucky draw entries on mobile accessories!",
     images: ["/twitter-home.jpg"],
     creator: "@megaprizemall",
     site: "@megaprizemall",
   },
-  
+
   // Additional SEO
   robots: {
     index: true,
@@ -80,12 +86,12 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
-  
+
   // Canonical
   alternates: {
     canonical: "https://megaprizemall.com",
@@ -98,18 +104,17 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <div className="min-h-screen">
-      
       <LuckyDrawPopup /> {/* Add this line */}
       {/* Hero Section - Above the fold */}
       <HeroSection />
-      {/* Categories */}
-      <CategoriesSection />
       {/* Featured Products */}
       <FeaturedProducts />
-      {/* How It Works */}
-      <HowItWorks />
+      {/* Categories */}
+      <CategoriesSection />
       {/* New Arrivals */}
       <NewArrivals />
+      {/* How It Works */}
+      <HowItWorks />
       {/* Best Sellers */}
       {/* <BestSellers /> */}
       {/* Bargain Zone */}

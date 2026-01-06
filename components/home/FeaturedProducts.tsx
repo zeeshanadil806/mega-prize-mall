@@ -4,7 +4,13 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useAnimation, useInView, Variants, PanInfo } from "framer-motion";
+import {
+  motion,
+  useAnimation,
+  useInView,
+  Variants,
+  PanInfo,
+} from "framer-motion";
 import {
   ShoppingBag,
   Tag,
@@ -51,10 +57,12 @@ const FeaturedProducts = () => {
   const [error, setError] = useState<string | null>(null);
   const [itemsPerSlide, setItemsPerSlide] = useState(1);
   const [isSwiping, setIsSwiping] = useState(false);
-  const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(null);
+  const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(
+    null
+  );
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
-  
+
   const controls = useAnimation();
   const containerRef = useRef<HTMLDivElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -70,11 +78,11 @@ const FeaturedProducts = () => {
   useEffect(() => {
     const updateItemsPerSlide = () => {
       const width = window.innerWidth;
-      if (width < 640) return 1; // Mobile
+      if (width < 640) return 2; // Mobile
       if (width < 768) return 2; // Small tablet
-      if (width < 1024) return 2; // Tablet
-      if (width < 1280) return 3; // Small desktop
-      return 4; // Large desktop
+      if (width < 1024) return 3; // Tablet
+      if (width < 1280) return 4; // Small desktop
+      return 5; // Large desktop
     };
 
     // Set initial value
@@ -173,8 +181,8 @@ const FeaturedProducts = () => {
 
   const nextSlide = useCallback(() => {
     if (products.length === 0) return;
-    setCurrentIndex((prev) => 
-      (prev + 1) % Math.ceil(products.length / itemsPerSlide)
+    setCurrentIndex(
+      (prev) => (prev + 1) % Math.ceil(products.length / itemsPerSlide)
     );
     setSwipeDirection("left");
     setTimeout(() => setSwipeDirection(null), 300);
@@ -182,9 +190,10 @@ const FeaturedProducts = () => {
 
   const prevSlide = useCallback(() => {
     if (products.length === 0) return;
-    setCurrentIndex((prev) => 
-      (prev - 1 + Math.ceil(products.length / itemsPerSlide)) % 
-      Math.ceil(products.length / itemsPerSlide)
+    setCurrentIndex(
+      (prev) =>
+        (prev - 1 + Math.ceil(products.length / itemsPerSlide)) %
+        Math.ceil(products.length / itemsPerSlide)
     );
     setSwipeDirection("right");
     setTimeout(() => setSwipeDirection(null), 300);
@@ -204,18 +213,18 @@ const FeaturedProducts = () => {
   const handleTouchEnd = () => {
     if (window.innerWidth >= 768) return; // Only enable on mobile/tablet
     if (!touchStart || !touchEnd) return;
-    
+
     const distance = touchStart - touchEnd;
     const minSwipeDistance = 50; // Minimum distance for a swipe
-    
+
     if (Math.abs(distance) < minSwipeDistance) {
       setTouchStart(null);
       setTouchEnd(null);
       return;
     }
-    
+
     setIsSwiping(true);
-    
+
     if (distance > 0) {
       // Swipe left - go to next slide
       nextSlide();
@@ -223,11 +232,11 @@ const FeaturedProducts = () => {
       // Swipe right - go to previous slide
       prevSlide();
     }
-    
+
     // Reset touch states
     setTouchStart(null);
     setTouchEnd(null);
-    
+
     // Reset swipe state
     setTimeout(() => setIsSwiping(false), 300);
   };
@@ -238,13 +247,19 @@ const FeaturedProducts = () => {
     setIsSwiping(true);
   };
 
-  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+  const handleDragEnd = (
+    event: MouseEvent | TouchEvent | PointerEvent,
+    info: PanInfo
+  ) => {
     if (window.innerWidth >= 768) return;
-    
+
     const swipeThreshold = 50;
     const velocityThreshold = 0.5;
-    
-    if (Math.abs(info.offset.x) > swipeThreshold || Math.abs(info.velocity.x) > velocityThreshold) {
+
+    if (
+      Math.abs(info.offset.x) > swipeThreshold ||
+      Math.abs(info.velocity.x) > velocityThreshold
+    ) {
       if (info.offset.x > 0 || info.velocity.x > 0) {
         // Swipe right
         prevSlide();
@@ -253,7 +268,7 @@ const FeaturedProducts = () => {
         nextSlide();
       }
     }
-    
+
     setTimeout(() => setIsSwiping(false), 300);
   };
 
@@ -415,7 +430,8 @@ const FeaturedProducts = () => {
           </h2>
 
           <p className="text-sm sm:text-base text-gray-600 max-w-xs sm:max-w-sm md:max-w-lg lg:max-w-2xl mx-auto">
-            Discover our handpicked selection of premium products at unbeatable prices
+            Discover our handpicked selection of premium products at unbeatable
+            prices
           </p>
         </motion.div>
 
@@ -483,18 +499,26 @@ const FeaturedProducts = () => {
           {/* Products Grid/Carousel */}
           <motion.div
             key={currentIndex}
-            initial={{ opacity: 0, x: swipeDirection === "left" ? 50 : swipeDirection === "right" ? -50 : 0 }}
-            animate={{ 
-              opacity: 1, 
+            initial={{
+              opacity: 0,
+              x:
+                swipeDirection === "left"
+                  ? 50
+                  : swipeDirection === "right"
+                  ? -50
+                  : 0,
+            }}
+            animate={{
+              opacity: 1,
               x: 0,
               transition: {
                 type: "spring",
                 stiffness: 300,
                 damping: 30,
-              }
+              },
             }}
             exit={{ opacity: 0, x: swipeDirection === "left" ? -50 : 50 }}
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6 xl:gap-8"
+            className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6"
             variants={containerVariants}
             whileInView="visible"
             viewport={{ once: true, amount: 0.1 }}
@@ -505,40 +529,48 @@ const FeaturedProducts = () => {
                 variants={cardVariants}
                 whileHover="hover"
                 initial="hidden"
-                animate={swipeDirection === "left" ? "swipeLeft" : swipeDirection === "right" ? "swipeRight" : "visible"}
+                animate={
+                  swipeDirection === "left"
+                    ? "swipeLeft"
+                    : swipeDirection === "right"
+                    ? "swipeRight"
+                    : "visible"
+                }
                 drag={window.innerWidth < 768 ? "x" : false}
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0.1}
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
                 className="group h-full touch-pan-y select-none"
-                style={{ cursor: isSwiping ? 'grabbing' : 'grab' }}
+                style={{ cursor: isSwiping ? "grabbing" : "grab" }}
               >
-                <div className="relative bg-white rounded-lg sm:rounded-xl md:rounded-2xl border border-gray-200 overflow-hidden shadow-sm sm:shadow-md md:shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col">
-                  {/* Product Badges */}
-                  <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10 flex flex-col gap-1 sm:gap-1.5">
+                <div className="relative bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 h-full flex flex-col">
+                  {/* Product Badges - Mobile: Smaller, Desktop: Normal */}
+                  <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 md:top-3 md:left-3 z-10 flex flex-col gap-1">
                     {product.discountPercentage > 0 && (
-                      <div className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-linear-to-r from-[#EAB75F] to-[#FF9F45] text-white text-xs font-bold shadow-sm">
+                      <div className="px-1.5 py-0.5 sm:px-2 sm:py-1 md:px-2.5 md:py-1 rounded-full bg-linear-to-r from-[#EAB75F] to-[#FF9F45] text-white text-[10px] sm:text-xs font-bold shadow-sm">
                         -{product.discountPercentage}%
                       </div>
                     )}
 
                     {product.bargainEnabled && (
-                      <div className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white text-xs font-bold shadow-sm flex items-center gap-1">
+                      <div className="px-1.5 py-0.5 sm:px-2 sm:py-1 md:px-2.5 md:py-1 rounded-full bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white text-[10px] sm:text-xs font-bold shadow-sm flex items-center gap-0.5 sm:gap-1">
                         <Tag className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-                        <span>Bargain</span>
+                        <span className="hidden xs:inline">Bargain</span>
+                        <span className="xs:hidden">B</span>
                       </div>
                     )}
 
                     {product.isBestSeller && (
-                      <div className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-linear-to-r from-[#2E297D] to-[#7C2C78] text-white text-xs font-bold shadow-sm flex items-center gap-1">
+                      <div className="px-1.5 py-0.5 sm:px-2 sm:py-1 md:px-2.5 md:py-1 rounded-full bg-linear-to-r from-[#2E297D] to-[#7C2C78] text-white text-[10px] sm:text-xs font-bold shadow-sm flex items-center gap-0.5 sm:gap-1">
                         <Zap className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-                        <span>Best Seller</span>
+                        <span className="hidden sm:inline">Best</span>
+                        <span className="sm:hidden">BS</span>
                       </div>
                     )}
 
                     {product.isNewArrival && (
-                      <div className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-linear-to-r from-[#A43875] to-[#EAB75F] text-white text-xs font-bold shadow-sm">
+                      <div className="px-1.5 py-0.5 sm:px-2 sm:py-1 md:px-2.5 md:py-1 rounded-full bg-linear-to-r from-[#A43875] to-[#EAB75F] text-white text-[10px] sm:text-xs font-bold shadow-sm">
                         New
                       </div>
                     )}
@@ -546,25 +578,22 @@ const FeaturedProducts = () => {
 
                   {/* Wishlist Button */}
                   {/* <button
-                    className="absolute top-2 right-2 sm:top-3 sm:right-3 z-10 h-7 w-7 sm:h-8 sm:w-8 md:h-9 md:w-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white transition-colors"
-                    aria-label="Add to wishlist"
-                  >
-                    <Heart className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-600 hover:text-red-500" />
-                  </button> */}
+          className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 md:top-3 md:right-3 z-10 h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white transition-colors"
+          aria-label="Add to wishlist"
+        >
+          <Heart className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 text-gray-600 hover:text-red-500" />
+        </button> */}
 
-                  {/* Product Image */}
-                  <Link
-                    href={`/products/${product.slug}`}
-                    className="shrink-0"
-                  >
-                    <div className="relative h-40 sm:h-44 md:h-48 lg:h-52 xl:h-56 overflow-hidden bg-gray-100">
+                  {/* Product Image - Height adjusts based on screen */}
+                  <Link href={`/products/${product.slug}`} className="shrink-0">
+                    <div className="relative h-32 xs:h-36 sm:h-40 md:h-44 lg:h-48 xl:h-52 overflow-hidden bg-gray-100">
                       {product.images?.[0]?.url ? (
                         <Image
                           src={product.images[0].url}
                           alt={product.images[0].alt || product.name}
                           fill
                           className="object-cover group-hover:scale-110 transition-transform duration-300"
-                          sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw"
+                          sizes="(max-width: 640px) 50vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
                           priority={currentIndex === 0}
                         />
                       ) : (
@@ -573,14 +602,14 @@ const FeaturedProducts = () => {
                             product.category
                           )}`}
                         >
-                          <div className="text-3xl sm:text-4xl">
+                          <div className="text-2xl sm:text-3xl md:text-4xl">
                             {getCategoryIcon(product.category)}
                           </div>
                         </div>
                       )}
 
-                      {/* Quick View Overlay */}
-                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      {/* Quick View Overlay - Only show on desktop */}
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden md:flex items-center justify-center">
                         <Button
                           variant="secondary"
                           size="sm"
@@ -593,51 +622,51 @@ const FeaturedProducts = () => {
                     </div>
                   </Link>
 
-                  {/* Product Info */}
-                  <div className="p-3 sm:p-4 md:p-5 grow flex flex-col">
-                    {/* Category & Brand */}
-                    <div className="flex items-center justify-between mb-1.5 sm:mb-2">
-                      <span className="text-xs font-medium text-gray-500 uppercase tracking-wide truncate pr-2">
+                  {/* Product Info - Adjust padding and text sizes */}
+                  <div className="p-2 sm:p-3 md:p-4 grow flex flex-col">
+                    {/* Category & Brand - Mobile: smaller, tighter */}
+                    <div className="flex items-center justify-between mb-1 sm:mb-1.5 md:mb-2">
+                      <span className="text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wide truncate pr-1">
                         {product.category}
                       </span>
-                      <span className="text-xs font-semibold text-[#2E297D] shrink-0">
+                      <span className="text-[10px] sm:text-xs font-semibold text-[#2E297D] shrink-0">
                         {product.brand}
                       </span>
                     </div>
 
-                    {/* Product Name */}
+                    {/* Product Name - Mobile: 1 line, Desktop: 2 lines */}
                     <Link
                       href={`/products/${product.slug}`}
-                      className="mb-1.5 sm:mb-2"
+                      className="mb-1 sm:mb-1.5 md:mb-2"
                     >
-                      <h3 className="font-bold text-gray-900 text-sm sm:text-base md:text-lg line-clamp-1 hover:text-[#7C2C78] transition-colors">
+                      <h3 className="font-bold text-gray-900 text-xs sm:text-sm md:text-base line-clamp-1 sm:line-clamp-2 hover:text-[#7C2C78] transition-colors">
                         {product.name}
                       </h3>
                     </Link>
 
-                    {/* Price */}
-                    <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4 md:mb-5">
+                    {/* Price - Adjust text sizes */}
+                    <div className="flex items-center gap-1 sm:gap-2 mb-2 sm:mb-3 md:mb-4">
                       {product.discountedPrice ? (
                         <>
-                          <span className="text-base sm:text-lg md:text-xl font-bold text-[#A43875]">
+                          <span className="text-sm sm:text-base md:text-lg font-bold text-[#A43875]">
                             {formatCurrency(product.discountedPrice)}
                           </span>
-                          <span className="text-sm sm:text-base md:text-lg text-gray-400 line-through">
+                          <span className="text-xs sm:text-sm md:text-base text-gray-400 line-through">
                             {formatCurrency(product.price)}
                           </span>
                         </>
                       ) : (
-                        <span className="text-base sm:text-lg md:text-xl font-bold text-[#A43875]">
+                        <span className="text-sm sm:text-base md:text-lg font-bold text-[#A43875]">
                           {formatCurrency(product.price)}
                         </span>
                       )}
                     </div>
 
-                    {/* Stock Status */}
-                    <div className="flex items-center justify-between mb-3 sm:mb-4 md:mb-5">
-                      <div className="flex items-center gap-1.5 sm:gap-2">
+                    {/* Stock Status - Mobile: smaller */}
+                    <div className="flex items-center justify-between mb-2 sm:mb-3 md:mb-4">
+                      <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2">
                         <div
-                          className={`h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full ${
+                          className={`h-1.5 w-1.5 sm:h-2 sm:w-2 md:h-2.5 md:w-2.5 rounded-full ${
                             product.stock > 10
                               ? "bg-green-500"
                               : product.stock > 0
@@ -645,25 +674,28 @@ const FeaturedProducts = () => {
                               : "bg-red-500"
                           }`}
                         />
-                        <span className="text-xs sm:text-sm text-gray-600">
+                        <span className="text-[10px] sm:text-xs md:text-sm text-gray-600">
                           {product.stock > 10
                             ? "In Stock"
                             : product.stock > 0
-                            ? `Only ${product.stock} left`
+                            ? product.stock <= 5
+                              ? `${product.stock} left`
+                              : `Only ${product.stock} left`
                             : "Out of Stock"}
                         </span>
                       </div>
                     </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex gap-2 mt-auto">
+                    {/* Action Buttons - Mobile: smaller, compact */}
+                    <div className="flex gap-1.5 sm:gap-2 mt-auto">
                       <Button
                         size="sm"
-                        className="flex-1 text-xs sm:text-sm bg-linear-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] text-white h-8 sm:h-9 md:h-10"
+                        className="flex-1 text-[10px] sm:text-xs md:text-sm bg-linear-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] text-white h-7 sm:h-8 md:h-9 lg:h-10"
                         disabled={product.stock === 0}
                       >
-                        <ShoppingBag className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1.5" />
-                        Add to Cart
+                        <ShoppingBag className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-3.5 md:w-3.5 mr-1" />
+                        <span className="hidden xs:inline">Add to Cart</span>
+                        <span className="xs:hidden">Cart</span>
                       </Button>
 
                       {product.bargainEnabled && (
@@ -674,10 +706,11 @@ const FeaturedProducts = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="w-full text-xs sm:text-sm border-[#2E297D] text-[#2E297D] hover:bg-[#2E297D]/10 h-8 sm:h-9 md:h-10"
+                            className="w-full text-[10px] sm:text-xs md:text-sm border-[#2E297D] text-[#2E297D] hover:bg-[#2E297D]/10 h-7 sm:h-8 md:h-9 lg:h-10"
                           >
-                            <Tag className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1.5" />
-                            Bargain
+              <Tag className="hidden xs:inline h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                            <span className="hidden xs:inline">Bargain</span>
+                            <span className="xs:hidden">Deal</span>
                           </Button>
                         </Link>
                       )}
@@ -690,7 +723,7 @@ const FeaturedProducts = () => {
         </div>
 
         {/* View All Button */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={controls}
           transition={{ delay: 0.8 }}
@@ -699,13 +732,13 @@ const FeaturedProducts = () => {
           <Link href="/products?featured=true">
             <Button
               variant="outline"
-              className="group text-sm sm:text-base border border-[#2E297D] text-[#2E297D] hover:bg-[#2E297D] hover:text-white px-5 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 transition-all duration-300"
+              className="group text-sm sm:text-base border bg-[#2E297D] border-[#2E297D] text-[#2E297D] hover:bg-[#2E297D] hover:text-white px-5 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 transition-all duration-300"
             >
               <span>View All Featured Products</span>
               <ChevronRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Link>
-        </motion.div>
+        </motion.div> */}
 
         {/* Mobile Navigation Dots */}
         {products.length > itemsPerSlide && (
@@ -726,7 +759,7 @@ const FeaturedProducts = () => {
         )}
 
         {/* Mobile Navigation Arrows */}
-        {products.length > itemsPerSlide && (
+        {/* {products.length > itemsPerSlide && (
           <div className="flex sm:hidden justify-between items-center mt-6">
             <Button
               onClick={prevSlide}
@@ -748,7 +781,7 @@ const FeaturedProducts = () => {
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
-        )}
+        )} */}
       </div>
     </section>
   );

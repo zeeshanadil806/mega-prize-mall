@@ -128,11 +128,11 @@ export default function CartPage() {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <ShoppingCart className="h-24 w-24 text-muted-foreground mx-auto mb-6" />
-        <h1 className="text-3xl font-bold mb-4">Your cart is empty</h1>
+        <h1 className="text-3xl font-bold mb-4 text-[#7C2C78]">Your cart is empty</h1>
         <p className="text-muted-foreground mb-8 max-w-md mx-auto">
           Looks like you haven&apos;t added any products to your cart yet.
         </p>
-        <Link href="/products">
+        <Link href="/products" className="bg-linear-to-r from-[#7C2C78] to-[#A43875]">
           <Button size="lg" className="gap-2">
             <ShoppingBag className="h-5 w-5" />
             Start Shopping

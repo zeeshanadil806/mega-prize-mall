@@ -11,11 +11,13 @@ import {
   Sparkles,
   ChevronRight,
   Star,
+  Eye,
   //   Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
+import Image from "next/image";
 
 interface Product {
   _id: string;
@@ -275,176 +277,180 @@ const NewArrivals = () => {
 
         {/* New Arrivals Grid */}
         <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate={inView ? "visible" : "hidden"}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6"
-        >
-          {products.slice(0, 4).map((product) => {
-            const discountPercentage = product.discountedPrice
-              ? Math.round(
-                  ((product.price - product.discountedPrice) / product.price) *
-                    100
-                )
-              : 0;
+  variants={containerVariants}
+  initial="hidden"
+  animate={inView ? "visible" : "hidden"}
+  className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6"
+>
+  {products.slice(0, 5).map((product) => {
+    const discountPercentage = product.discountedPrice
+      ? Math.round(
+          ((product.price - product.discountedPrice) / product.price) *
+            100
+        )
+      : 0;
 
-            return (
-              <motion.div
-                key={product._id}
-                variants={itemVariants}
-                whileHover="hover"
-                className="group h-full"
-              >
-                <div className="relative bg-white rounded-lg sm:rounded-xl lg:rounded-2xl border border-gray-200 overflow-hidden shadow-md sm:shadow-lg hover:shadow-xl lg:hover:shadow-2xl transition-all duration-300 h-full flex flex-col">
-                  {/* New Badge */}
-                  <div className="absolute top-2 sm:top-3 lg:top-4 left-2 sm:left-3 lg:left-4 z-10">
-                    <div className="px-2 sm:px-3 py-1 rounded-full bg-linear-to-r from-[#2E297D] to-[#7C2C78] text-white text-xs font-bold shadow-md sm:shadow-lg flex items-center gap-1">
-                      <Sparkles className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-                      <span className="hidden xs:inline">NEW</span>
-                      <span className="xs:hidden">NEW</span>
-                    </div>
-                  </div>
+    return (
+      <motion.div
+        key={product._id}
+        variants={itemVariants}
+        whileHover="hover"
+        className="group h-full"
+      >
+        <div className="relative bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 h-full flex flex-col">
+          {/* New Badge */}
+          <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 md:top-3 md:left-3 z-10">
+            <div className="px-1.5 py-0.5 sm:px-2 sm:py-1 md:px-2.5 md:py-1 rounded-full bg-linear-to-r from-[#2E297D] to-[#7C2C78] text-white text-[10px] sm:text-xs font-bold shadow-sm flex items-center gap-0.5 sm:gap-1">
+              <Sparkles className="hidden xs:inline h-2.5 w-2.5 sm:h-3 sm:w-3" />
+              <span className="hidden xs:inline">NEW</span>
+              <span className="xs:hidden">NEW</span>
+            </div>
+          </div>
 
-                  {/* Arrival Time */}
-                  {/* <div className="absolute top-2 sm:top-3 lg:top-4 right-2 sm:right-3 lg:right-4 z-10">
-                    <div className="px-2 sm:px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-medium shadow-md sm:shadow-lg">
-                      {getArrivalTime(product.createdAt)}
-                    </div>
-                  </div> */}
+          {/* Bargain Badge */}
+          {product.bargainEnabled && (
+            <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 md:top-3 md:right-3 z-10">
+              <div className="px-1.5 py-0.5 sm:px-2 sm:py-1 md:px-2.5 md:py-1 rounded-full bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white text-[10px] sm:text-xs font-bold shadow-sm flex items-center gap-0.5 sm:gap-1">
+                <Tag className="hidden xs:inline h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                <span className="hidden xs:inline">Bargain</span>
+                <span className="xs:hidden">B</span>
+              </div>
+            </div>
+          )}
 
-                  {/* Bargain Badge */}
-                  {product.bargainEnabled && (
-                    <div className="absolute top-10 sm:top-12 lg:top-14 left-2 sm:left-3 lg:left-4 z-10">
-                      <div className="px-2 sm:px-3 py-1 rounded-full bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white text-xs font-bold shadow-md sm:shadow-lg flex items-center gap-1">
-                        <Tag className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-                        <span className="hidden xs:inline">Bargain</span>
-                        <span className="xs:hidden">Bargain</span>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Product Image */}
-                  <Link
-                    href={`/products/${product.slug}`}
-                    className="shrink-0"
-                  >
-                    <div className="relative h-40 sm:h-44 md:h-48 lg:h-56 overflow-hidden bg-linear-to-br from-gray-100 to-gray-200">
-                      {/* Image or Icon */}
-                      {product.images?.[0]?.url ? (
-                        <div
-                          className="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-300"
-                          style={{
-                            backgroundImage: `url(${product.images[0].url})`,
-                          }}
-                        />
-                      ) : (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="h-32 w-32 sm:h-36 sm:w-36 lg:h-40 lg:w-40 rounded-xl sm:rounded-2xl bg-linear-to-br from-white to-gray-100 shadow-inner flex items-center justify-center">
-                            <div className="text-2xl sm:text-3xl lg:text-4xl">
-                              {getCategoryIcon(product.category)}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Overlay */}
-                      <div className="absolute inset-0 bg-linear-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    </div>
-                  </Link>
-
-                  {/* Product Info */}
-                  <div className="p-3 sm:p-4 lg:p-6 grow flex flex-col">
-                    {/* Category */}
-                    <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1 truncate">
-                      {product.category}
-                    </div>
-
-                    {/* Product Name */}
-                    <Link
-                      href={`/products/${product.slug}`}
-                      className="mb-1 sm:mb-2"
-                    >
-                      <h3 className="font-bold text-gray-900 text-sm sm:text-base lg:text-lg line-clamp-1 hover:text-[#7C2C78] transition-colors">
-                        {product.name}
-                      </h3>
-                    </Link>
-
-                    {/* Brand */}
-                    {/* <div className="text-xs sm:text-sm text-gray-600 mb-2 lg:mb-3">
-                      {product.brand}
-                    </div> */}
-
-                    {/* Rating - Hide on mobile, show on tablet+ */}
-                    {/* <div className="hidden sm:flex items-center gap-2 mb-3 sm:mb-4">
-                      <div className="flex items-center gap-1">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-3 w-3 sm:h-3.5 sm:w-3.5 ${
-                              i < 4
-                                ? "text-[#EAB75F] fill-current"
-                                : "text-gray-300"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <span className="text-xs sm:text-sm text-gray-600">
-                        4.5
-                      </span>
-                    </div> */}
-
-                    {/* Price */}
-                    <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-5 lg:mb-6 mt-auto">
-                      <span className="text-lg sm:text-xl lg:text-2xl font-bold text-[#A43875]">
-                        {formatCurrency(
-                          product.discountedPrice || product.price
-                        )}
-                      </span>
-                      {product.discountedPrice && (
-                        <>
-                          <span className="text-base sm:text-lg text-gray-400 line-through hidden sm:block">
-                            {formatCurrency(product.price)}
-                          </span>
-                          <span className="px-2 py-1 rounded bg-linear-to-r from-[#EAB75F]/20 to-[#FF9F45]/20 text-[#EAB75F] text-xs font-bold">
-                            -{discountPercentage}%
-                          </span>
-                        </>
-                      )}
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex gap-2 sm:gap-3">
-                      <Button
-                        size="sm"
-                        className="flex-1 text-xs sm:text-sm bg-linear-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] text-white h-8 sm:h-9 lg:h-10"
-                        disabled={product.stock === 0}
-                      >
-                        <ShoppingBag className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1.5" />
-                        Add to Cart
-                      </Button>
-
-                      {product.bargainEnabled && (
-                        <Link
-                          href={`/products/${product.slug}?bargain=true`}
-                          className="flex-1"
-                        >
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full text-xs sm:text-sm border-[#2E297D] text-[#2E297D] hover:bg-[#2E297D]/10 h-8 sm:h-9 lg:h-10"
-                          >
-                            <Tag className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1.5" />
-                            Bargain
-                          </Button>
-                        </Link>
-                      )}
-                    </div>
+          {/* Product Image */}
+          <Link
+            href={`/products/${product.slug}`}
+            className="shrink-0"
+          >
+            <div className="relative h-32 xs:h-36 sm:h-40 md:h-44 lg:h-48 xl:h-52 overflow-hidden bg-gray-100">
+              {product.images?.[0]?.url ? (
+                <Image
+                  src={product.images[0].url}
+                  alt={product.images[0].alt || product.name}
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  sizes="(max-width: 640px) 50vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
+                />
+              ) : (
+                <div
+                  className={`absolute inset-0 flex items-center justify-center`}
+                >
+                  <div className="text-2xl sm:text-3xl md:text-4xl">
+                    {getCategoryIcon(product.category)}
                   </div>
                 </div>
-              </motion.div>
-            );
-          })}
-        </motion.div>
+              )}
+
+              {/* Quick View Overlay - Only show on desktop */}
+              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden md:flex items-center justify-center">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="bg-white text-gray-900 hover:bg-gray-100 text-xs"
+                >
+                  <Eye className="h-3 w-3 mr-1.5" />
+                  Quick View
+                </Button>
+              </div>
+            </div>
+          </Link>
+
+          {/* Product Info */}
+          <div className="p-2 sm:p-3 md:p-4 grow flex flex-col">
+            {/* Category */}
+            <div className="text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wide mb-1 truncate">
+              {product.category}
+            </div>
+
+            {/* Product Name */}
+            <Link
+              href={`/products/${product.slug}`}
+              className="mb-1 sm:mb-1.5 md:mb-2"
+            >
+              <h3 className="font-bold text-gray-900 text-xs sm:text-sm md:text-base line-clamp-1 sm:line-clamp-2 hover:text-[#7C2C78] transition-colors">
+                {product.name}
+              </h3>
+            </Link>
+
+            {/* Price */}
+            <div className="flex items-center gap-1 sm:gap-2 mb-2 sm:mb-3 md:mb-4 mt-auto">
+              <span className="text-sm sm:text-base md:text-lg font-bold text-[#A43875]">
+                {formatCurrency(
+                  product.discountedPrice || product.price
+                )}
+              </span>
+              {product.discountedPrice && (
+                <>
+                  <span className="text-xs sm:text-sm md:text-base text-gray-400 line-through hidden sm:block">
+                    {formatCurrency(product.price)}
+                  </span>
+                  <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 rounded bg-linear-to-r from-[#EAB75F]/20 to-[#FF9F45]/20 text-[#EAB75F] text-[10px] sm:text-xs font-bold">
+                    -{discountPercentage}%
+                  </span>
+                </>
+              )}
+            </div>
+
+            {/* Stock Status */}
+            <div className="flex items-center justify-between mb-2 sm:mb-3 md:mb-4">
+              <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2">
+                <div
+                  className={`h-1.5 w-1.5 sm:h-2 sm:w-2 md:h-2.5 md:w-2.5 rounded-full ${
+                    product.stock > 10
+                      ? "bg-green-500"
+                      : product.stock > 0
+                      ? "bg-yellow-500"
+                      : "bg-red-500"
+                  }`}
+                />
+                <span className="text-[10px] sm:text-xs md:text-sm text-gray-600">
+                  {product.stock > 10
+                    ? "In Stock"
+                    : product.stock > 0
+                    ? product.stock <= 5 
+                      ? `${product.stock} left`
+                      : `Only ${product.stock} left`
+                    : "Out of Stock"}
+                </span>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-1.5 sm:gap-2 mt-auto">
+              <Button
+                size="sm"
+                className="flex-1 text-[10px] sm:text-xs md:text-sm bg-linear-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] text-white h-7 sm:h-8 md:h-9 lg:h-10"
+                disabled={product.stock === 0}
+              >
+                <ShoppingBag className="hidden xs:inline h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-3.5 md:w-3.5 mr-1" />
+                <span className="hidden xs:inline">Add to Cart</span>
+                <span className="xs:hidden">Cart</span>
+              </Button>
+
+              {product.bargainEnabled && (
+                <Link
+                  href={`/products/${product.slug}?bargain=true`}
+                  className="flex-1"
+                >
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full text-[10px] sm:text-xs md:text-sm border-[#2E297D] text-[#2E297D] hover:bg-[#2E297D]/10 h-7 sm:h-8 md:h-9 lg:h-10"
+                  >
+                    <Tag className="hidden xs:inline h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-3.5 md:w-3.5 mr-1" />
+                    <span className="hidden xs:inline">Bargain</span>
+                    <span className="xs:hidden">Deal</span>
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    );
+  })}
+</motion.div>
 
         {/* View More Button if more than 4 products */}
         {products.length > 4 && (

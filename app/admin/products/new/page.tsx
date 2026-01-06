@@ -5,7 +5,7 @@ import { redirect } from "next/navigation"
 export default async function NewProductPage() {
   const session = await auth()
   
-  if (!session?.user || session.user.role !== "admin") {
+if (!session?.user || (session.user.role !== "admin" && session.user.role !== "support")) {
     redirect("/login")
   }
 

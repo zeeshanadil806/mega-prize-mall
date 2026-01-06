@@ -44,9 +44,9 @@ import { ImageProps, ProductProps } from "@/types"
 const CATEGORIES = [
   "Mobile Cases",
   "Screen Protectors",
-  "Chargers & Cables",
+  "Chargers and Cables",
   "Power Banks",
-  "Earphones & Headphones",
+  "Earphones and Headphones",
   "Smart Watches",
   "Mobile Holders",
   "Other Accessories"

@@ -13,7 +13,7 @@ export default async function CouponsPage() {
   const session = await auth();
   
   // Redirect if not admin
-  if (!session?.user || session.user.role !== 'admin') {
+if (!session?.user || (session.user.role !== "admin" && session.user.role !== "support")) {
     redirect('/admin');
   }
   

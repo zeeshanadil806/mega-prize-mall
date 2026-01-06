@@ -12,6 +12,7 @@ interface ProductGridProps {
     maxPrice?: string;
     sortBy?: string;
     search?: string;
+    bargain?: string;
   };
 }
 
@@ -29,6 +30,10 @@ export default async function ProductGrid({ searchParams }: ProductGridProps) {
   if (searchParams.category) {
     filter.category = searchParams.category;
   }
+  // Add bargain filter
+if (searchParams.bargain === 'true') {
+  filter.bargainEnabled = true;
+}
   
   if (searchParams.minPrice || searchParams.maxPrice) {
     filter.price = {};
@@ -89,7 +94,7 @@ let sort: Record<string, SortOrder> = { createdAt: -1 };  switch (searchParams.s
   return (
     <>
       {/* Product Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {products.map((product) => (
           <ProductCard 
             key={product._id.toString()} 

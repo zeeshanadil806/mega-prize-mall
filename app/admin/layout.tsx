@@ -4,7 +4,6 @@ import AdminSidebar from "@/components/admin/AdminSidebar"
 import AdminHeader from "@/components/admin/AdminHeader"
 import { auth } from "@/auth"
 import { redirect } from "next/navigation"
-import { Toaster } from "sonner"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -25,7 +24,7 @@ export default async function AdminLayout({
     redirect("/login")
   }
   
-  if (session.user.role !== "admin") {
+  if (session.user.role !== "admin" && session.user.role !== "support") {
     redirect("/dashboard")
   }
 

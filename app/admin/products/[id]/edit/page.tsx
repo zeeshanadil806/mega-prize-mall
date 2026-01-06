@@ -11,7 +11,7 @@ export default async function EditProductPage({
 }) {
   const session = await auth()
   
-  if (!session?.user || session.user.role !== "admin") {
+if (!session?.user || (session.user.role !== "admin" && session.user.role !== "support")) {
     redirect("/login")
   }
 

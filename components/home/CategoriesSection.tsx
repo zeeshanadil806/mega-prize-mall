@@ -25,67 +25,67 @@ import { Button } from "@/components/ui/button";
 
 // Category configuration with icons and colors
 const CATEGORY_CONFIG = {
-  "mobile-accessories": {
+  "Mobile Accessories": {
     name: "Mobile Accessories",
     icon: Smartphone,
     color: "from-[#7C2C78] to-[#A43875]",
   },
-  "gaming-accessories": {
+  "Gaming Accessories": {
     name: "Gaming Accessories",
     icon: Gamepad2,
     color: "from-[#2E297D] to-[#7C2C78]",
   },
-  "audio-multimedia": {
-    name: "Audio & Multimedia",
+  "Audio and Multimedia": {
+    name: "Audio and Multimedia",
     icon: Headphones,
     color: "from-[#A43875] to-[#EAB75F]",
   },
-  "pc-laptop-accessories": {
-    name: "PC & Laptop Accessories",
+  "PC and Laptop Accessories": {
+    name: "PC and Laptop Accessories",
     icon: Laptop,
     color: "from-[#EAB75F] to-[#FF9F45]",
   },
-  "smart-wearables": {
+  "Smart Wearables": {
     name: "Smart Wearables",
     icon: Watch,
     color: "from-[#2E297D] to-[#A43875]",
   },
-  "content-creation": {
-    name: "Content Creation",
+  "Content Creation": {
+    name: "Content Creation and Vlogging",
     icon: Camera,
     color: "from-[#7C2C78] to-[#2E297D]",
   },
-  "tv-accessories": {
+  "Tv Accessories": {
     name: "TV Accessories",
     icon: Tv,
     color: "from-[#A43875] to-[#7C2C78]",
   },
-  "connectivity-accessories": {
+  "Connectivity Accessories": {
     name: "Connectivity Accessories",
     icon: Wifi,
     color: "from-[#EAB75F] to-[#2E297D]",
   },
-  "mobile-cases": {
+  "Mobile Cases": {
     name: "Mobile Cases",
     icon: Shield,
     color: "from-[#7C2C78] to-[#EAB75F]",
   },
-  "screen-protectors": {
+  "Screen Protectors": {
     name: "Screen Protectors",
     icon: Shield,
     color: "from-[#2E297D] to-[#A43875]",
   },
-  "power-charging": {
-    name: "Power & Charging",
+  "Power Charging": {
+    name: "Charging & cables",
     icon: Battery,
     color: "from-[#EAB75F] to-[#7C2C78]",
   },
-  "mobile-holders": {
+  "Mobile Holders": {
     name: "Mobile Holders",
     icon: SmartphoneCharging,
     color: "from-[#A43875] to-[#2E297D]",
   },
-  "other-accessories": {
+  "Other Accessories": {
     name: "Other Accessories",
     icon: Package,
     color: "from-[#7C2C78] to-[#EAB75F]",
@@ -385,22 +385,24 @@ const CategoriesSection = () => {
 
         {/* View All Categories Button */}
         <motion.div
-          initial={{ opacity: 1, y: 20 }}
-          //   animate={controls}
-          transition={{ delay: 0.5 }}
-          className="text-center mt-12"
-        >
-          <Link href="/categories">
-            <Button
-              size="lg"
-              variant="outline"
-              className="group border-2 border-[#2E297D] text-[#2E297D] hover:bg-[#2E297D] hover:text-white px-8 py-6 text-lg transition-all duration-300"
-            >
-              <span>View All Categories</span>
-              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </Link>
-        </motion.div>
+  initial={{ opacity: 1, y: 20 }}
+  transition={{ delay: 0.5 }}
+  className="text-center mt-6 sm:mt-8 md:mt-10 lg:mt-12"
+>
+  <Link href="/categories">
+    <Button
+      size="lg"
+      variant="outline"
+      className="group border-2 border-[#2E297D] text-[#2E297D] hover:bg-[#2E297D] hover:text-white transition-all duration-300 mb-2"
+    >
+      {/* Responsive padding and text size */}
+      <span className="px-5 py-2.5 sm:px-7 sm:py-3 md:px-8 md:py-4 text-sm sm:text-base md:text-lg font-medium">
+        View All Categories
+        <ArrowRight className="ml-1.5 sm:ml-2 md:ml-2.5 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 group-hover:translate-x-0.5 sm:group-hover:translate-x-1 transition-transform inline-block" />
+      </span>
+    </Button>
+  </Link>
+</motion.div>
       </div>
     </section>
   );

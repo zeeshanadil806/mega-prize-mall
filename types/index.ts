@@ -132,6 +132,7 @@ export interface BargainHistoryItem {
 
 export interface ProductFilter {
   isActive?: boolean;
+  bargainEnabled?: boolean;
   category?: string;
   price?: {
     $gte?: number;
