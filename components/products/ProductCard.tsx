@@ -53,7 +53,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       )}
       
       {/* Product Image */}
-      <div className="relative h-48 w-full mb-4 overflow-hidden rounded-lg bg-gray-100">
+      <div className="relative h-44 xs:h-36 sm:h-40 md:h-44 lg:h-48 xl:h-52 overflow-hidden bg-gray-100">
         {mainImage ? (
           <Image
             src={mainImage}
@@ -64,7 +64,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             loading="lazy"
           />
         ) : (
-          <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+          <div className="h-full w-full flex items-center justify-center bg-linear-to-br from-gray-100 to-gray-200">
             <div className="text-gray-400">
               <svg className="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -78,9 +78,9 @@ export default function ProductCard({ product }: ProductCardProps) {
       <div className="space-y-2">
         {/* Category */}
         <div className="flex items-center justify-between">
-          <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+          {/* <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
             {product.category}
-          </span>
+          </span> */}
           {product.purchaseCount > 0 && (
             <span className="text-xs text-gray-500">
               {product.purchaseCount} sold
@@ -94,9 +94,9 @@ export default function ProductCard({ product }: ProductCardProps) {
         </h3>
         
         {/* Brand */}
-        {product.brand && (
+        {/* {product.brand && (
           <p className="text-sm text-gray-600">Brand: {product.brand}</p>
-        )}
+        )} */}
         
         {/* Price */}
         <div className="flex items-center justify-between mb-2 sm:mb-3 mt-auto">

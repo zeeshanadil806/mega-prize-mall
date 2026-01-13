@@ -40,6 +40,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { useEffect } from "react";
+import Link from "next/link";
 
 interface WarrantyType {
   id: string;
@@ -810,7 +811,7 @@ export default function WarrantyPolicyPage() {
               </h2>
               <div className="flex flex-wrap gap-2">
                 {sections.map((section) => (
-                  <a
+                  <Link
                     key={section.id}
                     href={`#${section.id}`}
                     className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm font-medium transition-colors"
@@ -818,15 +819,15 @@ export default function WarrantyPolicyPage() {
                   >
                     <section.icon className="h-4 w-4" />
                     {section.title}
-                  </a>
+                  </Link>
                 ))}
-                <a
+                <Link
                   href="#contact"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-[#7C2C78] text-white hover:bg-[#A43875] rounded-full text-sm font-medium transition-colors"
                 >
                   <HelpCircle className="h-4 w-4" />
                   Support Contact
-                </a>
+                </Link>
               </div>
             </nav>
 
@@ -1312,12 +1313,12 @@ export default function WarrantyPolicyPage() {
                     </div>
                     <div className="space-y-3">
                       <div>
-                        <a
+                        <Link
                           href="mailto:support@megaprizemall.com"
                           className="font-medium text-blue-700 hover:text-blue-800 hover:underline"
                         >
                           support@megaprizemall.com
-                        </a>
+                        </Link>
                       </div>
                       <div className="flex items-center gap-2">
                         <Clock className="h-4 w-4 text-gray-500" />
@@ -1346,7 +1347,7 @@ export default function WarrantyPolicyPage() {
                     </div>
                     <div className="space-y-3">
                       <div>
-                        <a
+                        <Link
                           href="https://wa.me/923254007037"
                           target="_blank"
                           rel="noopener noreferrer"
@@ -1354,7 +1355,7 @@ export default function WarrantyPolicyPage() {
                         >
                           +92 325 4007037
                           <ExternalLink className="h-3 w-3" />
-                        </a>
+                        </Link>
                       </div>
                       <div className="flex items-center gap-2">
                         <Clock className="h-4 w-4 text-gray-500" />

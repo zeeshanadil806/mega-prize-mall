@@ -38,6 +38,6 @@ export default async function OrderSuccessPage({ searchParams }: OrderSuccessPag
   if (!order) {
     redirect('/orders');
   }
-  
-  return <OrderSuccessClient order={order} />;
+  const orderPlain = JSON.parse(JSON.stringify(order));
+  return <OrderSuccessClient order={orderPlain} />;
 }

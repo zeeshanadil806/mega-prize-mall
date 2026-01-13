@@ -22,7 +22,6 @@ import {
   ArrowUp,
   Home,
   ExternalLink,
-  Calendar,
   Clock,
   Users,
   Bell,
@@ -41,6 +40,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 interface CookieType {
   id: string;
@@ -598,38 +598,38 @@ export default function CookiePolicyPage() {
     },
   ];
 
-  const cookieLifespan = [
-    {
-      type: "Session Cookies",
-      duration: "Browser session",
-      purpose: "Temporary functionality",
-      deletable: "Automatic",
-    },
-    {
-      type: "Authentication",
-      duration: "30 days",
-      purpose: "Login persistence",
-      deletable: "Manual/Auto",
-    },
-    {
-      type: "Analytics",
-      duration: "24 months",
-      purpose: "Performance tracking",
-      deletable: "Manual",
-    },
-    {
-      type: "Preferences",
-      duration: "12 months",
-      purpose: "User settings",
-      deletable: "Manual",
-    },
-    {
-      type: "Advertising",
-      duration: "18 months",
-      purpose: "Marketing optimization",
-      deletable: "Manual",
-    },
-  ];
+  // const cookieLifespan = [
+  //   {
+  //     type: "Session Cookies",
+  //     duration: "Browser session",
+  //     purpose: "Temporary functionality",
+  //     deletable: "Automatic",
+  //   },
+  //   {
+  //     type: "Authentication",
+  //     duration: "30 days",
+  //     purpose: "Login persistence",
+  //     deletable: "Manual/Auto",
+  //   },
+  //   {
+  //     type: "Analytics",
+  //     duration: "24 months",
+  //     purpose: "Performance tracking",
+  //     deletable: "Manual",
+  //   },
+  //   {
+  //     type: "Preferences",
+  //     duration: "12 months",
+  //     purpose: "User settings",
+  //     deletable: "Manual",
+  //   },
+  //   {
+  //     type: "Advertising",
+  //     duration: "18 months",
+  //     purpose: "Marketing optimization",
+  //     deletable: "Manual",
+  //   },
+  // ];
 
   // Add structured data to page
   useEffect(() => {
@@ -1027,7 +1027,7 @@ export default function CookiePolicyPage() {
                         <h4 className="font-semibold text-gray-900">
                           {browser.browser}
                         </h4>
-                        <a
+                        <Link
                           href={browser.url}
                           target="_blank"
                           rel="noopener noreferrer"
@@ -1035,7 +1035,7 @@ export default function CookiePolicyPage() {
                         >
                           Official Guide
                           <ExternalLink className="h-3 w-3" />
-                        </a>
+                        </Link>
                       </div>
                     </div>
                     <ol className="space-y-2">
@@ -1080,7 +1080,7 @@ export default function CookiePolicyPage() {
               </h2>
               <div className="flex flex-wrap gap-2">
                 {sections.map((section) => (
-                  <a
+                  <Link
                     key={section.id}
                     href={`#${section.id}`}
                     className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm font-medium transition-colors"
@@ -1088,15 +1088,15 @@ export default function CookiePolicyPage() {
                   >
                     <section.icon className="h-4 w-4" />
                     {section.title}
-                  </a>
+                  </Link>
                 ))}
-                <a
+                <Link
                   href="#contact"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-[#7C2C78] text-white hover:bg-[#A43875] rounded-full text-sm font-medium transition-colors"
                 >
                   <Mail className="h-4 w-4" />
                   Contact Support
-                </a>
+                </Link>
               </div>
             </nav>
 
@@ -1396,12 +1396,12 @@ export default function CookiePolicyPage() {
                             <span className="font-medium block">
                               Email Support:
                             </span>
-                            <a
+                            <Link
                               href="mailto:support@megaprizemall.com"
                               className="text-white/90 hover:text-white"
                             >
                               support@megaprizemall.com
-                            </a>
+                            </Link>
                           </div>
                         </div>
                         <div className="flex items-start gap-3">
@@ -1410,12 +1410,12 @@ export default function CookiePolicyPage() {
                             <span className="font-medium block">
                               Privacy Portal:
                             </span>
-                            <a
+                            <Link
                               href="https://megaprizemall.com/privacy-policy"
                               className="text-white/90 hover:text-white"
                             >
                               megaprizemall.com/privacy-policy
-                            </a>
+                            </Link>
                           </div>
                         </div>
                       </div>
@@ -1437,12 +1437,12 @@ export default function CookiePolicyPage() {
                             <span className="font-medium block">
                               Data Protection Officer:
                             </span>
-                            <a
+                            <Link
                               href="mailto:support@megaprizemall.com"
                               className="text-white/90 hover:text-white"
                             >
                               support@megaprizemall.com
-                            </a>
+                            </Link>
                           </div>
                         </div>
                       </div>

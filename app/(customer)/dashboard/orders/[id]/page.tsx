@@ -85,7 +85,6 @@ export default async function OrderDetailPage({
   return (
     <OrderDetailClient 
       order={JSON.parse(JSON.stringify(enhancedOrder))}
-      userId={session.user.id}
     />
   );
 }

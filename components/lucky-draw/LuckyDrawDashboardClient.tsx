@@ -380,10 +380,10 @@ export function LuckyDrawDashboardClient({
                     }
                   </div>
                   <Button variant="outline" asChild>
-                    <a href={`/dashboard/lucky-draw/${draw.id}`}>
+                    <Link href={`/dashboard/lucky-draw/${draw.id}`}>
                       View Details
                       <ArrowRight className="h-4 w-4 ml-2" />
-                    </a>
+                    </Link>
                   </Button>
                 </CardFooter>
               </Card>

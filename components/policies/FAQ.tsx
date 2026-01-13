@@ -39,6 +39,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { useState, useEffect, useMemo } from "react";
+import Link from "next/link";
 
 interface FAQCategory {
   id: string;
@@ -1175,19 +1176,19 @@ export default function FAQPage() {
                           <Mail className="h-5 w-5" />
                           <div>
                             <p className="font-medium">Email Support</p>
-                            <a
+                            <Link
                               href="mailto:support@megaprizemall.com"
                               className="text-white/90 hover:text-white"
                             >
                               support@megaprizemall.com
-                            </a>
+                            </Link>
                           </div>
                         </li>
                         <li className="flex items-center gap-3">
                           <MessageCircle className="h-5 w-5" />
                           <div>
                             <p className="font-medium">WhatsApp</p>
-                            <a
+                            <Link
                               href="https://wa.me/923254007037"
                               target="_blank"
                               rel="noopener noreferrer"
@@ -1195,7 +1196,7 @@ export default function FAQPage() {
                             >
                               +92 325 4007037
                               <ExternalLink className="h-3 w-3" />
-                            </a>
+                            </Link>
                           </div>
                         </li>
                       </ul>
@@ -1242,7 +1243,7 @@ export default function FAQPage() {
                   📚 Related Resources & Policies
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <a href="/privacy-policy" className="group">
+                  <Link href="/privacy-policy" className="group">
                     <div className="bg-white rounded-xl p-4 border border-gray-200 hover:border-[#7C2C78] transition-colors h-full">
                       <div className="flex items-center gap-3 mb-2">
                         <Shield className="h-5 w-5 text-gray-600 group-hover:text-[#7C2C78] transition-colors" />
@@ -1254,8 +1255,8 @@ export default function FAQPage() {
                         How we protect your personal data and privacy rights
                       </p>
                     </div>
-                  </a>
-                  <a href="/terms-and-conditions" className="group">
+                  </Link>
+                  <Link href="/terms-and-conditions" className="group">
                     <div className="bg-white rounded-xl p-4 border border-gray-200 hover:border-[#7C2C78] transition-colors h-full">
                       <div className="flex items-center gap-3 mb-2">
                         <FileText className="h-5 w-5 text-gray-600 group-hover:text-[#7C2C78] transition-colors" />
@@ -1267,8 +1268,8 @@ export default function FAQPage() {
                         Complete terms of service and platform usage guidelines
                       </p>
                     </div>
-                  </a>
-                  <a href="/warranty-policy" className="group">
+                  </Link>
+                  <Link href="/warranty-policy" className="group">
                     <div className="bg-white rounded-xl p-4 border border-gray-200 hover:border-[#7C2C78] transition-colors h-full">
                       <div className="flex items-center gap-3 mb-2">
                         <Package className="h-5 w-5 text-gray-600 group-hover:text-[#7C2C78] transition-colors" />
@@ -1280,8 +1281,8 @@ export default function FAQPage() {
                         Detailed product warranty coverage and claim procedures
                       </p>
                     </div>
-                  </a>
-                  <a href="/returns-refunds-policy" className="group">
+                  </Link>
+                  <Link href="/returns-refunds-policy" className="group">
                     <div className="bg-white rounded-xl p-4 border border-gray-200 hover:border-[#7C2C78] transition-colors h-full">
                       <div className="flex items-center gap-3 mb-2">
                         <RefreshCw className="h-5 w-5 text-gray-600 group-hover:text-[#7C2C78] transition-colors" />
@@ -1293,7 +1294,7 @@ export default function FAQPage() {
                         Comprehensive return, exchange, and refund procedures
                       </p>
                     </div>
-                  </a>
+                  </Link>
                 </div>
               </section>
 

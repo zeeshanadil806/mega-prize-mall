@@ -22,6 +22,7 @@ import {
   PartyPopper,
 } from 'lucide-react';
 import { formatCurrency } from '@/lib/bargain-utils';
+import Link from 'next/link';
 
 interface DrawEntry {
   _id: string;
@@ -247,10 +248,10 @@ export function SpinWheelClient({ draw, entries }: SpinWheelClientProps) {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
           <Button variant="ghost" size="sm" asChild className="mb-4">
-            <a href={`/admin/lucky-draw/${draw._id}`}>
+            <Link href={`/admin/lucky-draw/${draw._id}`}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Draw
-            </a>
+            </Link>
           </Button>
           
           <div className="flex items-center gap-3">

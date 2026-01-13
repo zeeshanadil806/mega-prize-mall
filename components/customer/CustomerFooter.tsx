@@ -203,14 +203,14 @@ export default function CustomerFooter() {
             </p>
             <p className="text-gray-500 text-xs">
               Developed and maintained by{" "}
-              <a
+              <Link
                 href="https://alphaintellisense.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#7C2C78] hover:underline font-medium"
               >
                 Alpha Intellisense
-              </a>
+              </Link>
             </p>
           </div>
 

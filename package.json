@@ -46,6 +46,7 @@
     "framer-motion": "^12.23.25",
     "jspdf": "^3.0.4",
     "jspdf-autotable": "^5.0.2",
+    "lru-cache": "^11.2.4",
     "lucide-react": "^0.556.0",
     "mongodb": "^6.21.0",
     "mongoose": "^9.0.0",

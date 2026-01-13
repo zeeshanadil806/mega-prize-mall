@@ -31,6 +31,7 @@ import {
   formatCurrency,
   calculateDiscountPercentage,
 } from "@/lib/bargain-utils";
+import { useTikTokTracking } from "@/hooks/useTikTokTracking";
 
 interface BargainModalProps {
   isOpen: boolean;
@@ -109,6 +110,7 @@ export default function BargainModal({
   const handleSliderChange = (value: number[]) => {
     setOfferPrice(value[0]);
   };
+  const { trackBargainAccepted ,trackBargainInitiated } = useTikTokTracking();
 
   // Handle bargain submission
   const handleBargainSubmit = async () => {
@@ -126,6 +128,12 @@ export default function BargainModal({
       toast.error("Offer must be less than current price");
       return;
     }
+    trackBargainInitiated(
+      product.id,
+      product.name,
+      currentPrice, // original price
+      offerPrice // user's offer
+    );
 
     setLoading(true);
     setProcessing(true);
@@ -151,6 +159,13 @@ export default function BargainModal({
       }
 
       if (data.success && data.data.status === "accepted") {
+        trackBargainAccepted(
+    product.id,
+    product.name,
+    currentPrice, // original price
+    offerPrice, // accepted price
+    data.data.couponId || data.data._id // bargain/coupon ID
+  );
         setResult({
           status: data.data.status,
           couponCode: data.data.couponCode,

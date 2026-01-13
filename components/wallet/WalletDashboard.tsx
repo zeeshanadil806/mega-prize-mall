@@ -19,6 +19,7 @@ import {
 } from "lucide-react"
 import { toast } from "sonner"
 import { formatCurrency, formatPoints } from "@/lib/bargain-utils"
+import Link from "next/link"
 
 interface WalletTransaction {
   id: string
@@ -363,10 +364,10 @@ export default function WalletDashboard() {
                   Start shopping to earn points!
                 </p>
                 <Button asChild className="bg-gradient-to-r from-[#7C2C78] to-[#A43875] text-white">
-                  <a href="/products">
+                  <Link href="/products">
                     <Coins className="h-4 w-4 mr-2" />
                     Start Shopping
-                  </a>
+                  </Link>
                 </Button>
               </div>
             ) : (
@@ -424,10 +425,10 @@ export default function WalletDashboard() {
             {transactions.length > 0 && (
               <div className="mt-6 text-center">
                 <Button variant="outline" asChild>
-                  <a href="/wallet/transactions">
+                  <Link href="/wallet/transactions">
                     View All Transactions
                     <ArrowRight className="h-4 w-4 ml-2" />
-                  </a>
+                  </Link>
                 </Button>
               </div>
             )}

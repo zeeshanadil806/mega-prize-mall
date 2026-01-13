@@ -29,6 +29,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { useEffect } from "react";
+import Link from "next/link";
 
 type SectionItem =
   | string
@@ -350,7 +351,7 @@ export default function PrivacyPolicyPage() {
               </h2>
               <div className="flex flex-wrap gap-2">
                 {sections.map((section) => (
-                  <a
+                  <Link
                     key={section.id}
                     href={`#${section.id}`}
                     className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm font-medium transition-colors"
@@ -358,15 +359,15 @@ export default function PrivacyPolicyPage() {
                   >
                     <section.icon className="h-4 w-4" />
                     {section.title}
-                  </a>
+                  </Link>
                 ))}
-                <a
+                <Link
                   href="#contact"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm font-medium transition-colors"
                 >
                   <Mail className="h-4 w-4" />
                   Contact Us
-                </a>
+                </Link>
               </div>
             </nav>
 
@@ -512,39 +513,39 @@ export default function PrivacyPolicyPage() {
                     <div className="space-y-4">
                       <div className="flex items-center gap-3">
                         <Mail className="h-5 w-5" />
-                        <a
+                        <Link
                           href="mailto:support@megaprizemall.com"
                           className="font-medium hover:underline"
                         >
                           Email: support@megaprizemall.com
-                        </a>
+                        </Link>
                       </div>
                       <div className="flex items-center gap-3">
                         <Mail className="h-5 w-5" />
-                        <a
+                        <Link
                           href="mailto:support@megaprizemall.com"
                           className="font-medium hover:underline"
                         >
                           DPO: support@megaprizemall.com
-                        </a>
+                        </Link>
                       </div>
                       <div className="flex items-center gap-3">
                         <Phone className="h-5 w-5" />
-                        <a
+                        <Link
                           href="tel:+923254007030"
                           className="font-medium hover:underline"
                         >
                           Phone: +92 325 4007037
-                        </a>
+                        </Link>
                       </div>
                       <div className="flex items-center gap-3">
                         <Globe className="h-5 w-5" />
-                        <a
+                        <Link
                           href="https://megaprizemall.com"
                           className="font-medium hover:underline"
                         >
                           Website: https://megaprizemall.com
-                        </a>
+                        </Link>
                       </div>
                       {/* <div className="mt-4">
                         <p className="text-sm text-white/80">

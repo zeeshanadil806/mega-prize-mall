@@ -548,45 +548,45 @@ const FeaturedProducts = () => {
                   {/* Product Badges - Mobile: Smaller, Desktop: Normal */}
                   <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 md:top-3 md:left-3 z-10 flex flex-col gap-1">
                     {product.discountPercentage > 0 && (
-                      <div className="px-1.5 py-0.5 sm:px-2 sm:py-1 md:px-2.5 md:py-1 rounded-full bg-linear-to-r from-[#EAB75F] to-[#FF9F45] text-white text-[10px] sm:text-xs font-bold shadow-sm">
+                      <div className="px-1.5 py-0.5 sm:px-2 sm:py-1 md:px-2.5 md:py-1 justify-center rounded-full bg-linear-to-r from-[#EAB75F] to-[#FF9F45] text-white text-[10px] sm:text-xs font-bold shadow-sm">
                         -{product.discountPercentage}%
                       </div>
                     )}
 
                     {product.bargainEnabled && (
-                      <div className="px-1.5 py-0.5 sm:px-2 sm:py-1 md:px-2.5 md:py-1 rounded-full bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white text-[10px] sm:text-xs font-bold shadow-sm flex items-center gap-0.5 sm:gap-1">
-                        <Tag className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                      <div className="px-1.5 py-0.5 sm:px-2 sm:py-1 md:px-2.5 md:py-1 rounded-full bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white text-[10px] sm:text-xs font-bold shadow-sm flex justify-center items-center gap-0.5 sm:gap-1">
+                        <Tag className="hidden xs:inline h-2.5 w-2.5 sm:h-3 sm:w-3" />
                         <span className="hidden xs:inline">Bargain</span>
-                        <span className="xs:hidden">B</span>
+                        <span className="xs:hidden">Deal</span>
                       </div>
                     )}
 
                     {product.isBestSeller && (
-                      <div className="px-1.5 py-0.5 sm:px-2 sm:py-1 md:px-2.5 md:py-1 rounded-full bg-linear-to-r from-[#2E297D] to-[#7C2C78] text-white text-[10px] sm:text-xs font-bold shadow-sm flex items-center gap-0.5 sm:gap-1">
+                      <div className="px-1.5 py-0.5 sm:px-2 sm:py-1 md:px-2.5 md:py-1 rounded-full bg-linear-to-r from-[#2E297D] to-[#7C2C78] text-white text-[10px] sm:text-xs font-bold shadow-sm flex items-center justify-center gap-0.5 sm:gap-1">
                         <Zap className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                         <span className="hidden sm:inline">Best</span>
-                        <span className="sm:hidden">BS</span>
+                        <span className="sm:hidden">Best</span>
                       </div>
                     )}
 
                     {product.isNewArrival && (
-                      <div className="px-1.5 py-0.5 sm:px-2 sm:py-1 md:px-2.5 md:py-1 rounded-full bg-linear-to-r from-[#A43875] to-[#EAB75F] text-white text-[10px] sm:text-xs font-bold shadow-sm">
-                        New
+                      <div className="px-1.5 py-0.5 sm:px-2 sm:py-1 md:px-2.5 md:py-1 rounded-full bg-linear-to-r from-[#2E297D] to-[#7C2C78] text-white text-[10px] sm:text-xs font-bold shadow-sm flex items-center justify-center gap-0.5 sm:gap-1">
+                        NEW
                       </div>
                     )}
                   </div>
 
                   {/* Wishlist Button */}
                   {/* <button
-          className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 md:top-3 md:right-3 z-10 h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white transition-colors"
-          aria-label="Add to wishlist"
-        >
-          <Heart className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 text-gray-600 hover:text-red-500" />
-        </button> */}
+                    className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 md:top-3 md:right-3 z-10 h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white transition-colors"
+                    aria-label="Add to wishlist"
+                  >
+                    <Heart className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 text-gray-600 hover:text-red-500" />
+                  </button> */}
 
                   {/* Product Image - Height adjusts based on screen */}
                   <Link href={`/products/${product.slug}`} className="shrink-0">
-                    <div className="relative h-32 xs:h-36 sm:h-40 md:h-44 lg:h-48 xl:h-52 overflow-hidden bg-gray-100">
+                    <div className="relative h-50 xs:h-36 sm:h-40 md:h-44 lg:h-48 xl:h-52 overflow-hidden bg-gray-100">
                       {product.images?.[0]?.url ? (
                         <Image
                           src={product.images[0].url}
@@ -625,14 +625,14 @@ const FeaturedProducts = () => {
                   {/* Product Info - Adjust padding and text sizes */}
                   <div className="p-2 sm:p-3 md:p-4 grow flex flex-col">
                     {/* Category & Brand - Mobile: smaller, tighter */}
-                    <div className="flex items-center justify-between mb-1 sm:mb-1.5 md:mb-2">
+                    {/* <div className="flex items-center justify-between mb-1 sm:mb-1.5 md:mb-2">
                       <span className="text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wide truncate pr-1">
                         {product.category}
                       </span>
                       <span className="text-[10px] sm:text-xs font-semibold text-[#2E297D] shrink-0">
                         {product.brand}
                       </span>
-                    </div>
+                    </div> */}
 
                     {/* Product Name - Mobile: 1 line, Desktop: 2 lines */}
                     <Link
@@ -708,9 +708,9 @@ const FeaturedProducts = () => {
                             size="sm"
                             className="w-full text-[10px] sm:text-xs md:text-sm border-[#2E297D] text-[#2E297D] hover:bg-[#2E297D]/10 h-7 sm:h-8 md:h-9 lg:h-10"
                           >
-              <Tag className="hidden xs:inline h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                            <Tag className="hidden xs:inline h-2.5 w-2.5 sm:h-3 sm:w-3" />
                             <span className="hidden xs:inline">Bargain</span>
-                            <span className="xs:hidden">Deal</span>
+                            <span className="xs:hidden">Bargain</span>
                           </Button>
                         </Link>
                       )}

@@ -64,6 +64,7 @@ const adminOnlyPatterns = [
   "/admin/support.*",      // Support accounts management
   "/admin/lucky-draw.*",   // Lucky draw management
   "/admin/settings.*",     // Settings (if you have)
+  "/test-tiktok",
 ];
 
 // Customer routes

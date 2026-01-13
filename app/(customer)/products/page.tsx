@@ -396,14 +396,14 @@ function ActiveFilters({
         }
 
         return (
-          <a
+          <Link
             key={key}
             href={removeFilter(key)}
             className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition-colors"
           >
             <span className="font-medium">{key}:</span> {displayValue}
             <span className="ml-1">×</span>
-          </a>
+          </Link>
         );
       })}
       {hasActiveFilters && (

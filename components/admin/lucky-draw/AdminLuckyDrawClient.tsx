@@ -497,9 +497,9 @@ export function AdminLuckyDrawClient({
                                 className="h-8 px-2"
                                 asChild
                               >
-                                <a href={`/admin/lucky-draw/${draw._id}`}>
+                                <Link href={`/admin/lucky-draw/${draw._id}`}>
                                   <Eye className="h-4 w-4" />
-                                </a>
+                                </Link>
                               </Button>
                               
                               {draw.status === 'draft' && (
@@ -520,10 +520,10 @@ export function AdminLuckyDrawClient({
                                   className="h-8"
                                   asChild
                                 >
-                                  <a href={`/admin/lucky-draw/${draw._id}/spin`}>
+                                  <Link href={`/admin/lucky-draw/${draw._id}/spin`}>
                                     <Trophy className="h-4 w-4 mr-1" />
                                     Spin
-                                  </a>
+                                  </Link>
                                 </Button>
                               )}
                             </div>

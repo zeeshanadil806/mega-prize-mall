@@ -35,7 +35,6 @@ import Image from 'next/image';
 
 interface OrderDetailClientProps {
   order: ClientOrder;
-  userId: string;
 }
 
 const statusSteps = [
@@ -57,7 +56,7 @@ const statusIndex: Record<string, number> = {
   refunded: -1,
 };
 
-export function OrderDetailClient({ order, userId }: OrderDetailClientProps) {
+export function OrderDetailClient({ order }: OrderDetailClientProps) {
   const router = useRouter();
   const [isCancelling, setIsCancelling] = useState(false);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
@@ -107,7 +106,7 @@ export function OrderDetailClient({ order, userId }: OrderDetailClientProps) {
     </div>
     
     <div className="flex flex-wrap gap-2 sm:gap-3 w-full lg:w-auto">
-      <InvoiceGenerator order={order} userId={userId} />
+      <InvoiceGenerator order={order} />
 
       <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
         <DialogTrigger asChild>

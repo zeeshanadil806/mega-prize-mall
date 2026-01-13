@@ -1,7 +1,7 @@
 // components/products/ProductDetailClient.tsx (Client Component)
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 // import Image from 'next/image';
 import { motion } from "framer-motion";
 import { toast } from "sonner";
@@ -36,6 +36,7 @@ import { ImageProps, CustomerProductProps } from "@/types";
 import Link from "next/link";
 import Image from "next/image";
 import ProductStructuredData from "./ProductStructuredData";
+import { useTikTokTracking } from "@/hooks/useTikTokTracking";
 
 interface ProductDetailClientProps {
   product: CustomerProductProps; // Product document from MongoDB
@@ -46,9 +47,21 @@ export default function ProductDetailClient({
   product,
 }: ProductDetailClientProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(1); 
   const [isWishlisted, setIsWishlisted] = useState(false);
   const getItem = useCartStore((state) => state.getItem);
+  const { trackProductView } = useTikTokTracking();
+
+useEffect(() => {
+  if (product._id && product.name && product.price) {
+    trackProductView(
+      product._id.toString(),
+      product.name,
+      product.discountedPrice || product.price,
+      'USD'
+    );
+  }
+}, [product._id, product.name, product.price, product.discountedPrice, trackProductView]);
 
   // Format product data for components
   const formattedProduct = {
@@ -61,7 +74,7 @@ export default function ProductDetailClient({
     maxBargainRounds: product.maxBargainRounds,
     bargainValidityHours: product.bargainValidityHours,
     images: product.images,
-    stock: product.stock,
+    stock: product.stock, 
     slug: product.slug,
   };
 

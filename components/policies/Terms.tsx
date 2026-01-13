@@ -701,22 +701,22 @@ export default function TermsAndConditionsPage() {
               </h2>
               <div className="flex flex-wrap gap-2">
                 {sections.map((section) => (
-                  <a
+                  <Link
                     key={section.id}
                     href={`#${section.id}`}
                     className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm font-medium transition-colors"
                   >
                     <section.icon className="h-4 w-4" />
                     {section.title}
-                  </a>
+                  </Link>
                 ))}
-                <a
+                <Link
                   href="#contact"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-[#7C2C78] text-white hover:bg-[#A43875] rounded-full text-sm font-medium transition-colors"
                 >
                   <Mail className="h-4 w-4" />
                   Contact Legal
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -964,12 +964,12 @@ export default function TermsAndConditionsPage() {
                             <span className="font-medium block">
                               Legal Email:
                             </span>
-                            <a
+                            <Link
                               href="mailto:support@megaprizemall.com"
                               className="text-white/90 hover:text-white"
                             >
                               support@megaprizemall.com
-                            </a>
+                            </Link>
                             <p className="text-sm text-white/80 mt-1">
                               For formal legal communications
                             </p>

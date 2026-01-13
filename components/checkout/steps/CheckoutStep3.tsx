@@ -4,6 +4,7 @@
 import { CheckoutState } from '@/types';
 import { motion } from 'framer-motion';
 import { CheckCircle, Package, Truck, Home, Clock } from 'lucide-react';
+import Link from 'next/link';
 
 interface CheckoutStep3Props {
   checkoutData: CheckoutState;
@@ -131,8 +132,8 @@ export default function CheckoutStep3({ checkoutData }: CheckoutStep3Props) {
         />
         <label htmlFor="confirmTerms" className="text-gray-700">
           I confirm that I have read and agree to the{' '}
-          <a href="/terms" className="text-[#7C2C78] hover:underline">Terms & Conditions</a>{' '}
-          and <a href="/privacy" className="text-[#7C2C78] hover:underline">Privacy Policy</a>.
+          <Link href="/terms" className="text-[#7C2C78] hover:underline">Terms & Conditions</Link>{' '}
+          and <Link href="/privacy" className="text-[#7C2C78] hover:underline">Privacy Policy</Link>.
           I understand that this order is subject to product availability.
         </label>
       </div>

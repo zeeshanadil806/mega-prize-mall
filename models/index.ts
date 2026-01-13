@@ -6,5 +6,6 @@ export { BargainRequestModel, type IBargainRequest, BargainRequestSchema } from 
 export { BargainCouponModel, type IBargainCoupon, BargainCouponSchema } from './BargainCoupon';
 export { WalletTransactionModel, type IWalletTransaction, WalletTransactionSchema } from './WalletTransaction';
 export { AddressModel } from './Address';
+export { TikTokEventModel } from './TikTokEvent'; // Add this line
 
 // We'll add more models as we progress

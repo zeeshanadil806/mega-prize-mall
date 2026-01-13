@@ -3,16 +3,51 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { CheckCircle, Package, Truck, Download, Share2, Home } from 'lucide-react';
+import { CheckCircle, Package, Truck, Home } from 'lucide-react';
 import { formatCurrency } from '@/lib/bargain-utils';
 import { useEffect } from 'react';
-import { OrderDetails } from '@/types';
+import { ClientOrder } from '@/types';
+import { useTikTokTracking } from '@/hooks/useTikTokTracking';
+import { InvoiceGenerator } from '../orders/InvoiceGenerator';
 
 interface OrderSuccessClientProps {
-  order: OrderDetails;
+  order: ClientOrder;
 }
 
 export default function OrderSuccessClient({ order }: OrderSuccessClientProps) {
+  const { trackPurchaseComplete } = useTikTokTracking();
+
+  useEffect(() => {
+    async function trackPurchase() {
+
+      try {
+
+        // 2. Track purchase
+        await trackPurchaseComplete(
+          null, // client event ID (optional)
+          {
+            orderId: order._id,
+            totalValue: order.grandTotal,
+            currency: 'PKR',
+            items: order.items.map((item) => ({
+              productId: item.productId,
+              productName: item.productName,
+              quantity: item.quantity,
+              price: item.price,
+            })),
+            // userEmail: order.shippingAddress.phone,
+            userPhone: order.shippingAddress.phone,
+            userId: order.userId,
+          }
+        );
+      } catch (error) {
+        console.error('Failed to track purchase:', error);
+      }
+    }
+
+    trackPurchase();
+  }, [order._id, order.grandTotal, order.items, order.shippingAddress.phone, order.userId, trackPurchaseComplete]);
+
   useEffect(() => {
     // Clear cart on success page load
     localStorage.removeItem('megaprize-cart');
@@ -167,18 +202,13 @@ export default function OrderSuccessClient({ order }: OrderSuccessClientProps) {
             className="grid sm:grid-cols-2 gap-4 mb-8"
           >
             <Link
-              href="/orders"
-              className="p-4 bg-white border border-gray-200 rounded-xl hover:border-gray-300 transition-colors text-center"
+              href="/dashboard/orders"
+              className="flex items-center justify-center bg-white border border-gray-200 rounded-xl hover:border-gray-300 transition-colors text-center"
             >
-              <div className="font-medium text-gray-900 mb-1">
                 View All Orders
-              </div>
-              <div className="text-sm text-gray-600">
-                Track your order status
-              </div>
             </Link>
             
-            <button
+            {/* <button
               onClick={() => window.print()}
               className="p-4 bg-white border border-gray-200 rounded-xl hover:border-gray-300 transition-colors text-center"
             >
@@ -188,7 +218,8 @@ export default function OrderSuccessClient({ order }: OrderSuccessClientProps) {
               <div className="text-sm text-gray-600">
                 Save for your records
               </div>
-            </button>
+            </button> */}
+            <InvoiceGenerator order={order}/>
           </motion.div>
           
           {/* Continue Shopping */}

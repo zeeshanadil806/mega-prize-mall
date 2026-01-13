@@ -109,10 +109,10 @@ export default function HomePage() {
       <HeroSection />
       {/* Featured Products */}
       <FeaturedProducts />
-      {/* Categories */}
-      <CategoriesSection />
       {/* New Arrivals */}
       <NewArrivals />
+      {/* Categories */}
+      <CategoriesSection />
       {/* How It Works */}
       <HowItWorks />
       {/* Best Sellers */}

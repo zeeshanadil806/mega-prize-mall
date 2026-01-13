@@ -10,7 +10,6 @@ import { ClientOrder } from '@/types';
 
 interface InvoiceGeneratorProps {
   order: ClientOrder;
-  userId: string;
 }
 
 // --- Colors ---
@@ -23,7 +22,7 @@ const COLORS = {
   tableHeader: '#2c5282'
 };
 
-export function InvoiceGenerator({ order, userId }: InvoiceGeneratorProps) {
+export function InvoiceGenerator({ order }: InvoiceGeneratorProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

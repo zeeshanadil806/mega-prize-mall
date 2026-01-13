@@ -2,6 +2,7 @@
 import { ProductModel } from '@/models/Product';
 import { connectToDatabase } from '@/lib/mongodb';
 import ProductCard from './ProductCard';
+import Link from 'next/link';
 
 interface RelatedProductsProps {
   currentProductId: string;
@@ -42,12 +43,12 @@ export default async function RelatedProducts({
           <h2 className="text-2xl font-bold text-gray-900">Related Products</h2>
           <p className="text-gray-600 mt-1">You might also like</p>
         </div>
-        <a 
+        <Link 
           href={`/products?category=${category}`}
           className="text-[#7C2C78] font-medium hover:underline"
         >
           View all in {category} →
-        </a>
+        </Link>
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

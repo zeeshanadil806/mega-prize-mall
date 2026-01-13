@@ -4,6 +4,7 @@ import ProductCard from './ProductCard';
 import { connectToDatabase } from '@/lib/mongodb';
 import { SortOrder } from 'mongoose';
 import { ProductFilter } from '@/types';
+import Link from 'next/link';
 interface ProductGridProps {
   searchParams: {
     page?: string;
@@ -94,7 +95,7 @@ let sort: Record<string, SortOrder> = { createdAt: -1 };  switch (searchParams.s
   return (
     <>
       {/* Product Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
         {products.map((product) => (
           <ProductCard 
             key={product._id.toString()} 
@@ -166,7 +167,7 @@ function Pagination({
         </p>
         
         <div className="flex items-center space-x-2">
-          <a
+          <Link
             href={`/products?page=${Math.max(1, currentPage - 1)}`}
             className={`inline-flex items-center px-3 py-2 rounded-md text-sm font-medium ${
               currentPage === 1
@@ -176,7 +177,7 @@ function Pagination({
             aria-disabled={currentPage === 1}
           >
             Previous
-          </a>
+          </Link>
           
           {getPageNumbers().map((pageNum, index) => (
             pageNum === '...' ? (
@@ -184,7 +185,7 @@ function Pagination({
                 ...
               </span>
             ) : (
-              <a
+              <Link
                 key={pageNum}
                 href={`/products?page=${pageNum}`}
                 className={`inline-flex items-center px-3 py-2 rounded-md text-sm font-medium ${
@@ -194,11 +195,11 @@ function Pagination({
                 }`}
               >
                 {pageNum}
-              </a>
+              </Link>
             )
           ))}
           
-          <a
+          <Link
             href={`/products?page=${Math.min(totalPages, currentPage + 1)}`}
             className={`inline-flex items-center px-3 py-2 rounded-md text-sm font-medium ${
               currentPage === totalPages
@@ -208,7 +209,7 @@ function Pagination({
             aria-disabled={currentPage === totalPages}
           >
             Next
-          </a>
+          </Link>
         </div>
       </div>
     </div>

@@ -37,6 +37,7 @@ import { Label } from '@/components/ui/label';
 import { formatCurrency } from '@/lib/bargain-utils';
 import { ClientOrder } from '@/types';
 import { AdminInvoiceGenerator } from './AdminInvoiceGenerator';
+import Link from 'next/link';
 // import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 
@@ -609,9 +610,9 @@ export function AdminOrdersClient({
                               className="h-8 w-8 p-0"
                               asChild
                             >
-                              <a href={`/admin/orders/${order._id}`}>
+                              <Link href={`/admin/orders/${order._id}`}>
                                 <Eye className="h-4 w-4" />
-                              </a>
+                              </Link>
                             </Button>
                             <AdminInvoiceGenerator order={order} />
 
