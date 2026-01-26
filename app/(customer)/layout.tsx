@@ -43,7 +43,7 @@ export default async function CustomerLayout({
         {/* <CustomerNavbar user={session ? session.user : null} /> */}
         <Header />
         
-        <main className="px-4 sm:px-6 lg:px-8 mx-auto">
+        <main className="sm:px-6 lg:px-8 mx-auto">
           <div className="animate-in fade-in duration-700">
             {children}
           </div>

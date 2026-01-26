@@ -8,7 +8,7 @@ import {
   isDuplicateEvent,
 } from "../utils/event-id";
 import { getUserHashes, getTikTokClickId } from "../utils/user-hasher";
-import type { TikTokEventParams, TikTokEventName } from "@/types/events";
+import type { TikTokEventParams, EventName } from "@/types/events";
 
 declare global {
   interface Window {
@@ -84,7 +84,7 @@ export function useTikTokPixel() {
    */
   const trackEvent = useCallback(
     (
-      eventName: TikTokEventName,
+      eventName: EventName,
       params?: TikTokEventParams,
       customEventId?: string
     ): string | null => {

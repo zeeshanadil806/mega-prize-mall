@@ -51,7 +51,7 @@ export default async function RelatedProducts({
         </Link>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-1">
         {relatedProducts.map((product) => (
           <ProductCard key={product._id.toString()} product={product} />
         ))}

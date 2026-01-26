@@ -7,15 +7,16 @@ import { CheckCircle, Package, Truck, Home } from 'lucide-react';
 import { formatCurrency } from '@/lib/bargain-utils';
 import { useEffect } from 'react';
 import { ClientOrder } from '@/types';
-import { useTikTokTracking } from '@/hooks/useTikTokTracking';
+// import { useTikTokTracking } from '@/hooks/useTikTokTracking';
 import { InvoiceGenerator } from '../orders/InvoiceGenerator';
+import { useAllTracking } from '@/hooks/useAllTracking';
 
 interface OrderSuccessClientProps {
   order: ClientOrder;
 }
 
 export default function OrderSuccessClient({ order }: OrderSuccessClientProps) {
-  const { trackPurchaseComplete } = useTikTokTracking();
+  const { trackPurchaseComplete } = useAllTracking();
 
   useEffect(() => {
     async function trackPurchase() {

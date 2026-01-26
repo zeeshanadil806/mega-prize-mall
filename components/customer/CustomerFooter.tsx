@@ -57,7 +57,7 @@ export default function CustomerFooter() {
     {
       icon: Truck,
       title: "Fast Shipping",
-      desc: "2-9 business days across Pakistan",
+      desc: "3-5 business days across Pakistan",
     },
     {
       icon: CreditCard,

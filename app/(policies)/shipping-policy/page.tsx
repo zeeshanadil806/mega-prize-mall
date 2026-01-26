@@ -121,7 +121,7 @@ export const metadata: Metadata = {
     // Policy specific
     "policy:type": "Shipping and Delivery Policy",
     "policy:processing_time": "24-48 hours",
-    "policy:delivery_time": "2-9 business days",
+    "policy:delivery_time": "3-5 business days",
     "policy:unboxing_required": "Mandatory video",
     "policy:tracking_provided": "Yes",
     "policy:cod_available": "Subject to courier",

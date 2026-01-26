@@ -14,8 +14,10 @@ import { Loader2, ArrowLeft, Shield, Lock, ArrowRight } from "lucide-react";
 import { Address, CheckoutState, CheckoutUser } from "@/types";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import { useTikTokTracking } from "@/hooks/useTikTokTracking";
-import { formatCurrency } from "@/lib/utils";
+import { useAllTracking } from '@/hooks/useAllTracking';
+
+// import { useTikTokTracking } from "@/hooks/useTikTokTracking";
+// import { formatCurrency } from "@/lib/utils";
 import { useTikTokPixel } from "@/lib/tiktok/client/tiktok-pixel";
 
 interface CheckoutClientProps {
@@ -43,7 +45,7 @@ export default function CheckoutClient({
   });
 
   const { items, clearCart, getGrandTotal } = useCartStore();
-  const { trackInitiateCheckout } = useTikTokTracking();
+  const { trackInitiateCheckout } = useAllTracking();
   const { isInitialized } = useTikTokPixel(); // Or from your hook
 
   const finalTotal = Math.max(0, getGrandTotal());

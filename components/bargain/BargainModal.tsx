@@ -31,7 +31,8 @@ import {
   formatCurrency,
   calculateDiscountPercentage,
 } from "@/lib/bargain-utils";
-import { useTikTokTracking } from "@/hooks/useTikTokTracking";
+// import { useTikTokTracking } from "@/hooks/useTikTokTracking";
+import { useAllTracking } from '@/hooks/useAllTracking';
 
 interface BargainModalProps {
   isOpen: boolean;
@@ -110,7 +111,7 @@ export default function BargainModal({
   const handleSliderChange = (value: number[]) => {
     setOfferPrice(value[0]);
   };
-  const { trackBargainAccepted ,trackBargainInitiated } = useTikTokTracking();
+  const { trackBargainAccepted ,trackBargainInitiated } = useAllTracking();
 
   // Handle bargain submission
   const handleBargainSubmit = async () => {

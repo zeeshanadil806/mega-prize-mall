@@ -3,34 +3,39 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTikTokPixel } from '@/lib/tiktok/client/tiktok-pixel';
 import Link from 'next/link';
+import { useMetaPixel } from '@/lib/meta/client/meta-pixel';
 
 export default function CookieConsent() {
   const [showBanner, setShowBanner] = useState(false);
-  const { initialize, optOut } = useTikTokPixel();
+  const { initialize: initTikTok, optOut: optOutTikTok } = useTikTokPixel();
+  const { initialize: initMeta, optOut: optOutMeta } = useMetaPixel();
 
   // Check cookie consent on client side only
   useEffect(() => {
     const consent = localStorage.getItem('cookie_consent');
     
     if (!consent) {
-      const timer = setTimeout(() => {
-        setShowBanner(true);
-      }, 2000);
-      return () => clearTimeout(timer);
+      setTimeout(() => setShowBanner(true), 2000);
+    } else if (consent === 'accepted') {
+      initTikTok(); // Initialize TikTok if already accepted
+      initMeta();   // Initialize Meta if already accepted
     }
-  }, []);
+
+  }, [initTikTok, initMeta]);
 
   const handleAccept = useCallback(() => {
     localStorage.setItem('cookie_consent', 'accepted');
     setShowBanner(false);
-    initialize(); // Initialize TikTok pixel
-  }, [initialize]);
+    initTikTok(); // Initialize TikTok
+    initMeta();   // Initialize Meta
+  }, [initTikTok,initMeta]);
 
   const handleReject = useCallback(() => {
     localStorage.setItem('cookie_consent', 'rejected');
     setShowBanner(false);
-    optOut(); // Disable TikTok tracking
-  }, [optOut]);
+    optOutTikTok(); // Disable TikTok
+    optOutMeta();   // Disable Meta
+  }, [optOutTikTok, optOutMeta]);
 
   if (!showBanner) return null;
 

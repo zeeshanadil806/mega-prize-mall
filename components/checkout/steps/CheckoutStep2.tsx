@@ -39,7 +39,7 @@ export default function CheckoutStep2({
   // Points calculations
   const maxPointsData = calculateMaxRedeemablePoints(
     grandTotal - shippingFee,
-    userPoints
+    userPoints,
   );
   const pointsDiscount = checkoutData.pointsToUse * 0.1; // 10 points = Rs 1
 
@@ -88,7 +88,7 @@ export default function CheckoutStep2({
       if (data.valid) {
         // Check if coupon already applied
         const alreadyApplied = checkoutData.appliedCoupons.some(
-          (c: AppliedCoupon) => c.code === data.couponCode
+          (c: AppliedCoupon) => c.code === data.couponCode,
         );
 
         if (alreadyApplied) {
@@ -100,7 +100,7 @@ export default function CheckoutStep2({
         if (data.couponType === "bargain") {
           // Check if already have bargain coupon applied
           const hasBargain = checkoutData.appliedCoupons.some(
-            (c: AppliedCoupon) => c.type === "bargain"
+            (c: AppliedCoupon) => c.type === "bargain",
           );
 
           if (hasBargain) {
@@ -138,7 +138,7 @@ export default function CheckoutStep2({
     setCheckoutData((prev: CheckoutState) => ({
       ...prev,
       appliedCoupons: prev.appliedCoupons.filter(
-        (c: AppliedCoupon) => c.code !== code
+        (c: AppliedCoupon) => c.code !== code,
       ),
     }));
     toast.info("Coupon removed");
@@ -174,7 +174,7 @@ export default function CheckoutStep2({
               name: "Standard Shipping",
               price: 150,
               time: "3-5 business days",
-              freeOver: 1001,
+              freeOver: 2000,
             },
             {
               id: "express",
@@ -185,7 +185,7 @@ export default function CheckoutStep2({
           ].map((method) => {
             const isFree =
               method.id === "standard" &&
-              subtotal >= (method.freeOver || Infinity);
+              grandTotal >= (method.freeOver || Infinity);
             const price = isFree ? 0 : method.price;
 
             return (

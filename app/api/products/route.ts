@@ -5,11 +5,11 @@ import { ProductModel } from "@/models/Product";
 import { Types } from "mongoose";
 
 interface ProductQuery {
-      isActive: boolean;
-      isFeatured?: boolean;
-      isBestSeller?: boolean;
-      isNewArrival?: boolean;
-      category?: string;
+  isActive: boolean;
+  isFeatured?: boolean;
+  isBestSeller?: boolean;
+  isNewArrival?: boolean;
+  category?: string;
 }
 interface ProductDocument {
   _id: Types.ObjectId;
@@ -57,7 +57,7 @@ interface TransformedProduct {
   shortDescription?: string;
   price: number;
   discountedPrice?: number;
-  images: ProductDocument['images'];
+  images: ProductDocument["images"];
   category: string;
   brand: string;
   isFeatured: boolean;
@@ -74,8 +74,6 @@ interface TransformedProduct {
   sku: string;
   features: string[];
 }
-    
-
 
 export async function GET(request: Request) {
   try {
@@ -90,16 +88,16 @@ export async function GET(request: Request) {
 
     // Build query
     const query: ProductQuery = { isActive: true }; // Use 'any' or define proper interface
-    
+
     // Apply filters
     if (featured === "true") {
       query.isFeatured = true;
     }
-    
+
     if (bestSellers === "true") {
       query.isBestSeller = true;
     }
-    
+
     if (newArrivals === "true") {
       query.isNewArrival = true;
     }
@@ -109,15 +107,15 @@ export async function GET(request: Request) {
     }
 
     // Build sort object
-const sort: Record<string, 1 | -1> = {
-  purchaseCount: -1,
-  bargainCount: -1,
-  createdAt: -1,
-  isFeatured: -1,
-  isBestSeller: -1,
-};
+    const sort: Record<string, 1 | -1> = {
+      purchaseCount: -1,
+      bargainCount: -1,
+      createdAt: -1,
+      isFeatured: -1,
+      isBestSeller: -1,
+    };
 
-if (bestSellers === "true") {
+    if (bestSellers === "true") {
       // Sort best sellers by purchaseCount first, then rating
       sort.purchaseCount = -1;
       sort.bargainCount = -1; // Alternative popularity metric
@@ -131,6 +129,7 @@ if (bestSellers === "true") {
     } else {
       // Default sorting
       sort.createdAt = -1;
+      // sort.isFeatured = -1;
     }
 
     // Add secondary sort for consistency
@@ -143,43 +142,47 @@ if (bestSellers === "true") {
       .lean();
 
     // Transform data for frontend
-    const transformedProducts:TransformedProduct[]  = products.map((product: ProductDocument) => ({
-      _id: product._id.toString(),
-      name: product.name,
-      slug: product.slug,
-      description: product.description,
-      shortDescription: product.shortDescription,
-      price: product.price,
-      discountedPrice: product.discountedPrice,
-      images: product.images || [],
-      category: product.category,
-      brand: product.brand,
-      isFeatured: product.isFeatured,
-      isBestSeller: product.isBestSeller,
-      isNewArrival: product.isNewArrival,
-      bargainEnabled: product.bargainEnabled,
-      stock: product.stock,
-      purchaseCount: product.purchaseCount || 0,
-      bargainCount: product.bargainCount || 0,
-      viewCount: product.viewCount || 0,
-      createdAt: product.createdAt ? product.createdAt.toISOString() : new Date().toISOString(),
-      // Calculate discount percentage
-      discountPercentage: product.discountedPrice
-        ? Math.round(
-            ((product.price - product.discountedPrice) / product.price) * 100
-          )
-        : 0,
-      finalPrice: product.discountedPrice || product.price,
-      sku: product.sku,
-      features: product.features || [],
-    }));
+    const transformedProducts: TransformedProduct[] = products.map(
+      (product: ProductDocument) => ({
+        _id: product._id.toString(),
+        name: product.name,
+        slug: product.slug,
+        description: product.description,
+        shortDescription: product.shortDescription,
+        price: product.price,
+        discountedPrice: product.discountedPrice,
+        images: product.images || [],
+        category: product.category,
+        brand: product.brand,
+        isFeatured: product.isFeatured,
+        isBestSeller: product.isBestSeller,
+        isNewArrival: product.isNewArrival,
+        bargainEnabled: product.bargainEnabled,
+        stock: product.stock,
+        purchaseCount: product.purchaseCount || 0,
+        bargainCount: product.bargainCount || 0,
+        viewCount: product.viewCount || 0,
+        createdAt: product.createdAt
+          ? product.createdAt.toISOString()
+          : new Date().toISOString(),
+        // Calculate discount percentage
+        discountPercentage: product.discountedPrice
+          ? Math.round(
+              ((product.price - product.discountedPrice) / product.price) * 100,
+            )
+          : 0,
+        finalPrice: product.discountedPrice || product.price,
+        sku: product.sku,
+        features: product.features || [],
+      }),
+    );
 
     return NextResponse.json(transformedProducts);
   } catch (error) {
     console.error("Error fetching products:", error);
     return NextResponse.json(
       { error: "Failed to fetch products" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

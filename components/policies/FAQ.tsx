@@ -232,7 +232,7 @@ export default function FAQPage() {
               "Major cities (Karachi, Lahore, Islamabad): 2–4 business days",
               "Metro cities (Rawalpindi, Faisalabad, Multan): 3–5 business days",
               "Other cities & towns: 4–7 business days",
-              "Remote areas & villages: 5–9 business days",
+              "Remote areas & villages: 5–6 business days",
               "Express shipping: 1-2 days (additional charges apply)",
             ],
             note: "Delays may occur due to courier limitations, weather conditions, public holidays, or customs clearance.",

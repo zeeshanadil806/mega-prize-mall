@@ -650,7 +650,7 @@ export default function ShopNWinContestPage() {
     offers: {
       "@type": "Offer",
       price: "0",
-      priceCurrency: "USD",
+      priceCurrency: "PKR",
       availability: "InStock",
       validFrom: "2024-01-01T00:00:00Z",
     },

@@ -68,6 +68,7 @@ export interface CustomerProductProps {
   price: number
   discountedPrice: number
   costPrice: number
+  discountPercentage: number;
   
   // Categorization
   category: string

@@ -401,75 +401,16 @@ export default function CartPage() {
                     </div>
                   )}
 
-                  {/* Global Coupon Section */}
-                  <div className="pt-3 sm:pt-4 border-t border-gray-100">
-                    <div className="mb-3 sm:mb-4">
-                      <label className="text-sm sm:text-base font-medium mb-1.5 sm:mb-2 block">
-                        Coupon Code
-                      </label>
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          value={couponCode}
-                          onChange={(e) =>
-                            setCouponCode(e.target.value.toUpperCase())
-                          }
-                          placeholder="Enter coupon code"
-                          className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
-                          disabled={!!appliedGlobalCoupon}
-                        />
-                        {appliedGlobalCoupon ? (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-10 sm:h-11 px-3 sm:px-4 text-sm sm:text-base border-gray-300"
-                            onClick={() => {
-                              setAppliedGlobalCoupon(null);
-                              setCouponCode("");
-                            }}
-                          >
-                            Remove
-                          </Button>
-                        ) : (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-10 sm:h-11 px-3 sm:px-4 text-sm sm:text-base border-gray-300"
-                            onClick={handleApplyCoupon}
-                          >
-                            Apply
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Applied Global Coupon */}
-                    {appliedGlobalCoupon && (
-                      <div className="p-2.5 sm:p-3 bg-blue-50 border border-blue-200 rounded-lg sm:rounded-xl mb-3">
-                        <div className="flex items-center justify-between text-blue-700">
-                          <div className="flex items-center gap-1.5 sm:gap-2">
-                            <Tag className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                            <span className="font-medium text-sm sm:text-base">
-                              {appliedGlobalCoupon.code}
-                            </span>
-                            <span className="text-xs sm:text-sm">
-                              -{formatCurrency(appliedGlobalCoupon.discount)}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
 
                   {/* Shipping Estimate */}
-                  <div className="flex justify-between pt-2 border-t border-gray-100">
+                  {/* <div className="flex justify-between pt-2 border-t border-gray-100">
                     <span className="text-gray-600 text-sm sm:text-base">
                       Shipping
                     </span>
                     <span className="font-medium text-sm sm:text-base">
-                      {getGrandTotal() > 1000 ? "FREE" : "Rs 150"}
+                      {getGrandTotal() > 2000 ? "FREE" : "Rs 150"}
                     </span>
-                  </div>
+                  </div> */}
 
                   <div className="border-t border-gray-200 pt-3 sm:pt-4">
                     {/* Final Total */}

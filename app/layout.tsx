@@ -11,6 +11,7 @@ import WhatsAppFloatingButton from "@/components/customer/WhatsAppFloatingButton
 import TiktokProvider from "@/components/providers/TiktokProvider";
 import CookieConsent from "@/components/cookie/CookieConsent";
 import TiktokScript from "@/components/providers/TiktokScript";
+import MetaProvider from "@/components/providers/MetaProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -59,19 +60,21 @@ export default function RootLayout({
         <SessProvider>
           <ToastProvider />
           <TiktokProvider enabled={process.env.NODE_ENV === "production"}>
-            <TiktokScript />
-            {children}
+            <MetaProvider enabled={process.env.NODE_ENV === "production"}>
+              <TiktokScript />
+              {children}
+            </MetaProvider>
           </TiktokProvider>
           <SpeedInsights />
           <Analytics />
           <ServiceWorkerRegistration />
           <WhatsAppFloatingButton
-            phoneNumber="923254007037" // Your WhatsApp number
+            phoneNumber="923254007037"
             message="Hello Mega Prize Mall! I have a question about your mobile accessories."
             position="bottom-right"
             showOnMobile={true}
             showOnDesktop={true}
-            bounceInterval={5000} // Bounce every 5 seconds
+            bounceInterval={5000}
           />
         </SessProvider>
       </body>

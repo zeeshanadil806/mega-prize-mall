@@ -7,7 +7,8 @@ import { ShoppingCart, Check } from "lucide-react";
 import { useCartStore } from "@/stores/cart-store";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import { useTikTokTracking } from "@/hooks/useTikTokTracking";
+// import { useTikTokTracking } from "@/hooks/useTikTokTracking";
+import { useAllTracking } from '@/hooks/useAllTracking';
 
 interface AddToCartButtonProps {
   product: {
@@ -41,7 +42,7 @@ export default function AddToCartButton({
   className,
 }: AddToCartButtonProps) {
   const [isAdding, setIsAdding] = useState(false);
-  const { trackAddToCart } = useTikTokTracking(); // ADD THIS
+  const { trackAddToCart } = useAllTracking(); // ADD THIS
   const [added, setAdded] = useState(false);
   const addItem = useCartStore((state) => state.addItem);
   const getItem = useCartStore((state) => state.getItem);

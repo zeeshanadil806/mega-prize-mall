@@ -217,7 +217,7 @@ function generateStructuredData() {
         offers: {
           "@type": "Offer",
           price: "0",
-          priceCurrency: "USD",
+          priceCurrency: "PKR",
           availability: "https://schema.org/InStock",
           validFrom: "2024-01-01",
         },

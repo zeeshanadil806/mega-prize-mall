@@ -1,3 +1,45 @@
+export interface MetaEventBase {
+  eventName: string;
+  eventId: string;
+  eventSourceUrl: string;
+  actionSource: 'website' | 'app';
+  eventTime: number;
+}
+
+export interface MetaUserData {
+  em?: string[]; // SHA256 hashed email
+  ph?: string[]; // SHA256 hashed phone
+  external_id?: string[]; // User ID
+  client_ip_address?: string;
+  client_user_agent?: string;
+  fbc?: string; // Facebook Click ID
+  fbp?: string; // Facebook Browser ID
+}
+
+export interface MetaEventParams {
+  value?: number;
+  num_items?: number;
+  original_price?: number;
+  bargain_amount?: number;
+  discount_amount?: number;
+  currency?: string;
+  order_id?: string;
+  content_ids?: string[];
+  contents?: Array<{
+    id: string;
+    quantity: number;
+    item_price?: number;
+  }>;
+  content_type?: 'product' | 'product_group';
+  content_name?: string;
+  custom_data?: Record<string, unknown>;
+}
+
+export type MetaEvent = MetaEventBase & {
+  user_data: MetaUserData;
+  custom_data?: MetaEventParams;
+};
+
 export interface TikTokEventBase {
   event: string;
   event_id: string;
@@ -107,6 +149,6 @@ export const CUSTOM_EVENTS = {
 } as const;
 
 // Type for event names
-export type TikTokEventName = 
+export type EventName = 
   | typeof STANDARD_EVENTS[keyof typeof STANDARD_EVENTS]
   | typeof CUSTOM_EVENTS[keyof typeof CUSTOM_EVENTS];

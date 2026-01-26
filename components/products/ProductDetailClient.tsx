@@ -36,10 +36,11 @@ import { ImageProps, CustomerProductProps } from "@/types";
 import Link from "next/link";
 import Image from "next/image";
 import ProductStructuredData from "./ProductStructuredData";
-import { useTikTokTracking } from "@/hooks/useTikTokTracking";
+// import { useTikTokTracking } from "@/hooks/useTikTokTracking";
+import { useAllTracking } from '@/hooks/useAllTracking';
 
 interface ProductDetailClientProps {
-  product: CustomerProductProps; // Product document from MongoDB
+  product: CustomerProductProps;
   userId?: string;
 }
 
@@ -50,7 +51,7 @@ export default function ProductDetailClient({
   const [quantity, setQuantity] = useState(1); 
   const [isWishlisted, setIsWishlisted] = useState(false);
   const getItem = useCartStore((state) => state.getItem);
-  const { trackProductView } = useTikTokTracking();
+  const { trackProductView } = useAllTracking();
 
 useEffect(() => {
   if (product._id && product.name && product.price) {
@@ -58,7 +59,7 @@ useEffect(() => {
       product._id.toString(),
       product.name,
       product.discountedPrice || product.price,
-      'USD'
+      'PKR'
     );
   }
 }, [product._id, product.name, product.price, product.discountedPrice, trackProductView]);
@@ -588,14 +589,14 @@ useEffect(() => {
                   <button
                     onClick={incrementQuantity}
                     className="px-3 sm:px-4 py-1.5 sm:py-2 text-gray-600 hover:text-gray-900 disabled:text-gray-300"
-                    disabled={quantity >= (product.stock || 10)}
+                    disabled={quantity >= (product.stock || 0)}
                     aria-label="Increase quantity"
                   >
                     <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   </button>
                 </div>
                 <div className="text-xs sm:text-sm text-gray-600">
-                  {product.stock || 10} units available
+                  {product.stock || 0} units available
                 </div>
               </div>
             </div>
@@ -681,8 +682,14 @@ useEffect(() => {
 
       {/* Product Details Tabs */}
       <div className="mt-8 sm:mt-10 lg:mt-12">
-        <Tabs defaultValue="description" className="w-full">
-          <TabsList className="grid grid-cols-2 sm:grid-cols-3 w-full mb-6 lg:mb-8">
+        <Tabs defaultValue="features" className="w-full">
+          <TabsList className="grid grid-cols-3 w-full mb-6 lg:mb-8">
+            <TabsTrigger
+              value="features"
+              className="text-xs sm:text-sm py-2 sm:py-2.5 lg:py-3"
+            >
+              Features
+            </TabsTrigger>
             <TabsTrigger
               value="description"
               className="text-xs sm:text-sm py-2 sm:py-2.5 lg:py-3"
@@ -694,12 +701,6 @@ useEffect(() => {
               className="text-xs sm:text-sm py-2 sm:py-2.5 lg:py-3"
             >
               Specifications
-            </TabsTrigger>
-            <TabsTrigger
-              value="features"
-              className="text-xs sm:text-sm py-2 sm:py-2.5 lg:py-3"
-            >
-              Features
             </TabsTrigger>
             {/* <TabsTrigger
               value="reviews"

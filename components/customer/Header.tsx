@@ -30,6 +30,7 @@ import {
   UserCircle,
   CreditCard,
   Map,
+  DollarSign,
 } from "lucide-react";
 import { useCartStore } from "@/stores/cart-store";
 import { Button } from "@/components/ui/button";
@@ -233,8 +234,8 @@ const Header = () => {
       <div className="bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white text-[12px] py-2 px-4">
         <div className="container mx-auto flex items-center justify-center gap-4">
           <div className="flex items-center gap-2">
-            <Tag className="h-4 w-4" />
-            <span>🎉 Bargain on Electronics Accessories!</span>
+            <DollarSign className="h-4 w-4" />
+            <span>Cash on Delivery Available!</span>
           </div>
           <Link
             href="/products?bargain=true"

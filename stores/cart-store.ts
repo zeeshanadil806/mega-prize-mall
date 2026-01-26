@@ -141,9 +141,9 @@ getBargainEligibleItems: () => {
       
       getGrandTotal: () => {
           const subtotal = get().getSubtotal();
-          console.log(subtotal)
+          // console.log(subtotal)
           const discountTotal = get().getDiscountTotal();
-          console.log(discountTotal)
+          // console.log(discountTotal)
         return Math.max(0, subtotal - discountTotal);
       },
     }),

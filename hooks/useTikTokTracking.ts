@@ -14,7 +14,7 @@ export function useTikTokTracking() {
     productId: string,
     productName: string,
     price: number,
-    currency: string = 'USD'
+    currency: string = 'PKR'
   ): string | null => {
     return trackEvent(STANDARD_EVENTS.VIEW_CONTENT, {
       value: price,
@@ -37,7 +37,7 @@ export function useTikTokTracking() {
     productName: string,
     quantity: number,
     price: number,
-    currency: string = 'USD'
+    currency: string = 'PKR'
   ): string | null => {
     return trackEvent(STANDARD_EVENTS.ADD_TO_CART, {
       value: price * quantity,
@@ -63,7 +63,7 @@ export function useTikTokTracking() {
       price: number;
     }>,
     totalValue: number,
-    currency: string = 'USD'
+    currency: string = 'PKR'
   ): string | null => {
     const contents = cartItems.map(item => ({
       content_id: item.productId,
@@ -90,7 +90,7 @@ export function useTikTokTracking() {
   ): string | null => {
     return trackEvent(CUSTOM_EVENTS.BARGAIN_INITIATED, {
       value: bargainPrice,
-      currency: 'USD',
+      currency: 'PKR',
       original_price: originalPrice,
       bargain_amount: originalPrice - bargainPrice,
       contents: [{
@@ -114,7 +114,7 @@ export function useTikTokTracking() {
   ): string | null => {
     return trackEvent(CUSTOM_EVENTS.BARGAIN_ACCEPTED, {
       value: finalPrice,
-      currency: 'USD',
+      currency: 'PKR',
       original_price: originalPrice,
       discount_amount: originalPrice - finalPrice,
       bargain_id: bargainId,

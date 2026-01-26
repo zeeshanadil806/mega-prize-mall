@@ -144,7 +144,7 @@ const CategoriesSection = () => {
             const stats = categoryStats.find(
               (stat) =>
                 stat.category.toLowerCase() === slug.toLowerCase() ||
-                stat.category.toLowerCase() === config.name.toLowerCase()
+                stat.category.toLowerCase() === config.name.toLowerCase(),
             );
 
             return {
@@ -305,7 +305,7 @@ const CategoriesSection = () => {
           variants={containerVariants}
           initial="hidden"
           animate={controls}
-          className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6"
+          className="grid grid-cols-4 xs:grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3 sm:gap-4 md:gap-6"
         >
           {categories.slice(0, 8).map((category) => {
             const Icon = category.icon;
@@ -316,68 +316,46 @@ const CategoriesSection = () => {
                 variants={itemVariants}
                 whileHover="hover"
                 initial="initial"
-                className="relative"
+                className="relative flex flex-col items-center"
               >
-                {/* Glow Effect - Hidden on mobile for better performance */}
+                {/* Glow Effect - Hidden on mobile */}
                 <motion.div
                   variants={glowVariants}
-                  className={`absolute inset-0 rounded-xl md:rounded-2xl bg-linear-to-r ${category.color} blur-xl -z-10 opacity-50 md:opacity-100`}
+                  className={`absolute inset-0 rounded-full bg-linear-to-r blur-xl -z-10 opacity-30 md:opacity-50`}
                 />
 
-                {/* Category Card */}
+                {/* Round Category Circle */}
                 <motion.div
                   variants={cardHoverVariants}
                   className="relative group"
                 >
-                  <Link href={category.link}>
-                    <div className="relative overflow-hidden rounded-xl md:rounded-2xl bg-white border border-gray-200/50 hover:border-transparent shadow-sm hover:shadow-xl md:shadow-lg md:hover:shadow-2xl transition-all duration-300 h-full">
-                      {/* Card Content */}
-                      <div className="relative p-3 sm:p-4 md:p-6 h-full flex flex-col">
-                        {/* Icon */}
+                  <Link href={category.link} className="block">
+                    <div className="relative overflow-hidden rounded-full bg-white border border-gray-200/50 hover:border-transparent shadow-sm hover:shadow-xl md:shadow-md md:hover:shadow-xl transition-all duration-300">
+                      {/* Circular Container */}
+                      <div className="relative aspect-square flex items-center justify-center">
+                        {/* Icon Container with Gradient */}
                         <motion.div
                           whileHover={{ rotate: 5, scale: 1.1 }}
                           transition={{ type: "spring", stiffness: 300 }}
-                          className={`h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16 rounded-lg md:rounded-xl bg-linear-to-r ${category.color} flex items-center justify-center mb-3 md:mb-4 shadow-md md:shadow-lg`}
+                          className={`h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 lg:h-20 lg:w-20 rounded-full bg-linear-to-r ${category.color} flex items-center justify-center shadow-md md:shadow-lg`}
                         >
                           <div className="text-white">
-                            <Icon className="h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8" />
+                            <Icon className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 lg:h-8 lg:w-8" />
                           </div>
                         </motion.div>
-
-                        {/* Category Info */}
-                        <div className="flex-1 mb-2 md:mb-0">
-                          <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 line-clamp-1 md:line-clamp-none mb-1 md:mb-2">
-                            {category.name}
-                          </h3>
-                          <p className="text-gray-600 text-xs sm:text-sm line-clamp-2 md:line-clamp-2 mb-2 md:mb-4">
-                            {category.description}
-                          </p>
-                        </div>
-
-                        {/* Stats & CTA */}
-                        <div className="flex items-center justify-between pt-2 md:pt-4 border-t border-gray-100/50 md:border-gray-100">
-                          <div className="text-xs sm:text-sm">
-                            <span className="font-bold text-gray-900">
-                              {category.productCount > 999
-                                ? `${(category.productCount / 1000).toFixed(
-                                    1
-                                  )}k`
-                                : category.productCount.toLocaleString()}
-                            </span>
-                            <span className="text-gray-500 ml-0.5 md:ml-1">
-                              items
-                            </span>
-                          </div>
-
-                          <div className="flex items-center text-[#7C2C78] font-medium text-xs sm:text-sm group-hover:text-[#A43875] transition-colors">
-                            <span className="hidden xs:inline">Shop</span>
-                            <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4 ml-0.5 group-hover:translate-x-0.5 md:group-hover:translate-x-1 transition-transform" />
-                          </div>
-                        </div>
                       </div>
                     </div>
                   </Link>
                 </motion.div>
+
+                {/* Category Name - Below the circle */}
+                <div className="mt-2 text-center">
+                  <Link href={category.link}>
+                    <h3 className="text-xs xs:text-xs sm:text-sm md:text-base font-medium text-gray-900 hover:text-[#7C2C78] transition-colors line-clamp-1 xs:hidden sm:block">
+                      {category.name}
+                    </h3>
+                  </Link>
+                </div>
               </motion.div>
             );
           })}
@@ -385,24 +363,24 @@ const CategoriesSection = () => {
 
         {/* View All Categories Button */}
         <motion.div
-  initial={{ opacity: 1, y: 20 }}
-  transition={{ delay: 0.5 }}
-  className="text-center mt-6 sm:mt-8 md:mt-10 lg:mt-12"
->
-  <Link href="/categories">
-    <Button
-      size="lg"
-      variant="outline"
-      className="group border-2 border-[#2E297D] text-[#2E297D] hover:bg-[#2E297D] hover:text-white transition-all duration-300 mb-2"
-    >
-      {/* Responsive padding and text size */}
-      <span className="px-5 py-2.5 sm:px-7 sm:py-3 md:px-8 md:py-4 text-sm sm:text-base md:text-lg font-medium">
-        View All Categories
-        <ArrowRight className="ml-1.5 sm:ml-2 md:ml-2.5 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 group-hover:translate-x-0.5 sm:group-hover:translate-x-1 transition-transform inline-block" />
-      </span>
-    </Button>
-  </Link>
-</motion.div>
+          initial={{ opacity: 1, y: 20 }}
+          transition={{ delay: 0.5 }}
+          className="text-center mt-6 sm:mt-8 md:mt-10 lg:mt-12"
+        >
+          <Link href="/categories">
+            <Button
+              size="lg"
+              variant="outline"
+              className="group border-2 border-[#2E297D] text-[#2E297D] hover:bg-[#2E297D] hover:text-white transition-all duration-300 mb-2"
+            >
+              {/* Responsive padding and text size */}
+              <span className="px-5 py-2.5 sm:px-7 sm:py-3 md:px-8 md:py-4 text-sm sm:text-base md:text-lg font-medium">
+                View All Categories
+                <ArrowRight className="ml-1.5 sm:ml-2 md:ml-2.5 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 group-hover:translate-x-0.5 sm:group-hover:translate-x-1 transition-transform inline-block" />
+              </span>
+            </Button>
+          </Link>
+        </motion.div>
       </div>
     </section>
   );
