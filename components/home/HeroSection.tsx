@@ -15,7 +15,7 @@ const HeroSectionAspectRatio = ({
   return (
     <section className="relative w-full overflow-hidden">
       <div className={`relative ${aspectRatioClasses["16:9"]}`}>
-        <Link href={"/"}>
+        <Link href={"/products"}>
         <Image
           src={"/bg.png"}
           alt={"Mega Prize Mall"}

@@ -1,7 +1,6 @@
 // app/api/cart/sync/route.ts
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/auth"
-import { connectToDatabase } from "@/lib/mongodb"
 import { log } from "@/lib/logger"
 
 export async function POST(request: NextRequest) {

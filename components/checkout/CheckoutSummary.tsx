@@ -1,23 +1,30 @@
-// components/checkout/CheckoutSummary.tsx
+// components/checkout/CheckoutSummary.tsx (Updated with Coupons & Points)
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useCartStore } from "@/stores/cart-store";
-import { formatCurrency } from "@/lib/bargain-utils";
-import { Package, Shield, Truck } from "lucide-react";
+import { formatCurrency, calculateMaxRedeemablePoints } from "@/lib/bargain-utils";
+import { Package, Shield, Truck, Ticket, Wallet, Check, X, Loader2 } from "lucide-react";
 import { AppliedCoupon, CheckoutState } from "@/types";
+import { toast } from "sonner";
 
 interface CheckoutSummaryProps {
   checkoutData: CheckoutState;
-  currentStep: number;
+  setCheckoutData: React.Dispatch<React.SetStateAction<CheckoutState>>;
+  userId: string;
 }
 
 export default function CheckoutSummary({
   checkoutData,
-  currentStep,
+  setCheckoutData,
+  userId,
 }: CheckoutSummaryProps) {
-  const { items, getSubtotal, getDiscountTotal, getGrandTotal } =
-    useCartStore();
+  const { items, getSubtotal, getDiscountTotal, getGrandTotal } = useCartStore();
+  const [userPoints, setUserPoints] = useState(0);
+  const [couponInput, setCouponInput] = useState("");
+  const [applyingCoupon, setApplyingCoupon] = useState(false);
+  const [showCouponInput, setShowCouponInput] = useState(false);
 
   const subtotal = getSubtotal();
   const discountTotal = getDiscountTotal();
@@ -26,23 +33,22 @@ export default function CheckoutSummary({
 
   // Calculate shipping
   const freeDeliveryThreshold = 2000;
-  const shippingFee =
-    checkoutData.shippingMethod === "express"
-      ? 300
-      : grandTotal > freeDeliveryThreshold
-        ? 0
-        : 150;
+  const shippingFee = grandTotal > freeDeliveryThreshold ? 0 : 150;
 
-  // Calculate points discount
+  // Points calculations
+  const maxPointsData = calculateMaxRedeemablePoints(
+    grandTotal - shippingFee,
+    userPoints,
+  );
   const pointsDiscount = checkoutData.pointsToUse * 0.1; // 10 points = Rs 1
 
-  // Calculate coupon discount
+  // Coupon discount
   const couponDiscount = checkoutData.appliedCoupons.reduce(
     (sum: number, coupon: AppliedCoupon) => sum + coupon.discount,
     0,
   );
 
-  // Calculate amount needed for free delivery
+  // Amount needed for free delivery (after discounts)
   const amountForFreeDelivery = Math.max(
     0,
     freeDeliveryThreshold - (grandTotal - couponDiscount - pointsDiscount),
@@ -58,8 +64,121 @@ export default function CheckoutSummary({
   // Final total
   const finalTotal = Math.max(
     0,
-    getGrandTotal() + shippingFee - couponDiscount - pointsDiscount,
+    grandTotal + shippingFee - couponDiscount - pointsDiscount,
   );
+
+  // Fetch user points
+  useEffect(() => {
+    const fetchUserPoints = async () => {
+      try {
+        const response = await fetch("/api/user/points");
+        if (response.ok) {
+          const data = await response.json();
+          setUserPoints(data.points || 0);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user points:", error);
+      }
+    };
+
+    fetchUserPoints();
+  }, []);
+
+  // Handle coupon application
+  const handleApplyCoupon = async () => {
+    if (!couponInput.trim()) {
+      toast.error("Please enter a coupon code");
+      return;
+    }
+
+    setApplyingCoupon(true);
+
+    try {
+      const response = await fetch("/api/coupons/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          couponCode: couponInput.trim(),
+          orderAmount: grandTotal + shippingFee,
+          userId,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.valid) {
+        // Check if coupon already applied
+        const alreadyApplied = checkoutData.appliedCoupons.some(
+          (c: AppliedCoupon) => c.code === data.couponCode,
+        );
+
+        if (alreadyApplied) {
+          toast.error("Coupon already applied");
+          return;
+        }
+
+        // Check coupon compatibility
+        if (data.couponType === "bargain") {
+          const hasBargain = checkoutData.appliedCoupons.some(
+            (c: AppliedCoupon) => c.type === "bargain",
+          );
+
+          if (hasBargain) {
+            toast.error("Only one bargain coupon can be used per order");
+            return;
+          }
+        }
+
+        setCheckoutData((prev: CheckoutState) => ({
+          ...prev,
+          appliedCoupons: [
+            ...prev.appliedCoupons,
+            {
+              code: data.couponCode,
+              type: data.couponType,
+              discount: data.discountAmount,
+            },
+          ],
+        }));
+
+        setCouponInput("");
+        setShowCouponInput(false);
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error("Coupon validation error:", error);
+      toast.error("Failed to validate coupon");
+    } finally {
+      setApplyingCoupon(false);
+    }
+  };
+
+  const handleRemoveCoupon = (code: string) => {
+    setCheckoutData((prev: CheckoutState) => ({
+      ...prev,
+      appliedCoupons: prev.appliedCoupons.filter(
+        (c: AppliedCoupon) => c.code !== code,
+      ),
+    }));
+    toast.info("Coupon removed");
+  };
+
+  // Points handling
+  const handleUsePoints = (points: number) => {
+    setCheckoutData((prev: CheckoutState) => ({
+      ...prev,
+      pointsToUse: points,
+    }));
+  };
+
+  const handleUseMaxPoints = () => {
+    setCheckoutData((prev: CheckoutState) => ({
+      ...prev,
+      pointsToUse: maxPointsData.maxPoints,
+    }));
+  };
 
   return (
     <div className="sticky top-24">
@@ -73,7 +192,7 @@ export default function CheckoutSummary({
         </div>
 
         {/* Items List */}
-        <div className="p-6 max-h-96 overflow-y-auto">
+        <div className="p-6 max-h-80 overflow-y-auto">
           {items.map((item, index) => {
             const price = item.discountedPrice || item.price;
             const total = price * item.quantity;
@@ -86,7 +205,6 @@ export default function CheckoutSummary({
                 transition={{ delay: index * 0.05 }}
                 className="flex gap-3 py-3 border-b border-gray-100 last:border-0"
               >
-                {/* Item Image */}
                 <div className="h-16 w-16 rounded-lg bg-gray-100 overflow-hidden shrink-0">
                   {item.images?.[0]?.url ? (
                     <img
@@ -101,7 +219,6 @@ export default function CheckoutSummary({
                   )}
                 </div>
 
-                {/* Item Details */}
                 <div className="flex-1 min-w-0">
                   <h4 className="font-medium text-gray-900 truncate">
                     {item.name}
@@ -113,7 +230,6 @@ export default function CheckoutSummary({
                     <div className="font-medium">{formatCurrency(total)}</div>
                   </div>
 
-                  {/* Bargain Discount */}
                   {item.bargainDiscount && (
                     <div className="text-xs text-green-600 mt-1">
                       Bargain: -{formatCurrency(item.bargainDiscount)}
@@ -125,184 +241,224 @@ export default function CheckoutSummary({
           })}
         </div>
 
-        {/* Free Delivery Progress Bar */}
+        {/* Points Redemption Section */}
+        {userPoints > 0 && (
+          <div className="px-6 py-4 border-t border-gray-200">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Wallet className="h-5 w-5 text-[#EAB75F]" />
+                <span className="font-medium text-gray-900">Redeem Points</span>
+              </div>
+              <span className="text-sm text-gray-600">
+                {userPoints.toLocaleString()} pts
+              </span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 mb-3">
+              {[100, 500, 1000].map((points) => (
+                <button
+                  key={points}
+                  onClick={() => handleUsePoints(points)}
+                  disabled={
+                    points > maxPointsData.maxPoints || points > userPoints
+                  }
+                  className={`
+                    p-2 border rounded-lg text-center transition-all text-sm
+                    ${
+                      checkoutData.pointsToUse === points
+                        ? "border-[#7C2C78] bg-[#7C2C78]/10 text-[#7C2C78]"
+                        : "border-gray-300 hover:border-gray-400"
+                    }
+                    disabled:opacity-50 disabled:cursor-not-allowed
+                  `}
+                >
+                  <div className="font-medium">{points}</div>
+                  <div className="text-xs text-gray-600">
+                    {formatCurrency(points * 0.1)}
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            {maxPointsData.maxPoints > 0 && (
+              <button
+                onClick={handleUseMaxPoints}
+                className="w-full py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                Use Max ({maxPointsData.maxPoints.toLocaleString()} pts ={" "}
+                {formatCurrency(maxPointsData.maxDiscount)})
+              </button>
+            )}
+
+            {checkoutData.pointsToUse > 0 && (
+              <div className="mt-3 p-2 bg-green-50 border border-green-200 rounded-lg">
+                <div className="flex items-center justify-between text-green-700 text-sm">
+                  <div className="flex items-center gap-2">
+                    <Check className="h-3 w-3" />
+                    <span className="font-medium">
+                      {checkoutData.pointsToUse.toLocaleString()} points applied
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => handleUsePoints(0)}
+                    className="text-green-700 hover:text-green-800"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Coupon Section */}
+        <div className="px-6 py-4 border-t border-gray-200">
+          {!showCouponInput ? (
+            <button
+              onClick={() => setShowCouponInput(true)}
+              className="w-full flex items-center justify-center gap-2 text-[#A43875] hover:text-[#7C2C78] transition-colors"
+            >
+              <Ticket className="h-4 w-4" />
+              <span className="font-medium">Have a coupon code?</span>
+            </button>
+          ) : (
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <Ticket className="h-5 w-5 text-[#A43875]" />
+                  <span className="font-medium text-gray-900">Apply Coupon</span>
+                </div>
+                <button
+                  onClick={() => setShowCouponInput(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={couponInput}
+                  onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                  placeholder="Enter coupon code"
+                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
+                  disabled={applyingCoupon}
+                />
+                <button
+                  onClick={handleApplyCoupon}
+                  disabled={applyingCoupon || !couponInput.trim()}
+                  className="px-4 py-2 bg-[#7C2C78] text-white text-sm rounded-lg hover:bg-[#6A2566] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {applyingCoupon ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    "Apply"
+                  )}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Applied Coupons */}
+          {checkoutData.appliedCoupons.length > 0 && (
+            <div className="mt-3 space-y-2">
+              {checkoutData.appliedCoupons.map((coupon: AppliedCoupon) => (
+                <div
+                  key={coupon.code}
+                  className="p-2 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between text-sm"
+                >
+                  <div className="flex items-center gap-2">
+                    <Ticket className="h-3 w-3 text-blue-600" />
+                    <span className="font-medium text-blue-800">
+                      {coupon.code}
+                    </span>
+                    <span className="text-blue-700">
+                      -{formatCurrency(coupon.discount)}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => handleRemoveCoupon(coupon.code)}
+                    className="text-blue-700 hover:text-blue-800"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Free Delivery Progress */}
         {shippingFee > 0 && amountForFreeDelivery > 0 && (
-          <div className="px-6 pb-4">
-            <div className="bg-linear-to-r from-[#7C2C78]/5 to-[#A43875]/5 p-4 rounded-xl border border-[#7C2C78]/20">
+          <div className="px-6 py-4 border-t border-gray-200">
+            <div className="bg-linear-to-r from-[#7C2C78]/5 to-[#A43875]/5 p-3 rounded-lg border border-[#7C2C78]/20">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm font-medium text-gray-900">
-                  Add{" "}
-                  <span className="text-[#7C2C78] font-bold">
-                    {formatCurrency(amountForFreeDelivery)}
-                  </span>{" "}
-                  more for FREE delivery!
+                  Add {formatCurrency(amountForFreeDelivery)} more for FREE delivery!
                 </span>
                 <span className="text-xs font-medium text-[#A43875]">
                   {Math.round(freeDeliveryProgress)}%
                 </span>
               </div>
 
-              {/* Progress Bar Container */}
-              <div className="h-3 bg-gray-200/80 rounded-full overflow-hidden relative">
-                {/* Base Progress Fill */}
+              <div className="h-2 bg-gray-200/80 rounded-full overflow-hidden">
                 <motion.div
-                  className="h-full rounded-full absolute"
+                  className="h-full rounded-full"
                   initial={{ width: 0 }}
                   animate={{ width: `${freeDeliveryProgress}%` }}
                   transition={{ duration: 1.5, ease: "easeOut" }}
                   style={{
-                    background:
-                      "linear-gradient(90deg, #7C2C78, #A43875, #EAB75F)",
+                    background: "linear-linear(90deg, #7C2C78, #A43875)",
                   }}
                 />
-
-                {/* Main Glow - Moving light streak */}
-                <motion.div
-                  className="h-full rounded-full absolute"
-                  style={{
-                    width: `${freeDeliveryProgress}%`,
-                    background:
-                      "linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent)",
-                    filter: "blur(3px)",
-                  }}
-                  initial={{ x: "-100%" }}
-                  animate={{ x: "100%" }}
-                  transition={{
-                    duration: 2.5,
-                    repeat: Infinity,
-                    ease: "linear",
-                    repeatDelay: 0.5,
-                  }}
-                />
-
-                {/* Sparkle Particles Effect */}
-                <div className="absolute inset-0 overflow-hidden">
-                  <motion.div
-                    className="h-1 w-1 rounded-full absolute top-1"
-                    style={{
-                      background: "rgba(255, 255, 255, 0.9)",
-                      boxShadow: "0 0 4px 1px rgba(234, 183, 95, 0.8)",
-                    }}
-                    initial={{ x: 0 }}
-                    animate={{ x: `${freeDeliveryProgress * 10}px` }}
-                    transition={{
-                      duration: 1.5,
-                      repeat: Infinity,
-                      ease: "linear",
-                    }}
-                  />
-                  <motion.div
-                    className="h-1.5 w-1.5 rounded-full absolute top-1.5"
-                    style={{
-                      background: "rgba(255, 255, 255, 0.9)",
-                      boxShadow: "0 0 6px 2px rgba(164, 56, 117, 0.8)",
-                    }}
-                    initial={{ x: "20px" }}
-                    animate={{ x: `${freeDeliveryProgress * 10 + 20}px` }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "linear",
-                    }}
-                  />
-                </div>
-
-                {/* Glowing Edge with soft blur */}
-                <div
-                  className="absolute h-full w-3 rounded-full"
-                  style={{
-                    left: `${freeDeliveryProgress}%`,
-                    background:
-                      "linear-gradient(90deg, rgba(124, 44, 120, 0.8), rgba(164, 56, 117, 0.8), rgba(234, 183, 95, 0.8))",
-                    filter: "blur(4px)",
-                    transform: "translateX(-50%)",
-                    boxShadow: `
-                      0 0 15px 3px rgba(124, 44, 120, 0.4),
-                      0 0 20px 5px rgba(164, 56, 117, 0.3),
-                      0 0 25px 7px rgba(234, 183, 95, 0.2)
-                    `,
-                  }}
-                />
-
-                {/* Subtle Pulse Effect */}
-                <motion.div
-                  className="h-full rounded-full absolute"
-                  style={{
-                    width: `${freeDeliveryProgress}%`,
-                    background:
-                      "linear-gradient(90deg, rgba(234, 183, 95, 0.1), rgba(164, 56, 117, 0.2), rgba(124, 44, 120, 0.1))",
-                  }}
-                  animate={{
-                    opacity: [0.3, 0.6, 0.3],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                />
-              </div>
-
-              <div className="flex justify-between mt-1">
-                <span className="text-xs text-gray-600">Rs 0</span>
-                <span className="text-xs text-gray-600">
-                  {formatCurrency(freeDeliveryThreshold)}
-                </span>
               </div>
             </div>
           </div>
         )}
 
         {/* Price Breakdown */}
-        <div className="px-6 pb-6 border-t border-gray-200">
-          <div className="space-y-3">
-            <div className="flex justify-between">
+        <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
               <span className="text-gray-600">Subtotal</span>
               <span className="font-medium">{formatCurrency(subtotal)}</span>
             </div>
 
             {discountTotal > 0 && (
-              <div className="flex justify-between text-green-600">
+              <div className="flex justify-between text-sm text-green-600">
                 <span>Item Discounts</span>
                 <span>-{formatCurrency(discountTotal)}</span>
               </div>
             )}
 
             {couponDiscount > 0 && (
-              <div className="flex justify-between text-blue-600">
+              <div className="flex justify-between text-sm text-blue-600">
                 <span>Coupon Discount</span>
                 <span>-{formatCurrency(couponDiscount)}</span>
               </div>
             )}
 
             {pointsDiscount > 0 && (
-              <div className="flex justify-between text-[#EAB75F]">
+              <div className="flex justify-between text-sm text-[#EAB75F]">
                 <span>Points Redeemed</span>
                 <span>-{formatCurrency(pointsDiscount)}</span>
               </div>
             )}
 
-            <div className="flex justify-between">
+            <div className="flex justify-between text-sm">
               <span className="text-gray-600">Shipping</span>
-              <span
-                className={shippingFee === 0 ? "text-green-600" : "font-medium"}
-              >
+              <span className={shippingFee === 0 ? "text-green-600 font-medium" : "font-medium"}>
                 {shippingFee === 0 ? "FREE" : formatCurrency(shippingFee)}
               </span>
             </div>
 
-            <div className="pt-3 border-t border-gray-200">
+            <div className="pt-3 border-t border-gray-300">
               <div className="flex justify-between text-lg font-bold">
                 <span>Total</span>
                 <div className="text-right">
-                  <div className="text-2xl text-gray-900">
-                    {formatCurrency(finalTotal)}
-                  </div>
-                  {currentStep === 3 && (
-                    <div className="text-sm text-gray-600 mt-1">
-                      Pay on delivery
-                    </div>
-                  )}
+                  <div className="text-xl text-gray-900">{formatCurrency(finalTotal)}</div>
+                  <div className="text-xs text-gray-600 mt-1">Pay on delivery</div>
                 </div>
               </div>
             </div>
@@ -310,7 +466,7 @@ export default function CheckoutSummary({
         </div>
 
         {/* Security & Benefits */}
-        <div className="border-t border-gray-200 p-6">
+        <div className="p-6">
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
@@ -318,10 +474,10 @@ export default function CheckoutSummary({
               </div>
               <div>
                 <div className="text-sm font-medium text-gray-900">
-                  Secure Payment
+                  100% Secure Checkout
                 </div>
                 <div className="text-xs text-gray-600">
-                  100% secure & encrypted
+                  Encrypted & protected
                 </div>
               </div>
             </div>
@@ -339,18 +495,6 @@ export default function CheckoutSummary({
                 </div>
               </div>
             </div>
-
-            {/* Points Earned Preview */}
-            {currentStep === 3 && finalTotal > 0 && (
-              <div className="mt-4 p-3 bg-linear-to-r from-[#EAB75F]/10 to-[#A43875]/10 rounded-lg">
-                <div className="text-sm font-medium text-gray-900 mb-1">
-                  You&apos;ll Earn
-                </div>
-                <div className="text-lg font-bold text-[#EAB75F]">
-                  {Math.floor(finalTotal / 10).toLocaleString()} Points
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

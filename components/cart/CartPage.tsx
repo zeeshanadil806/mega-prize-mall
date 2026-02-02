@@ -36,7 +36,7 @@ export default function CartPage() {
   } = useCartStore();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [couponCode, setCouponCode] = useState("");
+  // const [couponCode, setCouponCode] = useState("");
   const [appliedGlobalCoupon, setAppliedGlobalCoupon] = useState<{
     code: string;
     discount: number;
@@ -81,39 +81,6 @@ export default function CartPage() {
     [removeBargainFromItem]
   );
 
-  // Apply global coupon
-  const handleApplyCoupon = async () => {
-    if (!couponCode.trim()) {
-      toast.error("Please enter a coupon code");
-      return;
-    }
-
-    try {
-      const response = await fetch("/api/coupons/validate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          couponCode: couponCode.trim(),
-          orderAmount: getSubtotal() - getDiscountTotal(),
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.valid) {
-        setAppliedGlobalCoupon({
-          code: couponCode.toUpperCase(),
-          discount: data.discountAmount || 0,
-        });
-        toast.success(data.message);
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to validate coupon");
-    }
-  };
 
   // Calculate final total with global coupon
   const calculateFinalTotal = () => {
@@ -400,17 +367,6 @@ export default function CartPage() {
                       </span>
                     </div>
                   )}
-
-
-                  {/* Shipping Estimate */}
-                  {/* <div className="flex justify-between pt-2 border-t border-gray-100">
-                    <span className="text-gray-600 text-sm sm:text-base">
-                      Shipping
-                    </span>
-                    <span className="font-medium text-sm sm:text-base">
-                      {getGrandTotal() > 2000 ? "FREE" : "Rs 150"}
-                    </span>
-                  </div> */}
 
                   <div className="border-t border-gray-200 pt-3 sm:pt-4">
                     {/* Final Total */}

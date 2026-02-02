@@ -1,29 +1,31 @@
-// components/checkout/CheckoutClient.tsx (Client Component)
+// components/checkout/CheckoutClient.tsx (Single-Step Version)
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useCartStore } from "@/stores/cart-store";
-import CheckoutStep1 from "./steps/CheckoutStep1";
-import CheckoutStep2 from "./steps/CheckoutStep2";
-import CheckoutStep3 from "./steps/CheckoutStep3";
-import CheckoutSummary from "./CheckoutSummary";
-import { Loader2, ArrowLeft, Shield, Lock, ArrowRight } from "lucide-react";
+import {
+  Loader2,
+  Shield,
+  Lock,
+  ArrowLeft,
+  Home,
+  Plus,
+  Check,
+} from "lucide-react";
 import { Address, CheckoutState, CheckoutUser } from "@/types";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import { useAllTracking } from '@/hooks/useAllTracking';
-
-// import { useTikTokTracking } from "@/hooks/useTikTokTracking";
-// import { formatCurrency } from "@/lib/utils";
+import { useAllTracking } from "@/hooks/useAllTracking";
 import { useTikTokPixel } from "@/lib/tiktok/client/tiktok-pixel";
+import CheckoutSummary from "./CheckoutSummary";
 
 interface CheckoutClientProps {
   user: CheckoutUser;
   userId: string;
-  addresses: Address[]; // Add this
+  addresses: Address[];
 }
 
 export default function CheckoutClient({
@@ -32,29 +34,39 @@ export default function CheckoutClient({
   addresses,
 }: CheckoutClientProps) {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [checkoutData, setCheckoutData] = useState<CheckoutState>({
-    shippingAddress: null,
-    billingAddress: null,
-    useSameAddress: true,
-    shippingMethod: "standard",
-    pointsToUse: 0,
-    appliedCoupons: [],
-    notes: "",
+  const [showAddressForm, setShowAddressForm] = useState(false);
+  const [newAddress, setNewAddress] = useState({
+    fullName: user?.name || "",
+    phone: user?.phone || "",
+    addressLine1: "",
+    addressLine2: "",
+    city: "",
+    state: "",
+    postalCode: "",
+    country: "Pakistan",
+    isDefault: false,
   });
 
   const { items, clearCart, getGrandTotal } = useCartStore();
   const { trackInitiateCheckout } = useAllTracking();
-  const { isInitialized } = useTikTokPixel(); // Or from your hook
+  const { isInitialized } = useTikTokPixel();
 
-  const finalTotal = Math.max(0, getGrandTotal());
-  const numericTotal = parseFloat(
-    finalTotal.toString().replace(/[^0-9.-]+/g, "")
-  );
+  const [checkoutData, setCheckoutData] = useState<CheckoutState>({
+    shippingAddress: addresses.find((addr) => addr.isDefault) || null,
+    billingAddress: null,
+    useSameAddress: true,
+    shippingMethod: "standard", // Auto-selected
+    pointsToUse: 0, // Removed from UI
+    appliedCoupons: [], // Removed from UI
+    notes: "", // Optional expandable
+  });
 
+  const savedAddresses = addresses || [];
+
+  // Track checkout initiation
   useEffect(() => {
-  if (items.length > 0) { // Add isInitialized check
+    if (items.length > 0) {
       trackInitiateCheckout(
         items.map((item) => ({
           productId: item.productId,
@@ -62,45 +74,95 @@ export default function CheckoutClient({
           quantity: item.quantity,
           price: item.discountedPrice || item.price,
         })),
-        numericTotal,
-        "PKR" // or 'PKR'
+        parseFloat(
+          getGrandTotal()
+            .toString()
+            .replace(/[^0-9.-]+/g, ""),
+        ),
+        "PKR",
       );
     }
-  }, [items, numericTotal, trackInitiateCheckout, isInitialized]);
-  // Check if cart is empty
+  }, [items, getGrandTotal, trackInitiateCheckout, isInitialized]);
+
+  // Auto-select first address if none selected
   useEffect(() => {
-    if (items.length === 0) {
-      toast.success("Order Placed Successfully and your cart is empty.");
-      // router.push('/cart');
+    if (savedAddresses.length > 0 && !checkoutData.shippingAddress) {
+      const defaultAddress =
+        savedAddresses.find((addr) => addr.isDefault) || savedAddresses[0];
+      setCheckoutData((prev) => ({
+        ...prev,
+        shippingAddress: defaultAddress,
+      }));
     }
-  }, [items, router]);
+  }, [savedAddresses, checkoutData.shippingAddress]);
 
-  const handleNextStep = () => {
-    // Validate current step
-    if (currentStep === 1 && !checkoutData.shippingAddress) {
-      toast.error("Please select a shipping address");
+  const handleSelectAddress = (address: Address) => {
+    setCheckoutData((prev: CheckoutState) => ({
+      ...prev,
+      shippingAddress: address,
+    }));
+  };
+
+  const handleSaveAddress = async () => {
+    // Validate required fields
+    const required = [
+      "fullName",
+      "phone",
+      "addressLine1",
+      "city",
+      "state",
+      "postalCode",
+    ];
+    const missing = required.filter(
+      (field) => !newAddress[field as keyof typeof newAddress],
+    );
+
+    if (missing.length > 0) {
+      toast.error(`Please fill in: ${missing.join(", ")}`);
       return;
     }
 
-    if (currentStep === 2 && !validateOrderSummary()) {
-      return;
+    try {
+      const response = await fetch("/api/user/addresses", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newAddress),
+      });
+
+      if (!response.ok) throw new Error("Failed to save address");
+
+      const savedAddress = await response.json();
+
+      // Add to local list and select it
+      // const updatedAddresses = [...savedAddresses, savedAddress];
+      setCheckoutData((prev: CheckoutState) => ({
+        ...prev,
+        shippingAddress: savedAddress,
+      }));
+
+      setShowAddressForm(false);
+      setNewAddress({
+        fullName: user?.name || "",
+        phone: user?.phone || "",
+        addressLine1: "",
+        addressLine2: "",
+        city: "",
+        state: "",
+        postalCode: "",
+        country: "Pakistan",
+        isDefault: false,
+      });
+
+      toast.success("Address saved successfully");
+    } catch (error) {
+      console.error("Error saving address:", error);
+      toast.error("Failed to save address");
     }
-
-    setCurrentStep((prev) => Math.min(3, prev + 1));
-  };
-
-  const handlePreviousStep = () => {
-    setCurrentStep((prev) => Math.max(1, prev - 1));
-  };
-
-  const validateOrderSummary = () => {
-    // Check product availability, prices, etc.
-    return true;
   };
 
   const handlePlaceOrder = async () => {
     if (!checkoutData.shippingAddress) {
-      toast.error("Please provide shipping address");
+      toast.error("Please select or add a shipping address");
       return;
     }
 
@@ -150,14 +212,12 @@ export default function CheckoutClient({
       toast.error(
         error instanceof Error
           ? error.message
-          : "Failed to place order. Please try again."
+          : "Failed to place order. Please try again.",
       );
     } finally {
       setIsSubmitting(false);
     }
   };
-  // Step titles
-  const stepTitles = ["Shipping Address", "Review & Pay", "Confirmation"];
 
   return (
     <div className="min-h-screen bg-linear-to-b from-gray-50 to-white py-6 sm:py-8">
@@ -165,73 +225,24 @@ export default function CheckoutClient({
         {/* Header */}
         <div className="mb-6 sm:mb-8 text-center">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-1.5 sm:mb-2">
-            Checkout
+            Complete Your Order
           </h1>
           <p className="text-sm sm:text-base text-gray-600">
-            Complete your purchase in just 3 easy steps
+            Review your items and enter shipping details
           </p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 lg:gap-10">
-          {/* Left Column - Checkout Steps */}
+          {/* Right Column - Order Summary */}
+          <div className="lg:w-1/3">
+            <CheckoutSummary
+              checkoutData={checkoutData}
+              setCheckoutData={setCheckoutData} // Add this!
+              userId={userId} // Always show as step 1 in single-step
+            />
+          </div>
+          {/* Left Column - Checkout Form */}
           <div className="lg:w-2/3">
-            {/* Progress Steps */}
-            <div className="mb-6 sm:mb-8">
-              <div className="relative flex items-center justify-between mb-4 sm:mb-6">
-                {stepTitles.map((title, index) => (
-                  <div
-                    key={index}
-                    className="relative flex flex-col items-center z-10"
-                  >
-                    <div
-                      className={`
-                  w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm sm:text-base font-semibold
-                  ${
-                    currentStep > index + 1
-                      ? "bg-green-500 text-white"
-                      : currentStep === index + 1
-                      ? "bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white shadow-lg"
-                      : "bg-gray-200 text-gray-400"
-                  }
-                  transition-all duration-300
-                `}
-                    >
-                      {currentStep > index + 1 ? "✓" : index + 1}
-                    </div>
-                    <span
-                      className={`
-                  mt-1.5 sm:mt-2 text-xs sm:text-sm font-medium
-                  ${
-                    currentStep >= index + 1 ? "text-gray-900" : "text-gray-400"
-                  }
-                  text-center
-                `}
-                    >
-                      <span className="hidden xs:inline">{title}</span>
-                      <span className="xs:hidden">Step {index + 1}</span>
-                    </span>
-                  </div>
-                ))}
-
-                {/* Progress Line */}
-                <div className="absolute left-0 right-0 top-4 sm:top-5 h-0.5 sm:h-1 bg-gray-200 -translate-y-1/2 z-0 hidden xs:block">
-                  <motion.div
-                    className="h-full bg-linear-to-r from-[#7C2C78] to-[#A43875]"
-                    initial={{ width: "0%" }}
-                    animate={{
-                      width:
-                        currentStep === 1
-                          ? "0%"
-                          : currentStep === 2
-                          ? "50%"
-                          : "100%",
-                    }}
-                    transition={{ duration: 0.3 }}
-                  />
-                </div>
-              </div>
-            </div>
-
             {/* Security Badge */}
             <div className="mb-5 sm:mb-6 p-3 sm:p-4 bg-green-50 border border-green-200 rounded-lg sm:rounded-xl flex items-start sm:items-center gap-2.5 sm:gap-3">
               <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 shrink-0 mt-0.5 sm:mt-0" />
@@ -245,130 +256,381 @@ export default function CheckoutClient({
               </div>
             </div>
 
-            {/* Steps Content */}
-            <div className="bg-white rounded-xl sm:rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+            {/* Address Section */}
+            <div className="bg-white rounded-xl sm:rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
               <div className="p-4 sm:p-5 lg:p-6">
-                <AnimatePresence mode="wait">
-                  {currentStep === 1 && (
-                    <motion.div
-                      key="step1"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 20 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <CheckoutStep1
-                        addresses={addresses}
-                        user={user}
-                        checkoutData={checkoutData}
-                        setCheckoutData={setCheckoutData}
-                      />
-                    </motion.div>
-                  )}
+                <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                  <Home className="h-5 w-5 text-[#7C2C78]" />
+                  Shipping Address
+                </h2>
 
-                  {currentStep === 2 && (
-                    <motion.div
-                      key="step2"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 20 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <CheckoutStep2
-                        checkoutData={checkoutData}
-                        setCheckoutData={setCheckoutData}
-                        userId={userId}
-                      />
-                    </motion.div>
-                  )}
-
-                  {currentStep === 3 && (
-                    <motion.div
-                      key="step3"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 20 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <CheckoutStep3
-                        checkoutData={checkoutData}
-                        isSubmitting={isSubmitting}
-                        onPlaceOrder={handlePlaceOrder}
-                      />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {/* Navigation Buttons */}
-                <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200 flex flex-col-reverse sm:flex-row justify-between gap-3 sm:gap-4">
-                  <div className="w-full sm:w-auto">
-                    {currentStep > 1 ? (
-                      <Button
-                        onClick={handlePreviousStep}
-                        variant="outline"
-                        className="w-full sm:w-auto h-10 sm:h-11 px-4 sm:px-6 gap-1.5 sm:gap-2 text-sm sm:text-base border-gray-300 hover:border-gray-400"
-                        disabled={isSubmitting}
-                      >
-                        <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                        Back
-                      </Button>
-                    ) : (
-                      <Link
-                        href="/cart"
-                        className="inline-block w-full sm:w-auto"
-                      >
-                        <Button
-                          variant="outline"
-                          className="w-full sm:w-auto h-10 sm:h-11 px-4 sm:px-6 gap-1.5 sm:gap-2 text-sm sm:text-base border-gray-300 hover:border-gray-400"
+                {/* Saved Addresses */}
+                {savedAddresses.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="font-medium text-gray-900 mb-4">
+                      Select a saved address
+                    </h3>
+                    <div className="grid gap-3">
+                      {savedAddresses.map((address: Address, index: number) => (
+                        <motion.div
+                          key={index}
+                          whileHover={{ scale: 1.01 }}
+                          whileTap={{ scale: 0.99 }}
                         >
-                          <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                          Back to Cart
-                        </Button>
-                      </Link>
-                    )}
+                          <label className="block cursor-pointer">
+                            <input
+                              type="radio"
+                              name="shippingAddress"
+                              checked={
+                                checkoutData.shippingAddress?._id ===
+                                address._id
+                              }
+                              onChange={() => handleSelectAddress(address)}
+                              className="sr-only"
+                            />
+                            <div
+                              className={`
+                              p-4 border-2 rounded-xl transition-all
+                              ${
+                                checkoutData.shippingAddress?._id ===
+                                address._id
+                                  ? "border-[#7C2C78] bg-[#7C2C78]/5"
+                                  : "border-gray-200 hover:border-gray-300"
+                              }
+                            `}
+                            >
+                              <div className="flex items-start gap-3">
+                                <div
+                                  className={`
+                                  h-5 w-5 rounded-full border-2 flex items-center justify-center mt-0.5
+                                  ${
+                                    checkoutData.shippingAddress?._id ===
+                                    address._id
+                                      ? "border-[#7C2C78] bg-[#7C2C78]"
+                                      : "border-gray-300"
+                                  }
+                                `}
+                                >
+                                  {checkoutData.shippingAddress?._id ===
+                                    address._id && (
+                                    <Check className="h-3 w-3 text-white" />
+                                  )}
+                                </div>
+                                <div className="flex-1">
+                                  <div className="flex justify-between">
+                                    <div>
+                                      <p className="font-medium text-gray-900">
+                                        {address.fullName}
+                                      </p>
+                                      <p className="text-sm text-gray-600 mt-1">
+                                        {address.addressLine1}
+                                        {address.addressLine2 &&
+                                          `, ${address.addressLine2}`}
+                                      </p>
+                                      <p className="text-sm text-gray-600">
+                                        {address.city}, {address.state}{" "}
+                                        {address.postalCode}
+                                      </p>
+                                      <p className="text-sm text-gray-600 mt-2">
+                                        📞 {address.phone}
+                                      </p>
+                                    </div>
+                                    {address.isDefault && (
+                                      <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
+                                        Default
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </label>
+                        </motion.div>
+                      ))}
+                    </div>
                   </div>
+                )}
 
-                  <div className="w-full sm:w-auto">
-                    {currentStep < 3 ? (
-                      <Button
-                        onClick={handleNextStep}
-                        className="w-full sm:w-auto h-10 sm:h-11 px-4 sm:px-6 text-sm sm:text-base bg-linear-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] text-white"
-                      >
-                        Continue to {currentStep === 1 ? "Review" : "Payment"}
-                        <ArrowRight className="ml-1.5 sm:ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={handlePlaceOrder}
-                        disabled={isSubmitting}
-                        className="w-full sm:w-auto h-10 sm:h-11 px-4 sm:px-6 text-sm sm:text-base bg-linear-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white"
-                      >
-                        {isSubmitting ? (
-                          <>
-                            <Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2 animate-spin" />
-                            Processing...
-                          </>
-                        ) : (
-                          <>
-                            <Lock className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
-                            Place Order
-                          </>
-                        )}
-                      </Button>
-                    )}
+                {/* Add New Address Button or Form */}
+                {!showAddressForm ? (
+                  <motion.button
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    onClick={() => setShowAddressForm(true)}
+                    className="w-full p-4 border-2 border-dashed border-gray-300 rounded-xl hover:border-[#7C2C78] hover:bg-[#7C2C78]/5 transition-all group"
+                  >
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-[#7C2C78]/10">
+                        <Plus className="h-4 w-4 text-gray-600 group-hover:text-[#7C2C78]" />
+                      </div>
+                      <span className="font-medium text-gray-900">
+                        Add New Address
+                      </span>
+                    </div>
+                  </motion.button>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    className="border border-gray-200 rounded-xl p-5"
+                  >
+                    <h3 className="font-medium text-gray-900 mb-4">
+                      Add New Address
+                    </h3>
+
+                    <div className="grid gap-4">
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Full Name *
+                          </label>
+                          <input
+                            type="text"
+                            value={newAddress.fullName}
+                            onChange={(e) =>
+                              setNewAddress((prev) => ({
+                                ...prev,
+                                fullName: e.target.value,
+                              }))
+                            }
+                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
+                            placeholder="John Doe"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Phone Number *
+                          </label>
+                          <input
+                            type="tel"
+                            value={newAddress.phone}
+                            onChange={(e) =>
+                              setNewAddress((prev) => ({
+                                ...prev,
+                                phone: e.target.value,
+                              }))
+                            }
+                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
+                            placeholder="+92 300 1234567"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Address Line 1 *
+                        </label>
+                        <input
+                          type="text"
+                          value={newAddress.addressLine1}
+                          onChange={(e) =>
+                            setNewAddress((prev) => ({
+                              ...prev,
+                              addressLine1: e.target.value,
+                            }))
+                          }
+                          className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
+                          placeholder="House #123, Street #45"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Address Line 2 (Optional)
+                        </label>
+                        <input
+                          type="text"
+                          value={newAddress.addressLine2}
+                          onChange={(e) =>
+                            setNewAddress((prev) => ({
+                              ...prev,
+                              addressLine2: e.target.value,
+                            }))
+                          }
+                          className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
+                          placeholder="Apartment, Suite, etc."
+                        />
+                      </div>
+
+                      <div className="grid sm:grid-cols-3 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            City *
+                          </label>
+                          <input
+                            type="text"
+                            value={newAddress.city}
+                            onChange={(e) =>
+                              setNewAddress((prev) => ({
+                                ...prev,
+                                city: e.target.value,
+                              }))
+                            }
+                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
+                            placeholder="Karachi"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            State *
+                          </label>
+                          <input
+                            type="text"
+                            value={newAddress.state}
+                            onChange={(e) =>
+                              setNewAddress((prev) => ({
+                                ...prev,
+                                state: e.target.value,
+                              }))
+                            }
+                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
+                            placeholder="Sindh"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Postal Code *
+                          </label>
+                          <input
+                            type="text"
+                            value={newAddress.postalCode}
+                            onChange={(e) =>
+                              setNewAddress((prev) => ({
+                                ...prev,
+                                postalCode: e.target.value,
+                              }))
+                            }
+                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
+                            placeholder="75500"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 pt-2">
+                        <input
+                          type="checkbox"
+                          id="setDefault"
+                          checked={newAddress.isDefault}
+                          onChange={(e) =>
+                            setNewAddress((prev) => ({
+                              ...prev,
+                              isDefault: e.target.checked,
+                            }))
+                          }
+                          className="h-4 w-4 text-[#7C2C78] focus:ring-[#7C2C78] border-gray-300 rounded"
+                        />
+                        <label
+                          htmlFor="setDefault"
+                          className="text-sm text-gray-700"
+                        >
+                          Set as default shipping address
+                        </label>
+                      </div>
+
+                      <div className="flex gap-3 pt-4">
+                        <button
+                          onClick={() => setShowAddressForm(false)}
+                          className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handleSaveAddress}
+                          className="flex-1 px-6 py-2.5 bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white rounded-lg hover:from-[#6A2566] hover:to-[#8D2F6A] transition-all"
+                        >
+                          Save & Use Address
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Same as Billing Address */}
+                {checkoutData.shippingAddress && (
+                  <div className="mt-6 pt-6 border-t border-gray-200">
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        id="sameAsBilling"
+                        checked={checkoutData.useSameAddress}
+                        onChange={(e) =>
+                          setCheckoutData((prev: CheckoutState) => ({
+                            ...prev,
+                            useSameAddress: e.target.checked,
+                          }))
+                        }
+                        className="h-5 w-5 text-[#7C2C78] focus:ring-[#7C2C78] border-gray-300 rounded"
+                      />
+                      <label htmlFor="sameAsBilling" className="text-gray-700">
+                        Use same address for billing
+                      </label>
+                    </div>
                   </div>
+                )}
+
+                {/* Payment Method (COD Only) */}
+                <div className="mt-8 pt-6 border-t border-gray-200">
+                  <h3 className="font-medium text-gray-900 mb-4">
+                    Payment Method
+                  </h3>
+                  <div className="p-4 border-2 border-[#7C2C78] rounded-xl">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                        <Shield className="h-5 w-5 text-gray-600" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-900">
+                          Cash on Delivery
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          Pay when you receive your order
+                        </div>
+                      </div>
+                      <div className="h-6 w-6 rounded-full border-2 border-[#7C2C78] flex items-center justify-center">
+                        <Check className="h-3 w-3 text-[#7C2C78]" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Place Order Button */}
+                <div className="mt-8 pt-6 border-t border-gray-200">
+                  <Button
+                    onClick={handlePlaceOrder}
+                    disabled={isSubmitting || !checkoutData.shippingAddress}
+                    className="w-full h-12 text-base bg-linear-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        <Lock className="h-4 w-4 mr-2" />
+                        Place Order
+                      </>
+                    )}
+                  </Button>
+
+                  {!checkoutData.shippingAddress && (
+                    <p className="text-sm text-red-600 mt-2 text-center">
+                      Please select or add a shipping address
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Right Column - Order Summary */}
-          <div className="lg:w-1/3">
-            <div className="sticky top-4 sm:top-6">
-              <CheckoutSummary
-                checkoutData={checkoutData}
-                currentStep={currentStep}
-              />
+            {/* Back to Cart Link */}
+            <div className="text-center">
+              <Link
+                href="/cart"
+                className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Cart
+              </Link>
             </div>
           </div>
         </div>
