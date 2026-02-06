@@ -6,6 +6,7 @@ import CheckoutClient from "@/components/checkout/CheckoutClient";
 import { connectToDatabase } from "@/lib/mongodb";
 import { UserModel } from "@/models/User";
 import { AddressModel } from "@/models";
+import { Address } from "@/types";
 
 export const metadata: Metadata = {
   title: "Secure Checkout | Complete Your Purchase - Mega Prize Mall",
@@ -46,19 +47,44 @@ export default async function CheckoutPage() {
   const session = await auth();
   console.log(session);
   // Redirect if not authenticated
-  if (!session?.user) {
-    redirect("/login?redirect=/checkout");
-  }
+  // if (!session?.user) {
+  //   redirect("/login?redirect=/checkout");
+  // }
 
   await connectToDatabase();
+  let user = null;
+  let addresses: Address[] = [];
+  let userId = "";
+  if (session?.user) {
+    if (session.user.isGuest) {
+      // Guest user - no DB data needed
+      user = {
+        _id: session.user.id,
+        name: session.user.name || "Guest",
+        email: session.user.email || "",
+        phone: "",
+      };
+      userId = session.user.id;
+    } else {
+      // Logged-in user - fetch from DB
+      user = await UserModel.findById(session.user.id)
+        .select("name email phone")
+        .lean();
 
+      addresses = await AddressModel.find({ userId: session.user.id }).lean();
+      userId = session.user.id;
+    }
+  } else {
+    // No session at all (shouldn't happen with middleware, but handle it)
+    redirect("/login");
+  }
   // Fetch user data with saved addresses
-  const user = await UserModel.findById(session.user.id)
-    .select("name email phone")
-    .lean();
+  // const user = await UserModel.findById(session.user.id)
+  //   .select("name email phone")
+  //   .lean();
 
   // Fetch addresses separately
-  const addresses = await AddressModel.find({ userId: session.user.id }).lean();
+  // const addresses = await AddressModel.find({ userId: session.user.id }).lean();
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "CheckoutPage",
@@ -130,7 +156,7 @@ export default async function CheckoutPage() {
       />
       <CheckoutClient
         user={user ? JSON.parse(JSON.stringify(user)) : null}
-        userId={session.user.id}
+        userId={userId}
         addresses={JSON.parse(JSON.stringify(addresses))}
       />
     </>

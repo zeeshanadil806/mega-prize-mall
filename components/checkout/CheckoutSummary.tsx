@@ -1,13 +1,27 @@
-// components/checkout/CheckoutSummary.tsx (Updated with Coupons & Points)
+// components/checkout/CheckoutSummary.tsx - UPDATE
 "use client";
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useCartStore } from "@/stores/cart-store";
-import { formatCurrency, calculateMaxRedeemablePoints } from "@/lib/bargain-utils";
-import { Package, Shield, Truck, Ticket, Wallet, Check, X, Loader2 } from "lucide-react";
+import {
+  formatCurrency,
+  calculateMaxRedeemablePoints,
+} from "@/lib/bargain-utils";
+import {
+  Package,
+  Shield,
+  Truck,
+  Ticket,
+  Wallet,
+  Check,
+  X,
+  Loader2,
+  User,
+} from "lucide-react";
 import { AppliedCoupon, CheckoutState } from "@/types";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react"; // ADD THIS
 
 interface CheckoutSummaryProps {
   checkoutData: CheckoutState;
@@ -20,7 +34,9 @@ export default function CheckoutSummary({
   setCheckoutData,
   userId,
 }: CheckoutSummaryProps) {
-  const { items, getSubtotal, getDiscountTotal, getGrandTotal } = useCartStore();
+  const { data: session } = useSession(); // ADD THIS
+  const { items, getSubtotal, getDiscountTotal, getGrandTotal } =
+    useCartStore();
   const [userPoints, setUserPoints] = useState(0);
   const [couponInput, setCouponInput] = useState("");
   const [applyingCoupon, setApplyingCoupon] = useState(false);
@@ -35,11 +51,11 @@ export default function CheckoutSummary({
   const freeDeliveryThreshold = 2000;
   const shippingFee = grandTotal > freeDeliveryThreshold ? 0 : 150;
 
-  // Points calculations
-  const maxPointsData = calculateMaxRedeemablePoints(
-    grandTotal - shippingFee,
-    userPoints,
-  );
+  // Points calculations (skip for guests)
+  const maxPointsData = session?.user?.isGuest
+    ? { maxPoints: 0, maxDiscount: 0 }
+    : calculateMaxRedeemablePoints(grandTotal - shippingFee, userPoints);
+
   const pointsDiscount = checkoutData.pointsToUse * 0.1; // 10 points = Rs 1
 
   // Coupon discount
@@ -67,8 +83,13 @@ export default function CheckoutSummary({
     grandTotal + shippingFee - couponDiscount - pointsDiscount,
   );
 
-  // Fetch user points
+  // Fetch user points (skip for guests)
   useEffect(() => {
+    if (session?.user?.isGuest) {
+      setUserPoints(0);
+      return;
+    }
+
     const fetchUserPoints = async () => {
       try {
         const response = await fetch("/api/user/points");
@@ -82,7 +103,7 @@ export default function CheckoutSummary({
     };
 
     fetchUserPoints();
-  }, []);
+  }, [session?.user?.isGuest]);
 
   // Handle coupon application
   const handleApplyCoupon = async () => {
@@ -100,7 +121,7 @@ export default function CheckoutSummary({
         body: JSON.stringify({
           couponCode: couponInput.trim(),
           orderAmount: grandTotal + shippingFee,
-          userId,
+          userId: session?.user?.isGuest ? undefined : userId,
         }),
       });
 
@@ -165,8 +186,10 @@ export default function CheckoutSummary({
     toast.info("Coupon removed");
   };
 
-  // Points handling
+  // Points handling (disabled for guests)
   const handleUsePoints = (points: number) => {
+    if (session?.user?.isGuest) return; // Prevent point usage for guests
+
     setCheckoutData((prev: CheckoutState) => ({
       ...prev,
       pointsToUse: points,
@@ -174,6 +197,8 @@ export default function CheckoutSummary({
   };
 
   const handleUseMaxPoints = () => {
+    if (session?.user?.isGuest) return; // Prevent point usage for guests
+
     setCheckoutData((prev: CheckoutState) => ({
       ...prev,
       pointsToUse: maxPointsData.maxPoints,
@@ -183,12 +208,20 @@ export default function CheckoutSummary({
   return (
     <div className="sticky top-24">
       <div className="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
-        {/* Header */}
-        <div className="bg-linear-to-r from-[#7C2C78] to-[#A43875] p-6 text-white">
+        {/* Header with Guest Badge */}
+        <div className="bg-linear-to-r from-[#7C2C78] to-[#A43875] p-6 text-white relative">
           <h3 className="text-xl font-bold mb-2">Order Summary</h3>
           <p className="text-white/80 text-sm">
             {itemCount} item{itemCount !== 1 ? "s" : ""} in your order
           </p>
+          {session?.user?.isGuest && (
+            <div className="absolute top-2 right-2">
+              <div className="flex items-center gap-1 px-2 py-1 bg-white/20 rounded-full text-xs">
+                <User className="h-3 w-3" />
+                <span>Guest</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Items List */}
@@ -241,8 +274,8 @@ export default function CheckoutSummary({
           })}
         </div>
 
-        {/* Points Redemption Section */}
-        {userPoints > 0 && (
+        {/* Points Redemption Section (HIDDEN for guests) */}
+        {!session?.user?.isGuest && userPoints > 0 && (
           <div className="px-6 py-4 border-t border-gray-200">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
@@ -311,7 +344,25 @@ export default function CheckoutSummary({
           </div>
         )}
 
-        {/* Coupon Section */}
+        {/* Guest Notice (SHOW for guests) */}
+        {session?.user?.isGuest && (
+          <div className="px-6 py-4 border-t border-gray-200 bg-blue-50">
+            <div className="flex items-start gap-3">
+              <User className="h-5 w-5 text-blue-600 mt-0.5" />
+              <div>
+                <p className="font-medium text-blue-800 text-sm">
+                  Guest Checkout
+                </p>
+                <p className="text-xs text-blue-700 mt-1">
+                  Create an account after ordering to earn points and track your
+                  purchase.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Coupon Section (AVAILABLE for all) */}
         <div className="px-6 py-4 border-t border-gray-200">
           {!showCouponInput ? (
             <button
@@ -326,7 +377,9 @@ export default function CheckoutSummary({
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <Ticket className="h-5 w-5 text-[#A43875]" />
-                  <span className="font-medium text-gray-900">Apply Coupon</span>
+                  <span className="font-medium text-gray-900">
+                    Apply Coupon
+                  </span>
                 </div>
                 <button
                   onClick={() => setShowCouponInput(false)}
@@ -395,7 +448,8 @@ export default function CheckoutSummary({
             <div className="bg-linear-to-r from-[#7C2C78]/5 to-[#A43875]/5 p-3 rounded-lg border border-[#7C2C78]/20">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm font-medium text-gray-900">
-                  Add {formatCurrency(amountForFreeDelivery)} more for FREE delivery!
+                  Add {formatCurrency(amountForFreeDelivery)} more for FREE
+                  delivery!
                 </span>
                 <span className="text-xs font-medium text-[#A43875]">
                   {Math.round(freeDeliveryProgress)}%
@@ -409,7 +463,7 @@ export default function CheckoutSummary({
                   animate={{ width: `${freeDeliveryProgress}%` }}
                   transition={{ duration: 1.5, ease: "easeOut" }}
                   style={{
-                    background: "linear-linear(90deg, #7C2C78, #A43875)",
+                    background: "linear-gradient(90deg, #7C2C78, #A43875)",
                   }}
                 />
               </div>
@@ -439,7 +493,7 @@ export default function CheckoutSummary({
               </div>
             )}
 
-            {pointsDiscount > 0 && (
+            {!session?.user?.isGuest && pointsDiscount > 0 && (
               <div className="flex justify-between text-sm text-[#EAB75F]">
                 <span>Points Redeemed</span>
                 <span>-{formatCurrency(pointsDiscount)}</span>
@@ -448,7 +502,13 @@ export default function CheckoutSummary({
 
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Shipping</span>
-              <span className={shippingFee === 0 ? "text-green-600 font-medium" : "font-medium"}>
+              <span
+                className={
+                  shippingFee === 0
+                    ? "text-green-600 font-medium"
+                    : "font-medium"
+                }
+              >
                 {shippingFee === 0 ? "FREE" : formatCurrency(shippingFee)}
               </span>
             </div>
@@ -457,10 +517,29 @@ export default function CheckoutSummary({
               <div className="flex justify-between text-lg font-bold">
                 <span>Total</span>
                 <div className="text-right">
-                  <div className="text-xl text-gray-900">{formatCurrency(finalTotal)}</div>
-                  <div className="text-xs text-gray-600 mt-1">Pay on delivery</div>
+                  <div className="text-xl text-gray-900">
+                    {formatCurrency(finalTotal)}
+                  </div>
+                  <div className="text-xs text-gray-600 mt-1">
+                    Pay on delivery
+                  </div>
                 </div>
               </div>
+
+              {/* Points Earned (HIDDEN for guests) */}
+              {!session?.user?.isGuest && finalTotal > 0 && (
+                <div className="mt-3 p-2 bg-linear-to-r from-[#EAB75F]/10 to-[#A43875]/10 rounded-lg">
+                  <div className="text-sm font-medium text-gray-900 mb-1">
+                    You&apos;ll Earn
+                  </div>
+                  <div className="text-lg font-bold text-[#EAB75F]">
+                    {Math.floor(finalTotal / 10).toLocaleString()} Points
+                  </div>
+                  <div className="text-xs text-gray-600 mt-1">
+                    Create account to earn and redeem points
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

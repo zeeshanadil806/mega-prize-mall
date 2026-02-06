@@ -1,108 +1,108 @@
 export interface ImageProps {
-  id: string
-  url: string
-  alt?: string
-  order: number
+  id: string;
+  url: string;
+  alt?: string;
+  order: number;
   metadata: {
-    width: number
-    height: number
-    size: number
-    format: string
-  }
+    width: number;
+    height: number;
+    size: number;
+    format: string;
+  };
 }
 export interface ProductProps {
   // Basic Info
-  _id?: string
-  name: string
-  slug: string
-  description: string
-  shortDescription: string
+  _id?: string;
+  name: string;
+  slug: string;
+  description: string;
+  shortDescription: string;
   // Pricing
-  price: number
-  discountedPrice: number
-  costPrice: number
-  
-  // Categorization
-  category: string
-  tags: string[]
-  brand: string
-  
-  // Inventory
-  sku: string
-  stock: number
-  
-  // Specifications
-  features: string[]
-  specifications: Record<string, string>
-  color: string
-  
-  // Gamification
-  bargainEnabled: boolean
-  minBargainPrice: number
-  maxBargainRounds: number
-  bargainValidityHours: number
-  
-  images?:ImageProps[]
-  // SEO
-  metaTitle: string
-  metaDescription: string
-  keywords: string[]
-  
-  // Status
-  isActive: boolean
-  isFeatured: boolean
-  isBestSeller: boolean
-  isNewArrival: boolean
+  price: number;
+  discountedPrice: number;
+  costPrice: number;
 
-  purchaseCount?: number
+  // Categorization
+  category: string;
+  tags: string[];
+  brand: string;
+
+  // Inventory
+  sku: string;
+  stock: number;
+
+  // Specifications
+  features: string[];
+  specifications: Record<string, string>;
+  color: string;
+
+  // Gamification
+  bargainEnabled: boolean;
+  minBargainPrice: number;
+  maxBargainRounds: number;
+  bargainValidityHours: number;
+
+  images?: ImageProps[];
+  // SEO
+  metaTitle: string;
+  metaDescription: string;
+  keywords: string[];
+
+  // Status
+  isActive: boolean;
+  isFeatured: boolean;
+  isBestSeller: boolean;
+  isNewArrival: boolean;
+
+  purchaseCount?: number;
 }
 
 export interface CustomerProductProps {
   // Basic Info
-  _id: string
-  name: string
-  slug: string
-  description: string
-  shortDescription: string
+  _id: string;
+  name: string;
+  slug: string;
+  description: string;
+  shortDescription: string;
   // Pricing
-  price: number
-  discountedPrice: number
-  costPrice: number
+  price: number;
+  discountedPrice: number;
+  costPrice: number;
   discountPercentage: number;
-  
-  // Categorization
-  category: string
-  tags: string[]
-  brand: string
-  
-  // Inventory
-  sku: string
-  stock: number
-  
-  // Specifications
-  features: string[]
-  specifications: Record<string, string>
-  color: string
-  
-  // Gamification
-  bargainEnabled: boolean
-  minBargainPrice: number
-  maxBargainRounds: number
-  bargainValidityHours: number
-  
-  images?:ImageProps[]
-  // SEO
-  metaTitle: string
-  metaDescription: string
-  keywords: string[]
-  
-  // Status
-  isActive: boolean
-  isFeatured: boolean
-  isBestSeller: boolean
-  isNewArrival: boolean
 
-  purchaseCount?: number
+  // Categorization
+  category: string;
+  tags: string[];
+  brand: string;
+
+  // Inventory
+  sku: string;
+  stock: number;
+
+  // Specifications
+  features: string[];
+  specifications: Record<string, string>;
+  color: string;
+
+  // Gamification
+  bargainEnabled: boolean;
+  minBargainPrice: number;
+  maxBargainRounds: number;
+  bargainValidityHours: number;
+
+  images?: ImageProps[];
+  // SEO
+  metaTitle: string;
+  metaDescription: string;
+  keywords: string[];
+
+  // Status
+  isActive: boolean;
+  isFeatured: boolean;
+  isBestSeller: boolean;
+  isNewArrival: boolean;
+
+  purchaseCount?: number;
 }
 export interface EmailSubscriber {
   email: string;
@@ -114,21 +114,21 @@ export interface EmailSubscriber {
 }
 
 export interface BargainHistoryItem {
-  id: string
-  productId: string
-  productName: string
-  productImage?: string
-  originalPrice: number
-  offeredPrice: number
-  status: 'accepted' | 'rejected' | 'pending' | 'expired'
-  discountPercentage: number
-  couponCode?: string
-  couponExpiresAt?: string
-  bargainRound: number
-  maxRounds: number
-  createdAt: string
-  isExpired: boolean
-  savingAmount: number
+  id: string;
+  productId: string;
+  productName: string;
+  productImage?: string;
+  originalPrice: number;
+  offeredPrice: number;
+  status: "accepted" | "rejected" | "pending" | "expired";
+  discountPercentage: number;
+  couponCode?: string;
+  couponExpiresAt?: string;
+  bargainRound: number;
+  maxRounds: number;
+  createdAt: string;
+  isExpired: boolean;
+  savingAmount: number;
 }
 
 export interface ProductFilter {
@@ -160,8 +160,6 @@ export interface CartItem {
   bargainDiscount?: number;
 }
 
-
-
 // types/checkout.ts (Recommended) OR top of CheckoutClient.tsx
 
 export interface Address {
@@ -180,7 +178,7 @@ export interface Address {
 
 export interface AppliedCoupon {
   code: string;
-  type: 'bargain' | 'global';
+  type: "bargain" | "global";
   discount: number;
 }
 
@@ -192,6 +190,7 @@ export interface CheckoutState {
   pointsToUse: number;
   appliedCoupons: AppliedCoupon[];
   notes: string;
+  guestEmail?: string; // ADD THIS for guest email
 }
 
 // The shape of the User object passed from the Server
@@ -202,7 +201,6 @@ export interface CheckoutUser {
   phone?: string;
   addresses: Address[];
 }
-
 
 export interface OrderDetails {
   _id: string;
@@ -216,7 +214,6 @@ export interface OrderDetails {
   grandTotal: number;
   pointsEarned: number;
 }
-
 
 export interface ClientAddress {
   fullName: string;
@@ -245,6 +242,8 @@ export interface ClientOrderItem {
 
 export interface ClientOrder {
   _id: string;
+  billingAddress: ClientAddress;
+  shippingMethod: string;
   userId: string;
   items: ClientOrderItem[];
   subtotal: number;
@@ -257,8 +256,6 @@ export interface ClientOrder {
   couponCodes: string[];
   bargainCouponIds: string[];
   shippingAddress: ClientAddress;
-  billingAddress: ClientAddress;
-  shippingMethod: string;
   paymentMethod: string;
   paymentStatus: string;
   status: string;
@@ -268,29 +265,27 @@ export interface ClientOrder {
   notes?: string;
   transactionId?: string;
   estimatedDelivery?: string;
-  createdAt: string; 
+  createdAt: string;
   updatedAt: string;
 }
-
 
 export interface WalletTransaction {
   _id: string;
   userId: string;
-  type: 'earn' | 'redeem' | 'adjustment' | 'expiry' | 'refund';
+  type: "earn" | "redeem" | "adjustment" | "expiry" | "refund";
   points: number;
   balanceAfter: number;
   rate: number;
   orderId?: string;
   productId?: string;
   description: string;
-  status: 'pending' | 'completed' | 'cancelled';
+  status: "pending" | "completed" | "cancelled";
   // metadata: Record<string, any>;
   expiresAt?: string; // ISO date string
   processedAt?: string; // ISO date string
   createdAt: string; // ISO date string
   updatedAt: string; // ISO date string
 }
-
 
 export interface CompletedDraw {
   _id: string;
@@ -300,5 +295,5 @@ export interface CompletedDraw {
   resultDate?: Date;
   winnerName?: string;
   winnerEmail?: string;
-  status: 'completed';
+  status: "completed";
 }

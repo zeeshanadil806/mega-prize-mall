@@ -1,4 +1,4 @@
-// components/checkout/CheckoutClient.tsx (Single-Step Version)
+// components/checkout/CheckoutClient.tsx - FINAL VERSION
 "use client";
 
 import { useState, useEffect } from "react";
@@ -14,6 +14,8 @@ import {
   Home,
   Plus,
   Check,
+  User,
+  MapPin,
 } from "lucide-react";
 import { Address, CheckoutState, CheckoutUser } from "@/types";
 import { Button } from "../ui/button";
@@ -21,6 +23,7 @@ import Link from "next/link";
 import { useAllTracking } from "@/hooks/useAllTracking";
 import { useTikTokPixel } from "@/lib/tiktok/client/tiktok-pixel";
 import CheckoutSummary from "./CheckoutSummary";
+import { useSession } from "next-auth/react";
 
 interface CheckoutClientProps {
   user: CheckoutUser;
@@ -28,22 +31,63 @@ interface CheckoutClientProps {
   addresses: Address[];
 }
 
+// Phone validation for Pakistan
+const isValidPKPhone = (phone: string): boolean => {
+  // Accepts: +92XXXXXXXXXX, 03XXXXXXXXX, 92XXXXXXXXXX
+  const regex = /^(?:\+92|92|0)?(3\d{2})[ .-]?(\d{3})[ .-]?(\d{4})$/;
+  return regex.test(phone);
+};
+
+// Format phone for display
+const formatPhone = (phone: string): string => {
+  if (!phone) return "";
+  // Convert to +92 format
+  const cleaned = phone.replace(/\D/g, "");
+  if (cleaned.startsWith("92")) return `+${cleaned}`;
+  if (cleaned.startsWith("3")) return `+92${cleaned}`;
+  if (cleaned.startsWith("0")) return `+92${cleaned.substring(1)}`;
+  return phone;
+};
+
+// Get guest address from localStorage
+const getGuestAddress = (): Address | null => {
+  if (typeof window === "undefined") return null;
+  const saved = localStorage.getItem("mega-guest-address");
+  return saved ? JSON.parse(saved) : null;
+};
+
+// Save guest address to localStorage
+const saveGuestAddress = (address: Address): void => {
+  if (typeof window === "undefined") return;
+  localStorage.setItem("mega-guest-address", JSON.stringify(address));
+};
+
+// Clear guest address
+const clearGuestAddress = (): void => {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem("mega-guest-address");
+};
+
 export default function CheckoutClient({
   user,
   userId,
   addresses,
 }: CheckoutClientProps) {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAddressForm, setShowAddressForm] = useState(false);
+
+  // Initialize newAddress with guest address if exists
+  const guestAddress = getGuestAddress();
   const [newAddress, setNewAddress] = useState({
-    fullName: user?.name || "",
-    phone: user?.phone || "",
-    addressLine1: "",
-    addressLine2: "",
-    city: "",
-    state: "",
-    postalCode: "",
+    fullName: guestAddress?.fullName || user?.name || "",
+    phone: guestAddress?.phone || user?.phone || "",
+    addressLine1: guestAddress?.addressLine1 || "",
+    addressLine2: guestAddress?.addressLine2 || "",
+    city: guestAddress?.city || "",
+    state: guestAddress?.state || "",
+    postalCode: guestAddress?.postalCode || "",
     country: "Pakistan",
     isDefault: false,
   });
@@ -52,14 +96,29 @@ export default function CheckoutClient({
   const { trackInitiateCheckout } = useAllTracking();
   const { isInitialized } = useTikTokPixel();
 
-  const [checkoutData, setCheckoutData] = useState<CheckoutState>({
-    shippingAddress: addresses.find((addr) => addr.isDefault) || null,
-    billingAddress: null,
-    useSameAddress: true,
-    shippingMethod: "standard", // Auto-selected
-    pointsToUse: 0, // Removed from UI
-    appliedCoupons: [], // Removed from UI
-    notes: "", // Optional expandable
+  const [checkoutData, setCheckoutData] = useState<CheckoutState>(() => {
+    // Initialize with guest address or saved addresses
+    if (session?.user?.isGuest && guestAddress) {
+      return {
+        shippingAddress: guestAddress,
+        billingAddress: null,
+        useSameAddress: true,
+        shippingMethod: "standard",
+        pointsToUse: 0,
+        appliedCoupons: [],
+        notes: "",
+      };
+    }
+
+    return {
+      shippingAddress: addresses.find((addr) => addr.isDefault) || null,
+      billingAddress: null,
+      useSameAddress: true,
+      shippingMethod: "standard",
+      pointsToUse: 0,
+      appliedCoupons: [],
+      notes: "",
+    };
   });
 
   const savedAddresses = addresses || [];
@@ -84,9 +143,13 @@ export default function CheckoutClient({
     }
   }, [items, getGrandTotal, trackInitiateCheckout, isInitialized]);
 
-  // Auto-select first address if none selected
+  // Auto-select first address if none selected (only for logged-in users)
   useEffect(() => {
-    if (savedAddresses.length > 0 && !checkoutData.shippingAddress) {
+    if (
+      !session?.user?.isGuest &&
+      savedAddresses.length > 0 &&
+      !checkoutData.shippingAddress
+    ) {
       const defaultAddress =
         savedAddresses.find((addr) => addr.isDefault) || savedAddresses[0];
       setCheckoutData((prev) => ({
@@ -94,7 +157,14 @@ export default function CheckoutClient({
         shippingAddress: defaultAddress,
       }));
     }
-  }, [savedAddresses, checkoutData.shippingAddress]);
+  }, [savedAddresses, checkoutData.shippingAddress, session?.user?.isGuest]);
+
+  // Save guest address when it changes
+  useEffect(() => {
+    if (session?.user?.isGuest && checkoutData.shippingAddress) {
+      saveGuestAddress(checkoutData.shippingAddress);
+    }
+  }, [checkoutData.shippingAddress, session?.user?.isGuest]);
 
   const handleSelectAddress = (address: Address) => {
     setCheckoutData((prev: CheckoutState) => ({
@@ -114,7 +184,8 @@ export default function CheckoutClient({
       "postalCode",
     ];
     const missing = required.filter(
-      (field) => !newAddress[field as keyof typeof newAddress],
+      (field) =>
+        !newAddress[field as keyof typeof newAddress]?.toString().trim(),
     );
 
     if (missing.length > 0) {
@@ -122,28 +193,104 @@ export default function CheckoutClient({
       return;
     }
 
+    // Validate phone number
+    if (!isValidPKPhone(newAddress.phone)) {
+      toast.error(
+        "Please enter a valid Pakistani phone number (e.g., 03XX XXXXXXX)",
+      );
+      return;
+    }
+
     try {
-      const response = await fetch("/api/user/addresses", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newAddress),
-      });
+      const formattedPhone = formatPhone(newAddress.phone);
 
-      if (!response.ok) throw new Error("Failed to save address");
+      if (session?.user?.isGuest) {
+        // For guests, create address object and save locally
+        const guestAddress: Address = {
+          _id: `guest-${Date.now()}`,
+          fullName: newAddress.fullName.trim(),
+          phone: formattedPhone,
+          addressLine1: newAddress.addressLine1.trim(),
+          addressLine2: newAddress.addressLine2?.trim() || "",
+          city: newAddress.city.trim(),
+          state: newAddress.state.trim(),
+          postalCode: newAddress.postalCode.trim(),
+          country: "Pakistan",
+          isDefault: true,
+          // isActive: true,
+          label: "home",
+          // userId: userId,
+          // createdAt: new Date(),
+          // updatedAt: new Date(),
+        };
 
-      const savedAddress = await response.json();
+        setCheckoutData((prev: CheckoutState) => ({
+          ...prev,
+          shippingAddress: guestAddress,
+        }));
 
-      // Add to local list and select it
-      // const updatedAddresses = [...savedAddresses, savedAddress];
-      setCheckoutData((prev: CheckoutState) => ({
-        ...prev,
-        shippingAddress: savedAddress,
-      }));
+        saveGuestAddress(guestAddress);
+        toast.success("Address saved for this order");
+      } else {
+        // For logged-in users, save to database
+        const response = await fetch("/api/user/addresses", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...newAddress,
+            phone: formattedPhone,
+          }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || "Failed to save address");
+        }
+
+        const { data: savedAddress } = await response.json();
+        setCheckoutData((prev: CheckoutState) => ({
+          ...prev,
+          shippingAddress: savedAddress,
+        }));
+        toast.success("Address saved successfully");
+      }
 
       setShowAddressForm(false);
+
+      // Don't reset form if guest (keep for editing)
+      if (!session?.user?.isGuest) {
+        setNewAddress({
+          fullName: user?.name || "",
+          phone: user?.phone || "",
+          addressLine1: "",
+          addressLine2: "",
+          city: "",
+          state: "",
+          postalCode: "",
+          country: "Pakistan",
+          isDefault: false,
+        });
+      }
+    } catch (error) {
+      console.error("Error saving address:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to save address. Please try again.",
+      );
+    }
+  };
+
+  const handleClearAddress = () => {
+    if (session?.user?.isGuest) {
+      clearGuestAddress();
+      setCheckoutData((prev: CheckoutState) => ({
+        ...prev,
+        shippingAddress: null,
+      }));
       setNewAddress({
-        fullName: user?.name || "",
-        phone: user?.phone || "",
+        fullName: "",
+        phone: "",
         addressLine1: "",
         addressLine2: "",
         city: "",
@@ -152,11 +299,7 @@ export default function CheckoutClient({
         country: "Pakistan",
         isDefault: false,
       });
-
-      toast.success("Address saved successfully");
-    } catch (error) {
-      console.error("Error saving address:", error);
-      toast.error("Failed to save address");
+      toast.info("Address cleared");
     }
   };
 
@@ -165,12 +308,35 @@ export default function CheckoutClient({
       toast.error("Please select or add a shipping address");
       return;
     }
+    // For guests, require email
+    if (session?.user?.isGuest && !checkoutData.guestEmail) {
+      toast.error("Please enter your email address");
+      return;
+    }
+
+    // Validate phone before placing order
+    if (!isValidPKPhone(checkoutData.shippingAddress.phone)) {
+      toast.error("Please enter a valid Pakistani phone number");
+      return;
+    }
+    if (session?.user?.isGuest && checkoutData.guestEmail) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(checkoutData.guestEmail)) {
+        toast.error("Please enter a valid email address");
+        return;
+      }
+    }
 
     setIsSubmitting(true);
 
     try {
       const orderData = {
-        userId,
+        userId: session?.user?.isGuest ? undefined : userId,
+        guestSessionId: session?.user?.isGuest ? userId : undefined,
+        guestEmail: session?.user?.isGuest
+          ? checkoutData.guestEmail
+          : undefined,
+        guestPhone: checkoutData.shippingAddress?.phone,
         items: items.map((item) => ({
           productId: item.productId,
           name: item.name,
@@ -180,9 +346,15 @@ export default function CheckoutClient({
           bargainCouponId: item.bargainCouponId,
           bargainDiscount: item.bargainDiscount,
         })),
-        shippingAddress: checkoutData.shippingAddress,
+        shippingAddress: {
+          ...checkoutData.shippingAddress,
+          phone: formatPhone(checkoutData.shippingAddress.phone),
+        },
         billingAddress: checkoutData.useSameAddress
-          ? checkoutData.shippingAddress
+          ? {
+              ...checkoutData.shippingAddress,
+              phone: formatPhone(checkoutData.shippingAddress.phone),
+            }
           : checkoutData.billingAddress,
         shippingMethod: checkoutData.shippingMethod,
         pointsToUse: checkoutData.pointsToUse,
@@ -202,8 +374,11 @@ export default function CheckoutClient({
         throw new Error(data.error || "Failed to place order");
       }
 
-      // Clear cart on success
+      // Clear cart and guest address on success
       clearCart();
+      if (session?.user?.isGuest) {
+        clearGuestAddress();
+      }
 
       // Redirect to order confirmation
       router.push(`/checkout/success?orderId=${data.orderId}`);
@@ -219,17 +394,43 @@ export default function CheckoutClient({
     }
   };
 
+  // Show loading while checking session
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-[#7C2C78]" />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-linear-to-b from-gray-50 to-white py-6 sm:py-8">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-6 sm:py-8">
       <div className="container mx-auto px-3 sm:px-4 lg:px-8">
-        {/* Header */}
+        {/* Header with Guest Badge */}
         <div className="mb-6 sm:mb-8 text-center">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-1.5 sm:mb-2">
             Complete Your Order
           </h1>
           <p className="text-sm sm:text-base text-gray-600">
             Review your items and enter shipping details
+            {session?.user?.isGuest && (
+              <span className="ml-2 px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">
+                Guest Checkout
+              </span>
+            )}
           </p>
+          {session?.user?.isGuest && (
+            <div className="mt-2 text-xs text-gray-500">
+              <User className="inline h-3 w-3 mr-1" />
+              You&apos;re checking out as a guest.
+              <Link
+                href="/login"
+                className="text-[#7C2C78] hover:underline ml-1"
+              >
+                Login to earn points!
+              </Link>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 lg:gap-10">
@@ -237,10 +438,11 @@ export default function CheckoutClient({
           <div className="lg:w-1/3">
             <CheckoutSummary
               checkoutData={checkoutData}
-              setCheckoutData={setCheckoutData} // Add this!
-              userId={userId} // Always show as step 1 in single-step
+              setCheckoutData={setCheckoutData}
+              userId={userId}
             />
           </div>
+
           {/* Left Column - Checkout Form */}
           <div className="lg:w-2/3">
             {/* Security Badge */}
@@ -259,13 +461,59 @@ export default function CheckoutClient({
             {/* Address Section */}
             <div className="bg-white rounded-xl sm:rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
               <div className="p-4 sm:p-5 lg:p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                  <Home className="h-5 w-5 text-[#7C2C78]" />
-                  Shipping Address
-                </h2>
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                    <Home className="h-5 w-5 text-[#7C2C78]" />
+                    Shipping Address
+                  </h2>
+                  {session?.user?.isGuest && checkoutData.shippingAddress && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleClearAddress}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      Clear Address
+                    </Button>
+                  )}
+                </div>
 
-                {/* Saved Addresses */}
-                {savedAddresses.length > 0 && (
+                {/* Guest Notice */}
+                {session?.user?.isGuest && (
+                  <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p className="text-sm text-blue-700">
+                      <strong>Guest Checkout:</strong> Enter your shipping
+                      address below. Your address will be saved temporarily for
+                      this session.
+                    </p>
+                  </div>
+                )}
+                {session?.user?.isGuest && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      value={checkoutData.guestEmail || ""}
+                      onChange={(e) =>
+                        setCheckoutData((prev: CheckoutState) => ({
+                          ...prev,
+                          guestEmail: e.target.value,
+                        }))
+                      }
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
+                      placeholder="your@email.com"
+                      required
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      For order confirmation and tracking
+                    </p>
+                  </div>
+                )}
+
+                {/* Saved Addresses (only for logged-in users) */}
+                {!session?.user?.isGuest && savedAddresses.length > 0 && (
                   <div className="mb-6">
                     <h3 className="font-medium text-gray-900 mb-4">
                       Select a saved address
@@ -351,31 +599,54 @@ export default function CheckoutClient({
                   </div>
                 )}
 
-                {/* Add New Address Button or Form */}
-                {!showAddressForm ? (
-                  <motion.button
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    onClick={() => setShowAddressForm(true)}
-                    className="w-full p-4 border-2 border-dashed border-gray-300 rounded-xl hover:border-[#7C2C78] hover:bg-[#7C2C78]/5 transition-all group"
-                  >
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-[#7C2C78]/10">
-                        <Plus className="h-4 w-4 text-gray-600 group-hover:text-[#7C2C78]" />
+                {/* Current Selected Address Display */}
+                {checkoutData.shippingAddress && !showAddressForm && (
+                  <div className="mb-6 p-4 border border-green-200 bg-green-50 rounded-xl">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start gap-3">
+                        <MapPin className="h-5 w-5 text-green-600 mt-0.5" />
+                        <div>
+                          <p className="font-medium text-gray-900">
+                            {checkoutData.shippingAddress.fullName}
+                          </p>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {checkoutData.shippingAddress.addressLine1}
+                            {checkoutData.shippingAddress.addressLine2 &&
+                              `, ${checkoutData.shippingAddress.addressLine2}`}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            {checkoutData.shippingAddress.city},{" "}
+                            {checkoutData.shippingAddress.state}{" "}
+                            {checkoutData.shippingAddress.postalCode}
+                          </p>
+                          <p className="text-sm text-gray-600 mt-2">
+                            📞 {formatPhone(checkoutData.shippingAddress.phone)}
+                          </p>
+                        </div>
                       </div>
-                      <span className="font-medium text-gray-900">
-                        Add New Address
-                      </span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowAddressForm(true)}
+                        className="text-[#7C2C78] hover:text-[#6A2566]"
+                      >
+                        Edit
+                      </Button>
                     </div>
-                  </motion.button>
-                ) : (
+                  </div>
+                )}
+
+                {/* Address Form */}
+                {showAddressForm ? (
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     className="border border-gray-200 rounded-xl p-5"
                   >
                     <h3 className="font-medium text-gray-900 mb-4">
-                      Add New Address
+                      {checkoutData.shippingAddress
+                        ? "Edit Shipping Address"
+                        : "Add Shipping Address"}
                     </h3>
 
                     <div className="grid gap-4">
@@ -395,6 +666,7 @@ export default function CheckoutClient({
                             }
                             className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
                             placeholder="John Doe"
+                            required
                           />
                         </div>
                         <div>
@@ -411,8 +683,12 @@ export default function CheckoutClient({
                               }))
                             }
                             className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
-                            placeholder="+92 300 1234567"
+                            placeholder="03XX XXXXXXX or +92XXXXXXXXXX"
+                            required
                           />
+                          <p className="text-xs text-gray-500 mt-1">
+                            Pakistani format: 03XX XXXXXXX or +92XXXXXXXXXX
+                          </p>
                         </div>
                       </div>
 
@@ -431,6 +707,7 @@ export default function CheckoutClient({
                           }
                           className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
                           placeholder="House #123, Street #45"
+                          required
                         />
                       </div>
 
@@ -468,6 +745,7 @@ export default function CheckoutClient({
                             }
                             className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
                             placeholder="Karachi"
+                            required
                           />
                         </div>
                         <div>
@@ -485,6 +763,7 @@ export default function CheckoutClient({
                             }
                             className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
                             placeholder="Sindh"
+                            required
                           />
                         </div>
                         <div>
@@ -502,30 +781,34 @@ export default function CheckoutClient({
                             }
                             className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
                             placeholder="75500"
+                            required
                           />
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 pt-2">
-                        <input
-                          type="checkbox"
-                          id="setDefault"
-                          checked={newAddress.isDefault}
-                          onChange={(e) =>
-                            setNewAddress((prev) => ({
-                              ...prev,
-                              isDefault: e.target.checked,
-                            }))
-                          }
-                          className="h-4 w-4 text-[#7C2C78] focus:ring-[#7C2C78] border-gray-300 rounded"
-                        />
-                        <label
-                          htmlFor="setDefault"
-                          className="text-sm text-gray-700"
-                        >
-                          Set as default shipping address
-                        </label>
-                      </div>
+                      {/* Only show "Set as default" for logged-in users */}
+                      {!session?.user?.isGuest && (
+                        <div className="flex items-center gap-2 pt-2">
+                          <input
+                            type="checkbox"
+                            id="setDefault"
+                            checked={newAddress.isDefault}
+                            onChange={(e) =>
+                              setNewAddress((prev) => ({
+                                ...prev,
+                                isDefault: e.target.checked,
+                              }))
+                            }
+                            className="h-4 w-4 text-[#7C2C78] focus:ring-[#7C2C78] border-gray-300 rounded"
+                          />
+                          <label
+                            htmlFor="setDefault"
+                            className="text-sm text-gray-700"
+                          >
+                            Set as default shipping address
+                          </label>
+                        </div>
+                      )}
 
                       <div className="flex gap-3 pt-4">
                         <button
@@ -536,14 +819,32 @@ export default function CheckoutClient({
                         </button>
                         <button
                           onClick={handleSaveAddress}
-                          className="flex-1 px-6 py-2.5 bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white rounded-lg hover:from-[#6A2566] hover:to-[#8D2F6A] transition-all"
+                          className="flex-1 px-6 py-2.5 bg-gradient-to-r from-[#7C2C78] to-[#A43875] text-white rounded-lg hover:from-[#6A2566] hover:to-[#8D2F6A] transition-all"
                         >
-                          Save & Use Address
+                          {checkoutData.shippingAddress
+                            ? "Update Address"
+                            : "Save Address"}
                         </button>
                       </div>
                     </div>
                   </motion.div>
-                )}
+                ) : !checkoutData.shippingAddress ? (
+                  <motion.button
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    onClick={() => setShowAddressForm(true)}
+                    className="w-full p-4 border-2 border-dashed border-gray-300 rounded-xl hover:border-[#7C2C78] hover:bg-[#7C2C78]/5 transition-all group"
+                  >
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-[#7C2C78]/10">
+                        <Plus className="h-4 w-4 text-gray-600 group-hover:text-[#7C2C78]" />
+                      </div>
+                      <span className="font-medium text-gray-900">
+                        Add Shipping Address
+                      </span>
+                    </div>
+                  </motion.button>
+                ) : null}
 
                 {/* Same as Billing Address */}
                 {checkoutData.shippingAddress && (
@@ -598,7 +899,7 @@ export default function CheckoutClient({
                   <Button
                     onClick={handlePlaceOrder}
                     disabled={isSubmitting || !checkoutData.shippingAddress}
-                    className="w-full h-12 text-base bg-linear-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg"
+                    className="w-full h-12 text-base bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg"
                   >
                     {isSubmitting ? (
                       <>
@@ -615,7 +916,7 @@ export default function CheckoutClient({
 
                   {!checkoutData.shippingAddress && (
                     <p className="text-sm text-red-600 mt-2 text-center">
-                      Please select or add a shipping address
+                      Please add a shipping address
                     </p>
                   )}
                 </div>

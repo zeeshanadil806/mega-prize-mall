@@ -19,8 +19,11 @@ import { formatCurrency } from "@/lib/bargain-utils";
 import BargainButton from "@/components/bargain/BargainButton";
 import { toast } from "sonner";
 import Image from "next/image";
+import { signIn, useSession } from "next-auth/react";
 
 export default function CartPage() {
+  const { data: session, status } = useSession();
+  console.log(session?.user);
   const {
     items,
     removeItem,
@@ -78,9 +81,20 @@ export default function CartPage() {
       removeBargainFromItem(productId);
       toast.info("Bargain removed from item");
     },
-    [removeBargainFromItem]
+    [removeBargainFromItem],
   );
 
+  const handleGuestCheckout = async () => {
+    try {
+      await signIn("guest", {
+        callbackUrl: "/checkout",
+        redirect: true,
+      });
+    } catch (error) {
+      console.error("Guest checkout failed:", error);
+      toast.error("Failed to proceed as guest. Please try again.");
+    }
+  };
 
   // Calculate final total with global coupon
   const calculateFinalTotal = () => {
@@ -95,11 +109,16 @@ export default function CartPage() {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <ShoppingCart className="h-24 w-24 text-muted-foreground mx-auto mb-6" />
-        <h1 className="text-3xl font-bold mb-4 text-[#7C2C78]">Your cart is empty</h1>
+        <h1 className="text-3xl font-bold mb-4 text-[#7C2C78]">
+          Your cart is empty
+        </h1>
         <p className="text-muted-foreground mb-8 max-w-md mx-auto">
           Looks like you haven&apos;t added any products to your cart yet.
         </p>
-        <Link href="/products" className="bg-linear-to-r from-[#7C2C78] to-[#A43875]">
+        <Link
+          href="/products"
+          className="bg-linear-to-r from-[#7C2C78] to-[#A43875]"
+        >
           <Button size="lg" className="gap-2">
             <ShoppingBag className="h-5 w-5" />
             Start Shopping
@@ -191,7 +210,7 @@ export default function CartPage() {
                                   onClick={() =>
                                     updateQuantity(
                                       item.productId,
-                                      item.quantity - 1
+                                      item.quantity - 1,
                                     )
                                   }
                                   aria-label="Decrease quantity"
@@ -210,7 +229,7 @@ export default function CartPage() {
                                   onClick={() =>
                                     updateQuantity(
                                       item.productId,
-                                      item.quantity + 1
+                                      item.quantity + 1,
                                     )
                                   }
                                   aria-label="Increase quantity"
@@ -388,19 +407,31 @@ export default function CartPage() {
                       Shipping & taxes calculated at checkout
                     </div>
 
-                    <Link href="/checkout" className="block mt-4 sm:mt-5">
-                      <Button
-                        size="lg"
-                        className="w-full h-11 sm:h-12 lg:h-14 text-sm sm:text-base lg:text-lg bg-linear-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] text-white gap-2"
-                      >
-                        Proceed to Checkout
-                        <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 rotate-180" />
-                      </Button>
-                    </Link>
+                    <div className="space-y-3 sm:space-y-4">
+                      <Link href="/checkout" className="block">
+                        <Button
+                          size="lg"
+                          className="w-full h-11 sm:h-12 lg:h-14 text-sm sm:text-base lg:text-lg bg-linear-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] text-white gap-2"
+                        >
+                          Proceed to Checkout
+                          <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 rotate-180" />
+                        </Button>
+                      </Link>
+                      {!session?.user && (
+                        <Button
+                          onClick={handleGuestCheckout}
+                          variant="outline"
+                          className="w-full h-11 sm:h-12 lg:h-14 text-sm sm:text-base lg:text-lg border-gray-300 hover:border-gray-400 hover:bg-gray-50 gap-2"
+                        >
+                          Continue as Guest
+                          <ShoppingBag className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
+                        </Button>
+                      )}
 
-                    <div className="text-xs text-gray-500 text-center mt-3 sm:mt-4">
-                      By completing your purchase, you agree to our Terms of
-                      Service
+                      <div className="text-xs text-gray-500 text-center mt-3 sm:mt-4">
+                        By completing your purchase, you agree to our Terms of
+                        Service
+                      </div>
                     </div>
                   </div>
                 </div>

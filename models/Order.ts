@@ -1,6 +1,6 @@
 // models/Order.ts
-import mongoose, { Schema, Document } from 'mongoose';
-import { z } from 'zod';
+import mongoose, { Schema, Document } from "mongoose";
+import { z } from "zod";
 
 // Order Item Schema (subdocument)
 export const OrderItemSchema = z.object({
@@ -24,7 +24,7 @@ export const AddressSchema = z.object({
   city: z.string().min(1),
   state: z.string().min(1),
   postalCode: z.string().min(1),
-  country: z.string().default('Pakistan'),
+  country: z.string().default("Pakistan"),
   isDefault: z.boolean().default(false),
 });
 
@@ -33,10 +33,16 @@ export const OrderSchema = z.object({
   // Core Order Info
   // orderNumber: z.string().min(1), // e.g., "MPM-20241225-001"
   userId: z.string().min(1),
-  
+
+  // Guest Identification
+  guestSessionId: z.string().optional(),
+  guestPhone: z.string().optional(),
+  guestEmail: z.string().email().optional(),
+  isGuestOrder: z.boolean().default(false),
+
   // Order Items
   items: z.array(OrderItemSchema).min(1),
-  
+
   // Pricing Summary
   subtotal: z.number().positive(),
   discountTotal: z.number().min(0), // Sum of all discounts
@@ -45,49 +51,53 @@ export const OrderSchema = z.object({
   shippingFee: z.number().min(0).default(0),
   taxAmount: z.number().min(0).default(0),
   grandTotal: z.number().positive(),
-  
+
   // Discounts & Coupons
   couponCodes: z.array(z.string()).default([]),
   bargainCouponIds: z.array(z.string()).default([]),
   globalCouponCode: z.string().optional(),
-  
+
   // Shipping & Delivery
   shippingAddress: AddressSchema,
   billingAddress: AddressSchema.optional(),
-  shippingMethod: z.string().default('standard'),
+  shippingMethod: z.string().default("standard"),
   estimatedDelivery: z.date().optional(),
   deliveredAt: z.date().optional(),
-  
+
   // Payment
-  paymentMethod: z.enum(['cod', 'card', 'bank_transfer']).default('cod'),
-  paymentStatus: z.enum(['pending', 'paid', 'failed', 'refunded']).default('pending'),
+  paymentMethod: z.enum(["cod", "card", "bank_transfer"]).default("cod"),
+  paymentStatus: z
+    .enum(["pending", "paid", "failed", "refunded"])
+    .default("pending"),
   transactionId: z.string().optional(),
-  
+
   // Order Status
-  status: z.enum([
-    'pending',        // Order placed
-    'confirmed',      // Admin confirmed
-    'processing',     // Preparing for shipment
-    'shipped',        // Shipped to customer
-    'delivered',      // Successfully delivered
-    'cancelled',      // Cancelled by admin/user
-    'returned',       // Returned by customer
-    'refunded'        // Refund processed
-  ]).default('pending'),
-  
+  status: z
+    .enum([
+      "pending", // Order placed
+      "confirmed", // Admin confirmed
+      "processing", // Preparing for shipment
+      "shipped", // Shipped to customer
+      "delivered", // Successfully delivered
+      "cancelled", // Cancelled by admin/user
+      "returned", // Returned by customer
+      "refunded", // Refund processed
+    ])
+    .default("pending"),
+
   // Points & Rewards
   pointsEarned: z.number().min(0).default(0), // Points to earn after delivery
   pointsRedeemTransactionId: z.string().optional(), // Reference to wallet transaction
-  
+
   // Lucky Draw
   luckyDrawEntries: z.number().int().min(0).default(0),
   luckyDrawEntryIds: z.array(z.string()).default([]),
-  
+
   // Metadata
   notes: z.string().max(1000).optional(),
   ipAddress: z.string().optional(),
   userAgent: z.string().optional(),
-  
+
   // Timestamps
   createdAt: z.date().default(() => new Date()),
   updatedAt: z.date().default(() => new Date()),
@@ -104,20 +114,40 @@ export interface IOrder extends Document, Order {}
 // Mongoose Schema
 const OrderSchemaMongoose = new Schema<IOrder>({
   // orderNumber: { type: String, required: true, unique: true, index: true },
-  userId: { type: String, required: true, ref: 'User', index: true },
-  
-  items: [{
-    productId: { type: String, required: true, ref: 'Product' },
-    productName: { type: String, required: true },
-    productSlug: { type: String, required: true },
-    productImage: { type: String },
-    quantity: { type: Number, required: true, min: 1 },
-    price: { type: Number, required: true, min: 0 },
-    bargainCouponId: { type: String, ref: 'BargainCoupon' },
-    discountAmount: { type: Number, default: 0, min: 0 },
-    finalPrice: { type: Number, required: true, min: 0 },
-  }],
-  
+  userId: { type: String, required: false, ref: "User", index: true },
+
+  // Guest Identification
+  guestSessionId: {
+    type: String,
+    index: true,
+  },
+  guestPhone: {
+    type: String,
+    index: true,
+  },
+  guestEmail: {
+    type: String,
+  },
+  isGuestOrder: {
+    type: Boolean,
+    default: false,
+    index: true,
+  },
+
+  items: [
+    {
+      productId: { type: String, required: true, ref: "Product" },
+      productName: { type: String, required: true },
+      productSlug: { type: String, required: true },
+      productImage: { type: String },
+      quantity: { type: Number, required: true, min: 1 },
+      price: { type: Number, required: true, min: 0 },
+      bargainCouponId: { type: String, ref: "BargainCoupon" },
+      discountAmount: { type: Number, default: 0, min: 0 },
+      finalPrice: { type: Number, required: true, min: 0 },
+    },
+  ],
+
   // Pricing
   subtotal: { type: Number, required: true, min: 0 },
   discountTotal: { type: Number, default: 0, min: 0 },
@@ -126,12 +156,12 @@ const OrderSchemaMongoose = new Schema<IOrder>({
   shippingFee: { type: Number, default: 0, min: 0 },
   taxAmount: { type: Number, default: 0, min: 0 },
   grandTotal: { type: Number, required: true, min: 0 },
-  
+
   // Discounts
   couponCodes: [{ type: String }],
-  bargainCouponIds: [{ type: String, ref: 'BargainCoupon' }],
+  bargainCouponIds: [{ type: String, ref: "BargainCoupon" }],
   globalCouponCode: { type: String },
-  
+
   // Shipping
   shippingAddress: {
     fullName: { type: String, required: true },
@@ -141,10 +171,10 @@ const OrderSchemaMongoose = new Schema<IOrder>({
     city: { type: String, required: true },
     state: { type: String, required: true },
     postalCode: { type: String, required: true },
-    country: { type: String, default: 'Pakistan' },
+    country: { type: String, default: "Pakistan" },
     isDefault: { type: Boolean, default: false },
   },
-  
+
   billingAddress: {
     fullName: { type: String },
     phone: { type: String },
@@ -153,53 +183,58 @@ const OrderSchemaMongoose = new Schema<IOrder>({
     city: { type: String },
     state: { type: String },
     postalCode: { type: String },
-    country: { type: String, default: 'Pakistan' },
+    country: { type: String, default: "Pakistan" },
     isDefault: { type: Boolean, default: false },
   },
-  
-  shippingMethod: { type: String, default: 'standard' },
+
+  shippingMethod: { type: String, default: "standard" },
   estimatedDelivery: { type: Date },
   deliveredAt: { type: Date },
-  
+
   // Payment
-  paymentMethod: { 
-    type: String, 
-    enum: ['cod', 'card', 'bank_transfer'],
-    default: 'cod' 
+  paymentMethod: {
+    type: String,
+    enum: ["cod", "card", "bank_transfer"],
+    default: "cod",
   },
-  paymentStatus: { 
-    type: String, 
-    enum: ['pending', 'paid', 'failed', 'refunded'],
-    default: 'pending',
-    index: true 
+  paymentStatus: {
+    type: String,
+    enum: ["pending", "paid", "failed", "refunded"],
+    default: "pending",
+    index: true,
   },
   transactionId: { type: String },
-  
+
   // Order Status
-  status: { 
-    type: String, 
+  status: {
+    type: String,
     enum: [
-      'pending', 'confirmed', 'processing', 
-      'shipped', 'delivered', 'cancelled', 
-      'returned', 'refunded'
+      "pending",
+      "confirmed",
+      "processing",
+      "shipped",
+      "delivered",
+      "cancelled",
+      "returned",
+      "refunded",
     ],
-    default: 'pending',
-    index: true 
+    default: "pending",
+    index: true,
   },
-  
+
   // Points & Rewards
   pointsEarned: { type: Number, default: 0, min: 0 },
-  pointsRedeemTransactionId: { type: String, ref: 'WalletTransaction' },
-  
+  pointsRedeemTransactionId: { type: String, ref: "WalletTransaction" },
+
   // Lucky Draw
   luckyDrawEntries: { type: Number, default: 0, min: 0 },
-  luckyDrawEntryIds: [{ type: String, ref: 'LuckyDrawEntry' }],
-  
+  luckyDrawEntryIds: [{ type: String, ref: "LuckyDrawEntry" }],
+
   // Metadata
   notes: { type: String, maxlength: 1000 },
   ipAddress: { type: String },
   userAgent: { type: String },
-  
+
   // Timestamps
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
@@ -209,60 +244,50 @@ const OrderSchemaMongoose = new Schema<IOrder>({
 
 // Indexes
 OrderSchemaMongoose.index({ userId: 1, createdAt: -1 });
+OrderSchemaMongoose.index({ guestSessionId: 1, createdAt: -1 });
+OrderSchemaMongoose.index({ guestPhone: 1, createdAt: -1 });
+OrderSchemaMongoose.index({ isGuestOrder: 1, createdAt: -1 });
 OrderSchemaMongoose.index({ status: 1, createdAt: -1 });
 OrderSchemaMongoose.index({ paymentStatus: 1, status: 1 });
-OrderSchemaMongoose.index({ 'items.productId': 1 });
+OrderSchemaMongoose.index({ "items.productId": 1 });
 
-// Pre-save middleware for order number generation
-// OrderSchemaMongoose.pre('save', async function() {
-//   if (this.isNew) {
-//     // Generate order number: MPM-YYYYMMDD-XXX
-//     const date = new Date();
-//     const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '');
-    
-//     // Get count of today's orders
-//     const count = await mongoose.models.Order?.countDocuments({
-//       createdAt: {
-//         $gte: new Date(date.setHours(0, 0, 0, 0)),
-//         $lt: new Date(date.setHours(23, 59, 59, 999))
-//       }
-//     }) || 0;
-    
-//     this.orderNumber = `MPM-${dateStr}-${(count + 1).toString().padStart(3, '0')}`;
-//   }
-  
-//   this.updatedAt = new Date();
-// //   next();
-// });
-
-// Virtual for formatted order date
-OrderSchemaMongoose.virtual('formattedDate').get(function() {
-  return this.createdAt.toLocaleDateString('en-PK', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
+OrderSchemaMongoose.virtual("formattedDate").get(function () {
+  return this.createdAt.toLocaleDateString("en-PK", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 });
 
+// Add validation to ensure either userId OR guest fields
+OrderSchemaMongoose.pre("validate", function () {
+  if (!this.userId && !this.guestSessionId && !this.guestPhone) {
+    this.invalidate(
+      "userId",
+      "Either userId or guest identification is required",
+    );
+  }
+});
+
 // Virtual for item count
-OrderSchemaMongoose.virtual('itemCount').get(function() {
+OrderSchemaMongoose.virtual("itemCount").get(function () {
   return this.items.reduce((sum, item) => sum + item.quantity, 0);
 });
 
 // Virtual for delivery status
-OrderSchemaMongoose.virtual('deliveryStatus').get(function() {
-  if (this.status === 'delivered') return 'Delivered';
-  if (this.status === 'shipped') return 'Shipped';
-  if (this.status === 'processing') return 'Processing';
-  if (this.status === 'confirmed') return 'Confirmed';
-  return 'Pending';
+OrderSchemaMongoose.virtual("deliveryStatus").get(function () {
+  if (this.status === "delivered") return "Delivered";
+  if (this.status === "shipped") return "Shipped";
+  if (this.status === "processing") return "Processing";
+  if (this.status === "confirmed") return "Confirmed";
+  return "Pending";
 });
 
 // Enable virtuals
-OrderSchemaMongoose.set('toJSON', { virtuals: true });
-OrderSchemaMongoose.set('toObject', { virtuals: true });
+OrderSchemaMongoose.set("toJSON", { virtuals: true });
+OrderSchemaMongoose.set("toObject", { virtuals: true });
 
-export const OrderModel = mongoose.models.Order || 
-  mongoose.model<IOrder>('Order', OrderSchemaMongoose);
+export const OrderModel =
+  mongoose.models.Order || mongoose.model<IOrder>("Order", OrderSchemaMongoose);

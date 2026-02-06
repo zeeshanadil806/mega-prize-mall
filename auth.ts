@@ -8,6 +8,7 @@ import { z } from "zod";
 import { MongoClient } from "mongodb";
 import EmailSubscriber from "./models/EmailSubscriber";
 import { sendGoogleWelcomeEmail } from "./lib/email-templates";
+import { v4 as uuidv4 } from "uuid"; // ADD THIS
 
 // Validation schema for credentials
 const credentialsSchema = z.object({
@@ -28,7 +29,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     newUser: "/register",
     error: "/auth-error",
   },
-    // allowDangerousEmailAccountLinking: true,
+  // allowDangerousEmailAccountLinking: true,
 
   providers: [
     Google({
@@ -108,9 +109,39 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
       },
     }),
+    {
+      id: "guest",
+      name: "Guest",
+      type: "credentials",
+      credentials: {
+        // No credentials needed for guest
+      },
+      async authorize() {
+        try {
+          // Create guest user object (NOT saved to database)
+          const guestId = `guest-${uuidv4()}`;
+
+          return {
+            id: guestId,
+            name: "Guest",
+            email: `${guestId}@temp.megaprizemall.com`,
+            role: "guest",
+            isGuest: true,
+            points: 0,
+            image: null,
+          };
+        } catch (error) {
+          console.error("Guest auth error:", error);
+          return null;
+        }
+      },
+    },
   ],
   callbacks: {
     async signIn({ user, account }) {
+      if (account?.provider === "guest") {
+        return true; // Guest users don't need DB operations
+      }
       if (account?.provider === "google") {
         // Add bonus points for new Google users
         const existingUser = await UserModel.findOne({ email: user.email });
@@ -124,17 +155,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
           // Update user with points
           await UserModel.findOneAndUpdate(
-              { email: user.email },
-              { 
-                $set: { 
-                  role: "customer",
-                  name: user.name,
-                  image: user.image
-                },
-                $inc: { points: bonusPoints }
-              }
-            );
-
+            { email: user.email },
+            {
+              $set: {
+                role: "customer",
+                name: user.name,
+                image: user.image,
+              },
+              $inc: { points: bonusPoints },
+            },
+          );
 
           // Send welcome email
           if (user.email && bonusPoints > 0) {
@@ -149,23 +179,34 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return true;
     },
-    async jwt({ token, user, trigger, session }) {
+    async jwt({ token, user, account, trigger, session }) {
       if (user) {
         // Get fresh data from DB
-        const dbUser = await UserModel.findOne({ email: user.email })
-          .catch(() => null);
-        
-        token.id = dbUser?._id.toString() || user.id;
-        token.role = dbUser?.role || "customer";
-        token.points = dbUser?.points || 0;
-        token.name = dbUser?.name || user.name;
-        token.image = dbUser?.image || user.image;
+        if (account?.provider === "guest") {
+          token.id = user.id;
+          token.role = user.role || "guest";
+          token.points = 0;
+          token.name = user.name || "Guest";
+          token.image = user.image;
+          token.isGuest = true;
+        } else {
+          // For regular users, get fresh data from DB
+          const dbUser = await UserModel.findOne({ email: user.email }).catch(
+            () => null,
+          );
+
+          token.id = dbUser?._id.toString() || user.id;
+          token.role = dbUser?.role || "customer";
+          token.points = dbUser?.points || 0;
+          token.name = dbUser?.name || user.name;
+          token.image = dbUser?.image || user.image;
+          token.isGuest = false;
+        }
       }
       if (trigger === "update" && session) {
         token.name = session.user.name;
         token.image = session.user.image;
       }
-
 
       return token;
     },
@@ -176,6 +217,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.points = token.points as number;
         session.user.name = token.name as string;
         session.user.image = token.image as string;
+        session.user.isGuest = token.isGuest as boolean;
       }
       return session;
     },

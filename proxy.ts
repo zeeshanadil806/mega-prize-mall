@@ -4,7 +4,6 @@ import { log } from "@/lib/logger";
 
 // Define route patterns
 
-
 // Fixed pattern matcher
 function matchPattern(pathname: string, patterns: string[]): boolean {
   return patterns.some((pattern) => {
@@ -14,13 +13,13 @@ function matchPattern(pathname: string, patterns: string[]): boolean {
       const regex = new RegExp(`^${pattern}$`);
       return regex.test(pathname);
     }
-    
+
     // Exact match or starts with
     if (pattern.endsWith(".*")) {
       const base = pattern.slice(0, -2);
       return pathname === base || pathname.startsWith(base + "/");
     }
-    
+
     // Exact match
     return pathname === pattern;
   });
@@ -49,29 +48,30 @@ const publicPatterns = [
   "/products/[^/]+",
   "/product.*",
   "/api/auth.*",
+  "/checkout.*",
 ];
 
 // BOTH Admin & Support can access these
 const sharedAdminPatterns = [
-  "/admin$",               // Admin dashboard
-  "/admin/products.*",     // Products management
-  "/admin/orders.*",       // Orders management
-  "/admin/bargain.*",      // Bargain requests
-  "/admin/coupons.*",      // Coupons management
+  "/admin$", // Admin dashboard
+  "/admin/products.*", // Products management
+  "/admin/orders.*", // Orders management
+  "/admin/bargain.*", // Bargain requests
+  "/admin/coupons.*", // Coupons management
 ];
 
 // ONLY Admin can access these (Support CANNOT)
 const adminOnlyPatterns = [
-  "/admin/analytics.*",    // Analytics dashboard & sub-pages
-  "/admin/users.*",        // Users management
-  "/admin/support.*",      // Support accounts management
-  "/admin/lucky-draw.*",   // Lucky draw management
-  "/admin/settings.*",     // Settings (if you have)
+  "/admin/analytics.*", // Analytics dashboard & sub-pages
+  "/admin/users.*", // Users management
+  "/admin/support.*", // Support accounts management
+  "/admin/lucky-draw.*", // Lucky draw management
+  "/admin/settings.*", // Settings (if you have)
   "/test-tiktok",
 ];
 
 // Customer routes
-const customerPatterns = ["/dashboard.*", "/checkout.*", "/addresses"];
+const customerPatterns = ["/dashboard.*", "/addresses"];
 
 // Fixed pattern matcher function remains the same...
 
@@ -122,62 +122,66 @@ export async function proxy(request: NextRequest) {
 
   // Check if it's a SHARED admin route (both admin & support)
   const isSharedAdminRoute = matchPattern(pathname, sharedAdminPatterns);
-  
+
   // Check if it's an ADMIN-ONLY route
   const isAdminOnlyRoute = matchPattern(pathname, adminOnlyPatterns);
 
   // Handle SHARED admin routes (both admin & support can access)
   if (isSharedAdminRoute) {
     console.log(`🛡️  Shared admin route detected: ${pathname}`);
-    
+
     // ADMIN can access
     if (userRole === "admin") {
       console.log(`✅ Admin allowed on shared route: ${pathname}`);
       return NextResponse.next();
     }
-    
+
     // SUPPORT can access
     if (userRole === "support") {
       console.log(`✅ Support allowed on shared route: ${pathname}`);
       return NextResponse.next();
     }
-    
+
     // CUSTOMER trying to access shared admin routes
     if (userRole === "customer") {
       console.log(`🚫 Customer blocked from admin route: ${pathname}`);
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
-    
+
     // Default block for any other role
-    console.log(`🚫 Blocked: ${userRole} accessing shared admin route ${pathname}`);
+    console.log(
+      `🚫 Blocked: ${userRole} accessing shared admin route ${pathname}`,
+    );
     return NextResponse.redirect(new URL("/", request.url));
   }
 
   // Handle ADMIN-ONLY routes (only admin can access)
   if (isAdminOnlyRoute) {
     console.log(`👑 Admin-only route detected: ${pathname}`);
-    
+
     // ONLY ADMIN can access
     if (userRole === "admin") {
       console.log(`✅ Admin allowed on admin-only route: ${pathname}`);
       return NextResponse.next();
     }
-    
+
     // SUPPORT trying to access admin-only routes
     if (userRole === "support") {
       console.log(`🚫 Support blocked from admin-only route: ${pathname}`);
       // Redirect support to admin dashboard (which they can access)
       return NextResponse.redirect(new URL("/admin", request.url));
     }
-    
+
     // CUSTOMER trying to access admin-only routes
     if (userRole === "customer") {
       console.log(`🚫 Customer blocked from admin-only route: ${pathname}`);
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
-    
+
     // Default block for any other role
-    console.log(`🚫 Blocked: ${userRole} accessing admin-only route ${pathname}`);
+    console.log(
+      `🚫 Blocked: ${userRole} accessing admin-only route ${pathname}`,
+    );
     return NextResponse.redirect(new URL("/", request.url));
   }
 
@@ -186,7 +190,9 @@ export async function proxy(request: NextRequest) {
 
   if (isCustomerRoute) {
     if (userRole !== "customer" && userRole !== "admin") {
-      console.log(`🚫 Blocked: ${userRole} accessing customer route ${pathname}`);
+      console.log(
+        `🚫 Blocked: ${userRole} accessing customer route ${pathname}`,
+      );
       return NextResponse.redirect(new URL("/", request.url));
     }
     console.log(`✅ Customer allowed: ${pathname}`);

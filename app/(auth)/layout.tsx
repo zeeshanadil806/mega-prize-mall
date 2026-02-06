@@ -1,11 +1,6 @@
-// import type { Metadata } from "next"
 import { Inter } from "next/font/google"
-// import CustomerNavbar from "@/components/customer/CustomerNavbar"
 import CustomerFooter from "@/components/customer/CustomerFooter"
-// import { Toaster } from "sonner"
-// import { auth } from "@/auth"
 import Header from "@/components/customer/Header"
-// import { redirect } from "next/navigation"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -19,17 +14,6 @@ export default async function CustomerLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  // const session = await auth()
-  
-  // Redirect to login if not authenticated
-  // if (!session?.user) {
-  //   redirect("/login")
-  // }
-
-  // Redirect admin users to admin dashboard
-  // if (session.user.role === "admin") {
-  //   redirect("/admin")
-  // }
 
   return (
     <html lang="en" className="scroll-smooth">
@@ -40,7 +24,6 @@ export default async function CustomerLayout({
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-linear-to-r from-[#EAB75F]/10 to-[#2E297D]/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
         </div>
 
-        {/* <CustomerNavbar user={session ? session.user : null} /> */}
         <Header />
         
         <main className="mx-auto">
@@ -50,7 +33,6 @@ export default async function CustomerLayout({
         </main>
 
         <CustomerFooter />
-        {/* <Toaster position="top-center" richColors /> */}
       </body>
     </html>
   )

@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import CartPage from "@/components/cart/CartPage";
 import { Metadata } from "next";
 
@@ -33,7 +34,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function page() {
+export default async function page() {
   const breadcrumbStructuredData = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -77,6 +78,7 @@ export default function page() {
       ],
     },
   };
+  const session = await auth();
 
   return (
     <div>

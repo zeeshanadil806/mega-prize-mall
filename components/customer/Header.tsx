@@ -422,7 +422,15 @@ const Header = () => {
                                   {session.user.name || "User"}
                                 </div>
                                 <div className="text-sm text-gray-600 truncate">
-                                  {session.user.email}
+                                  {/* {session.user.email} */}
+                                  {session.user.email &&
+                                  !session.user.email.includes(
+                                    "temp.megaprizemall.com",
+                                  ) ? (
+                                    <>{session.user.email}</>
+                                  ) : (
+                                    "Logged in as Guest"
+                                  )}
                                 </div>
                               </div>
                             </div>
@@ -433,8 +441,8 @@ const Header = () => {
       session.user.role === "admin"
         ? "bg-linear-to-r from-red-600 to-red-500"
         : session.user.role === "support"
-        ? "bg-linear-to-r from-blue-600 to-blue-500"
-        : "bg-linear-to-r from-[#7C2C78] to-[#A43875]"
+          ? "bg-linear-to-r from-blue-600 to-blue-500"
+          : "bg-linear-to-r from-[#7C2C78] to-[#A43875]"
     } text-white border-0
   `}
                               >
@@ -713,8 +721,8 @@ const Header = () => {
               session.user.role === "admin"
                 ? "bg-red-100 text-red-800"
                 : session.user.role === "support"
-                ? "bg-blue-100 text-blue-800"
-                : "bg-[#7C2C78]/10 text-[#7C2C78]"
+                  ? "bg-blue-100 text-blue-800"
+                  : "bg-[#7C2C78]/10 text-[#7C2C78]"
             }
           `}
                           >
