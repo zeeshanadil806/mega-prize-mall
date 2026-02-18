@@ -112,6 +112,7 @@ export async function POST(request: NextRequest) {
     await connectToDatabase();
 
     const body = await request.json();
+    // console.log(body.minBargainPrice)
 
     // Validate input
     const validatedData = ProductSchema.parse({
@@ -119,6 +120,7 @@ export async function POST(request: NextRequest) {
       // Ensure required fields
       slug: body.slug || generateSlug(body.name),
     });
+    console.log(validatedData.minBargainPrice)
 
     // Check for duplicate SKU or slug
     const existingProduct = await ProductModel.findOne({
@@ -131,7 +133,6 @@ export async function POST(request: NextRequest) {
         { status: 409 }
       );
     }
-    console.log(body)
     // Create product
     const product = await ProductModel.create(validatedData);
     log.info("Product created", { productId: product._id, name: product.name });

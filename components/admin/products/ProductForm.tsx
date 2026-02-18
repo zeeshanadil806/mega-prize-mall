@@ -108,7 +108,7 @@ export default function ProductForm({
     
     // Gamification
     bargainEnabled: initialData?.bargainEnabled || false,
-    minBargainPrice: initialData?.minBargainPrice || 0,
+    minBargainPrice: initialData?.minBargainPrice || 1,
     maxBargainRounds: initialData?.maxBargainRounds || 3,
     bargainValidityHours: initialData?.bargainValidityHours || 48,
 
@@ -754,7 +754,7 @@ export default function ProductForm({
                         <Input
                           id="minBargainPrice"
                           type="number"
-                          value={formData.minBargainPrice || ""}
+                          value={formData.minBargainPrice || 1}
                           onChange={(e) => handleNumberChange("minBargainPrice", e.target.value)}
                           placeholder="Minimum acceptable price"
                         />
