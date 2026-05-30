@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendBargainExpiryReminders } from '@/lib/bargain-expiry-reminders';
+import { log } from '@/lib/logger';
 
 // Add secret for security
 const CRON_SECRET = process.env.CRON_SECRET || 'your-secret-key';
@@ -25,7 +26,7 @@ export async function GET(request: NextRequest) {
     });
     
   } catch (error) {
-    console.error('❌ Cron job failed:', error);
+    log.error('Cron job failed', { error: error as Error });
     return NextResponse.json(
       { 
         success: false, 

@@ -4,6 +4,7 @@ import { UserModel } from '@/models/User';
 import { auth } from '@/auth';
 import { z } from 'zod';
 import { log } from '@/lib/logger';
+import { escapeRegex } from '@/lib/utils';
 
 // Validation schemas
 const createUserSchema = z.object({
@@ -76,10 +77,11 @@ interface UserQuery {
     }
     
     if (search) {
+      const safe = escapeRegex(search);
       query.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { email: { $regex: search, $options: 'i' } },
-        { phone: { $regex: search, $options: 'i' } },
+        { name: { $regex: safe, $options: 'i' } },
+        { email: { $regex: safe, $options: 'i' } },
+        { phone: { $regex: safe, $options: 'i' } },
       ];
     }
     

@@ -57,52 +57,14 @@ export interface ProductProps {
   purchaseCount?: number;
 }
 
-export interface CustomerProductProps {
-  // Basic Info
+/**
+ * Customer-facing product shape. Identical to `ProductProps` except `_id` is
+ * required (server has already persisted the document) and the API computes a
+ * `discountPercentage` for display.
+ */
+export interface CustomerProductProps extends Omit<ProductProps, "_id"> {
   _id: string;
-  name: string;
-  slug: string;
-  description: string;
-  shortDescription: string;
-  // Pricing
-  price: number;
-  discountedPrice: number;
-  costPrice: number;
   discountPercentage: number;
-
-  // Categorization
-  category: string;
-  tags: string[];
-  brand: string;
-
-  // Inventory
-  sku: string;
-  stock: number;
-
-  // Specifications
-  features: string[];
-  specifications: Record<string, string>;
-  color: string;
-
-  // Gamification
-  bargainEnabled: boolean;
-  minBargainPrice: number;
-  maxBargainRounds: number;
-  bargainValidityHours: number;
-
-  images?: ImageProps[];
-  // SEO
-  metaTitle: string;
-  metaDescription: string;
-  keywords: string[];
-
-  // Status
-  isActive: boolean;
-  isFeatured: boolean;
-  isBestSeller: boolean;
-  isNewArrival: boolean;
-
-  purchaseCount?: number;
 }
 export interface EmailSubscriber {
   email: string;
@@ -269,7 +231,15 @@ export interface ClientOrder {
   updatedAt: string;
 }
 
-export interface WalletTransaction {
+/**
+ * Client-side view of a wallet transaction as returned by API routes —
+ * dates are ISO strings (JSON-serialized) and `_id` is the Mongoose virtual.
+ *
+ * The server-side type lives in models/WalletTransaction.ts (named
+ * `WalletTransaction`, dates as `Date` objects, includes `metadata`).
+ * Keep both in sync when adding fields that appear on the wire.
+ */
+export interface WalletTransactionView {
   _id: string;
   userId: string;
   type: "earn" | "redeem" | "adjustment" | "expiry" | "refund";
@@ -280,7 +250,6 @@ export interface WalletTransaction {
   productId?: string;
   description: string;
   status: "pending" | "completed" | "cancelled";
-  // metadata: Record<string, any>;
   expiresAt?: string; // ISO date string
   processedAt?: string; // ISO date string
   createdAt: string; // ISO date string

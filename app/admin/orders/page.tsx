@@ -5,6 +5,7 @@ import { Metadata } from 'next';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { UserModel } from '@/models/User';
+import { escapeRegex } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: 'Order Management - Admin Dashboard',
@@ -71,11 +72,12 @@ export default async function AdminOrdersPage({
   }
   
   if (search) {
+    const safe = escapeRegex(search);
     query.$or = [
-      { _id: { $regex: search, $options: 'i' } },
-      { 'items.productName': { $regex: search, $options: 'i' } },
-      { 'shippingAddress.fullName': { $regex: search, $options: 'i' } },
-      { 'shippingAddress.phone': { $regex: search, $options: 'i' } },
+      { _id: { $regex: safe, $options: 'i' } },
+      { 'items.productName': { $regex: safe, $options: 'i' } },
+      { 'shippingAddress.fullName': { $regex: safe, $options: 'i' } },
+      { 'shippingAddress.phone': { $regex: safe, $options: 'i' } },
     ];
   }
   

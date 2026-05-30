@@ -59,13 +59,13 @@ export const metadata: Metadata = {
     siteName: "Mega Prize Mall",
     images: [
       {
-        url: "/og-home.jpg",
+        url: "/logo.png",
         width: 1200,
         height: 630,
         alt: "Mega Prize Mall - Mobile Accessories with Bargain Feature",
       },
     ],
-    locale: "en_IN",
+    locale: "en_PK",
   },
 
   // Twitter
@@ -74,7 +74,7 @@ export const metadata: Metadata = {
     title: "Mega Prize Mall - Bargain & Win Mobile Accessories",
     description:
       "Unique shopping experience: Negotiate prices & earn lucky draw entries on mobile accessories!",
-    images: ["/twitter-home.jpg"],
+    images: ["/logo.png"],
     creator: "@megaprizemall",
     site: "@megaprizemall",
   },
@@ -97,7 +97,7 @@ export const metadata: Metadata = {
     canonical: "https://megaprizemall.com",
   },
   verification: {
-    google: "your-google-verification-code",
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
   },
 };
 

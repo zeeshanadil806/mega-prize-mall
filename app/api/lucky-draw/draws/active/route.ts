@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getActiveDraws } from '@/lib/lucky-draw-utils';
+import { log } from '@/lib/logger';
 
 export async function GET() {
   try {
@@ -12,7 +13,7 @@ export async function GET() {
     });
 
   } catch (error) {
-    console.error('Error fetching active draws:', error);
+    log.error('Error fetching active draws', { error: error as Error });
         const errorMessage = error instanceof Error ? error.message : 'Failed to cancel order';
 
     return NextResponse.json(

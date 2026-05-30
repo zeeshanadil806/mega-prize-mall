@@ -5,6 +5,7 @@ import { UserModel } from '@/models/User';
 import { auth } from '@/auth';
 import mongoose from 'mongoose';
 import { z } from 'zod';
+import { log } from '@/lib/logger';
 
 // Validation schema
 const redeemSchema = z.object({
@@ -109,7 +110,7 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error) {
-    console.error('Error redeeming points:', error);
+    log.error('Error redeeming points', { error: error as Error });
         const errorMessage = error instanceof Error ? error.message : 'Failed to generate invoice';
 
     return NextResponse.json(

@@ -43,10 +43,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Alert, AlertDescription } from '@/components/ui/alert';
 // import { Skeleton } from '@/components/ui/skeleton';
 // import Link from 'next/link';
-import { WalletTransaction } from '@/types';
+import { WalletTransactionView } from '@/types';
 
 interface WalletDashboardClientProps {
-  transactions: WalletTransaction[];
+  transactions: WalletTransactionView[];
   currentPage: number;
   totalPages: number;
   currentType: string;

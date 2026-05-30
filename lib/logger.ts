@@ -100,22 +100,3 @@ export const log = {
     }
   },
 }
-
-// Synchronous version for API routes (server-only)
-export const serverLog = {
-  info: (message: string, meta?: LogMeta) => {
-    if (typeof window === 'undefined') {
-      console.log(`[SERVER] ${message}`, meta || '')
-    }
-  },
-  warn: (message: string, meta?: LogMeta) => {
-    if (typeof window === 'undefined') {
-      console.warn(`[SERVER] ${message}`, meta || '')
-    }
-  },
-  error: (message: string, meta?: LogMeta) => {
-    if (typeof window === 'undefined') {
-      console.error(`[SERVER] ${message}`, meta || '')
-    }
-  },
-}

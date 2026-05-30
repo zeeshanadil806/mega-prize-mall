@@ -40,7 +40,7 @@ if (!session?.user || (session.user.role !== "admin" && session.user.role !== "s
   const productData = JSON.parse(JSON.stringify(product))
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-IN", {
+    return new Intl.NumberFormat("en-PK", {
       style: "currency",
       currency: "PKR",
     }).format(price)

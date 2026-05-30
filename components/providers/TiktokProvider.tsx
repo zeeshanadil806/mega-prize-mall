@@ -59,7 +59,7 @@ function TiktokProviderContent({
 
   // Track page views
   useEffect(() => {
-    if (!enabled || !isInitialized) return;
+    if (!enabled || !isInitialized()) return;
     
     const timer = setTimeout(() => {
       trackPageView();

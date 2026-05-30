@@ -31,13 +31,6 @@ interface CheckoutClientProps {
   addresses: Address[];
 }
 
-// Phone validation for Pakistan
-const isValidPKPhone = (phone: string): boolean => {
-  // Accepts: +92XXXXXXXXXX, 03XXXXXXXXX, 92XXXXXXXXXX
-  const regex = /^(?:\+92|92|0)?(3\d{2})[ .-]?(\d{3})[ .-]?(\d{4})$/;
-  return regex.test(phone);
-};
-
 // Format phone for display
 const formatPhone = (phone: string): string => {
   if (!phone) return "";
@@ -193,14 +186,6 @@ export default function CheckoutClient({
       return;
     }
 
-    // Validate phone number
-    if (!isValidPKPhone(newAddress.phone)) {
-      toast.error(
-        "Please enter a valid Pakistani phone number (e.g., 03XX XXXXXXX)",
-      );
-      return;
-    }
-
     try {
       const formattedPhone = formatPhone(newAddress.phone);
 
@@ -314,11 +299,6 @@ export default function CheckoutClient({
       return;
     }
 
-    // Validate phone before placing order
-    if (!isValidPKPhone(checkoutData.shippingAddress.phone)) {
-      toast.error("Please enter a valid Pakistani phone number");
-      return;
-    }
     if (session?.user?.isGuest && checkoutData.guestEmail) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(checkoutData.guestEmail)) {

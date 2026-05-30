@@ -1,7 +1,6 @@
 import LoginPage from '@/components/auth/LoginPage'
 import React from 'react'
 import type { Metadata } from 'next';
-import Head from 'next/head';
 
 export const metadata: Metadata = {
   title: "Login to Your Account | Mega Prize Mall - Accessories Mall",
@@ -41,16 +40,5 @@ export const metadata: Metadata = {
 };
 
 export default function page() {
-  return (
-    <div>
-      <Head>
-  <meta name="robots" content="noindex, nofollow, noarchive, nocache, nosnippet" />
-  <meta name="googlebot" content="noindex, nofollow, noimageindex" />
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
-</Head>
-      <LoginPage />
-    </div>
-  )
+  return <LoginPage />
 }

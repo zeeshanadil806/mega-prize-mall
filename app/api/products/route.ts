@@ -3,6 +3,14 @@ import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { ProductModel } from "@/models/Product";
 import { Types } from "mongoose";
+import { rateLimit } from "@/lib/rate-limit";
+import { log } from "@/lib/logger";
+
+const PRODUCTS_RATE_LIMIT = 120; // requests per minute per IP
+const limiter = rateLimit({
+  interval: 60 * 1000,
+  uniqueTokenPerInterval: 500,
+});
 
 interface ProductQuery {
   isActive: boolean;
@@ -77,6 +85,29 @@ interface TransformedProduct {
 
 export async function GET(request: Request) {
   try {
+    const ip =
+      request.headers.get("x-forwarded-for") ||
+      request.headers.get("x-real-ip") ||
+      "unknown";
+    const rateLimitResult = limiter.check(PRODUCTS_RATE_LIMIT, ip);
+    if (rateLimitResult.isRateLimited) {
+      const retryAfter = Math.ceil(
+        (rateLimitResult.resetTime - Date.now()) / 1000
+      );
+      return NextResponse.json(
+        { error: "Too many requests", retryAfter },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": retryAfter.toString(),
+            "X-RateLimit-Limit": String(PRODUCTS_RATE_LIMIT),
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset": rateLimitResult.resetTime.toString(),
+          },
+        }
+      );
+    }
+
     await connectToDatabase();
 
     const { searchParams } = new URL(request.url);
@@ -179,7 +210,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json(transformedProducts);
   } catch (error) {
-    console.error("Error fetching products:", error);
+    log.error("Error fetching products", { error: error as Error });
     return NextResponse.json(
       { error: "Failed to fetch products" },
       { status: 500 },

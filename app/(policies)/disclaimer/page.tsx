@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     ],
     images: [
       {
-        url: "https://megaprizemall.com/og-disclaimer.jpg",
+        url: "https://megaprizemall.com/logo.png",
         width: 1200,
         height: 630,
         alt: "Mega Prize Mall Legal Disclaimer & Terms",
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     title: "Legal Disclaimer | Mega Prize Mall - Read Terms",
     description:
       "Important legal terms, disclaimers, and limitations for Mega Prize Mall platform usage.",
-    images: ["https://megaprizemall.com/twitter-disclaimer.jpg"],
+    images: ["https://megaprizemall.com/logo.png"],
     creator: "@megaprizemall",
     site: "@megaprizemall",
   },

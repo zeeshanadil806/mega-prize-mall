@@ -3,6 +3,7 @@ import { connectToDatabase } from "@/lib/mongodb";
 import { ProductModel, ProductSchema } from "@/models/Product";
 import { auth } from "@/auth";
 import { log } from "@/lib/logger";
+import { escapeRegex } from "@/lib/utils";
 import { z } from "zod";
 
 type MongoQuery = {
@@ -41,10 +42,11 @@ export async function GET(request: NextRequest) {
     const query: MongoQuery = {};
 
     if (search) {
+      const safe = escapeRegex(search);
       query.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { sku: { $regex: search, $options: "i" } },
-        { description: { $regex: search, $options: "i" } },
+        { name: { $regex: safe, $options: "i" } },
+        { sku: { $regex: safe, $options: "i" } },
+        { description: { $regex: safe, $options: "i" } },
       ];
     }
 

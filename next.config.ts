@@ -31,10 +31,9 @@ const nextConfig: NextConfig = {
         hostname: "pub-b072b472844f414b9c691e5a9b16d1e1.r2.dev",
         pathname: "/**",
       },
-      // Add your production domain
       {
         protocol: "https",
-        hostname: "yourdomain.com",
+        hostname: "megaprizemall.com",
         pathname: "/api/proxy-image/**",
       },
     ],
@@ -50,6 +49,31 @@ const nextConfig: NextConfig = {
   //   // your project has ESLint errors.
   //   ignoreDuringBuilds: false,
   // }
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "X-DNS-Prefetch-Control", value: "on" },
+          {
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
+          {
+            key: "Permissions-Policy",
+            value:
+              "camera=(), microphone=(), geolocation=(self), interest-cohort=()",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

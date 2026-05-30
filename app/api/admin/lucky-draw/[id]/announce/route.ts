@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { LuckyDrawModel } from '@/models/LuckyDraw';
 import { connectToDatabase } from '@/lib/mongodb';
 import { auth } from '@/auth';
+import { log } from '@/lib/logger';
 
 export async function POST(
   request: NextRequest,
@@ -61,7 +62,7 @@ export async function POST(
   } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to cancel order';
 
-    console.error('Error announcing draw:', error);
+    log.error('Error announcing draw', { error: error as Error });
     return NextResponse.json(
       { 
         success: false,

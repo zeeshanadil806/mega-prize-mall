@@ -5,7 +5,11 @@ export { VariantSchema, type Variant } from './Variant';
 export { BargainRequestModel, type IBargainRequest, BargainRequestSchema } from './BargainRequest';
 export { BargainCouponModel, type IBargainCoupon, BargainCouponSchema } from './BargainCoupon';
 export { WalletTransactionModel, type IWalletTransaction, WalletTransactionSchema } from './WalletTransaction';
-export { AddressModel } from './Address';
-export { TikTokEventModel } from './TikTokEvent'; // Add this line
-
-// We'll add more models as we progress
+export { AddressModel, type IAddress, AddressSchema } from './Address';
+export { OrderModel, type IOrder, OrderSchema } from './Order';
+export { LuckyDrawModel, type ILuckyDraw, LuckyDrawSchema } from './LuckyDraw';
+export { LuckyDrawEntryModel, type ILuckyDrawEntry, LuckyDrawEntrySchema } from './LuckyDrawEntry';
+export { GlobalCouponModel, type IGlobalCoupon, GlobalCouponSchema, CouponServices } from './GlobalCoupon';
+export { CouponUsageModel, type ICouponUsage, CouponUsageSchema } from './CouponUsage';
+export { TikTokEventModel, type ITikTokEvent } from './TikTokEvent';
+export { default as EmailSubscriberModel, type IEmailSubscriber } from './EmailSubscriber';

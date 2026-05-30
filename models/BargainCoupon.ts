@@ -60,7 +60,6 @@ BargainCouponSchemaMongoose.index({ validUntil: 1, isUsed: 1, isActive: 1 });
 // Update timestamp
 BargainCouponSchemaMongoose.pre('save', function() {
   this.updatedAt = new Date();
-//   next();
 });
 
 // Virtual for isValid

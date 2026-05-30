@@ -4,6 +4,7 @@ import ProductCard from './ProductCard';
 import { connectToDatabase } from '@/lib/mongodb';
 import { SortOrder } from 'mongoose';
 import { ProductFilter } from '@/types';
+import { escapeRegex } from '@/lib/utils';
 import Link from 'next/link';
 interface ProductGridProps {
   searchParams: {
@@ -47,10 +48,11 @@ if (searchParams.bargain === 'true') {
   }
   
   if (searchParams.search) {
+    const safe = escapeRegex(searchParams.search);
     filter.$or = [
-      { name: { $regex: searchParams.search, $options: 'i' } },
-      { description: { $regex: searchParams.search, $options: 'i' } },
-      { tags: { $regex: searchParams.search, $options: 'i' } },
+      { name: { $regex: safe, $options: 'i' } },
+      { description: { $regex: safe, $options: 'i' } },
+      { tags: { $regex: safe, $options: 'i' } },
     ];
   }
   

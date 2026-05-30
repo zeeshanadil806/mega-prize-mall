@@ -84,17 +84,17 @@ export const useCartStore = create<CartStore>()(
       
       loadedProducts: {},
 
-setLoadedProducts: (products) => {
-  set({ loadedProducts: products });
-},
+      setLoadedProducts: (products) => {
+        set({ loadedProducts: products });
+      },
 
-getBargainEligibleItems: () => {
-  const state = get();
-  return state.items.filter(item => {
-    const product = state.loadedProducts[item.productId];
-    return product?.bargainEnabled && !item.bargainCouponId;
-  });
-},
+      getBargainEligibleItems: () => {
+        const state = get();
+        return state.items.filter(item => {
+          const product = state.loadedProducts[item.productId];
+          return product?.bargainEnabled && !item.bargainCouponId;
+        });
+      },
 
       removeBargainFromItem: (productId) => {
         set((state) => ({
@@ -140,10 +140,8 @@ getBargainEligibleItems: () => {
       },
       
       getGrandTotal: () => {
-          const subtotal = get().getSubtotal();
-          // console.log(subtotal)
-          const discountTotal = get().getDiscountTotal();
-          // console.log(discountTotal)
+        const subtotal = get().getSubtotal();
+        const discountTotal = get().getDiscountTotal();
         return Math.max(0, subtotal - discountTotal);
       },
     }),

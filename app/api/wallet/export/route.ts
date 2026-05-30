@@ -3,6 +3,7 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { WalletTransactionModel } from '@/models/WalletTransaction';
 import { auth } from '@/auth';
 import { formatCurrency } from '@/lib/bargain-utils';
+import { log } from '@/lib/logger';
 
 interface WalletExportQuery {
   userId: string;
@@ -89,7 +90,7 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error exporting wallet data:', error);
+    log.error('Error exporting wallet data', { error: error as Error });
         const errorMessage = error instanceof Error ? error.message : 'Failed to generate invoice';
     return NextResponse.json(
       { error: errorMessage || 'Failed to export data' },

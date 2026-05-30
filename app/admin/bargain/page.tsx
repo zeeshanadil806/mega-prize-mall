@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { AdminBargainClient } from "@/components/admin/bargain/AdminBargainClient";
 import { connectToDatabase } from "@/lib/mongodb";
 import { ProductModel, UserModel } from "@/models";
+import { escapeRegex } from "@/lib/utils";
 interface BargainRequestQuery {
   isActive: boolean;
   status?: string;
@@ -64,9 +65,10 @@ export default async function AdminBargainPage({
   }
 
   if (search) {
+    const safe = escapeRegex(search);
     query.$or = [
-      { couponCode: { $regex: search, $options: "i" } },
-      { message: { $regex: search, $options: "i" } },
+      { couponCode: { $regex: safe, $options: "i" } },
+      { message: { $regex: safe, $options: "i" } },
     ];
   }
 

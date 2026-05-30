@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { deduplicationService } from '@/lib/tiktok/server/deduplication';
+import { log } from '@/lib/logger';
 
 // Protect this route with admin authentication
 export async function GET(request: NextRequest) {
@@ -30,7 +31,7 @@ export async function GET(request: NextRequest) {
       })),
     });
   } catch (error) {
-    console.error('Failed to fetch TikTok stats:', error);
+    log.error('Failed to fetch TikTok stats', { error: error as Error });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

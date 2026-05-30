@@ -99,22 +99,23 @@ const AddressSchemaMongoose = new Schema<IAddress>({
 AddressSchemaMongoose.index({ userId: 1, isDefault: 1 });
 AddressSchemaMongoose.index({ userId: 1, isActive: 1 });
 
-// Pre-save middleware
-AddressSchemaMongoose.pre('save', function() {
+// Pre-save middleware. Returning the promise (via async) makes Mongoose await
+// the updateMany before completing this save — without that, the parent save
+// could resolve while two addresses are briefly both marked default, and a
+// failure inside updateMany would never surface to the caller.
+AddressSchemaMongoose.pre('save', async function() {
   this.updatedAt = new Date();
-  
-  // If this address is being set as default, unset other defaults
+
+  // If this address is being set as default, unset other defaults first.
   if (this.isDefault && this.isModified('isDefault')) {
-    mongoose.models.Address?.updateMany(
-      { 
-        userId: this.userId, 
-        _id: { $ne: this._id } 
+    await mongoose.models.Address?.updateMany(
+      {
+        userId: this.userId,
+        _id: { $ne: this._id },
       },
       { $set: { isDefault: false } }
-    ).catch(err => console.error('Error updating default addresses:', err));
+    );
   }
-  
-//   next();
 });
 
 // Virtual for formatted address

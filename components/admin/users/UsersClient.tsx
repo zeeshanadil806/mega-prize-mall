@@ -267,7 +267,7 @@ export default function UsersClient() {
       toast.error("Failed to export users");
     }
   };
-console.log(users)
+
   // Stats
   const totalUsers = pagination.totalUsers;
   const totalAdmins = users.filter((u) => u.role === "admin").length;

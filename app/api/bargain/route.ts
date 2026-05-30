@@ -173,7 +173,7 @@ export async function POST(request: NextRequest) {
           console.log(`Bargain coupon email sent for ${couponCode}`);
         }
       } catch (emailError) {
-        console.error("Failed to send bargain coupon email:", emailError);
+        log.error("Failed to send bargain coupon email", { error: emailError as Error });
       }
     }, 0);
 

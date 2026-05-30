@@ -3,6 +3,7 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { WalletTransactionModel } from '@/models/WalletTransaction';
 import { UserModel } from '@/models/User';
 import { auth } from '@/auth';
+import { log } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -198,7 +199,7 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to generate invoice';
-    console.error('Error fetching wallet stats:', error);
+    log.error('Error fetching wallet stats', { error: error as Error });
     return NextResponse.json(
       { error: errorMessage || 'Failed to fetch wallet statistics' },
       { status: 400 }

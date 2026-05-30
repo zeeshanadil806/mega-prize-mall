@@ -158,7 +158,7 @@ export default function CustomerDashboard() {
   const stats = useMemo(() => dashboardData ? [
     { label: "Total Orders", value: dashboardData.stats.totalOrders.toString(), icon: ShoppingBag, color: "from-blue-500 to-cyan-500" },
     { label: "Active Bargains", value: dashboardData.stats.activeBargains.toString(), icon: Ticket, color: "from-purple-500 to-pink-500" },
-    { label: "Points Balance", value: dashboardData.stats.pointsBalance.toLocaleString('en-IN'), icon: Gift, color: "from-amber-500 to-orange-500" },
+    { label: "Points Balance", value: dashboardData.stats.pointsBalance.toLocaleString('en-PK'), icon: Gift, color: "from-amber-500 to-orange-500" },
     { label: "Success Rate", value: `${dashboardData.stats.successRate}%`, icon: TrendingUp, color: "from-emerald-500 to-green-500" },
   ] : [], [dashboardData])
 
@@ -338,7 +338,7 @@ export default function CustomerDashboard() {
                       <span className="text-gray-500 line-through">{bargain.original}</span>
                       <span className="font-bold text-[#7C2C78]">{bargain.offer}</span>
                       <span className="text-green-600 font-medium">
-                        Save Rs {bargain.savingAmount.toLocaleString('en-IN')}
+                        Save Rs {bargain.savingAmount.toLocaleString('en-PK')}
                       </span>
                     </div>
                   </motion.div>

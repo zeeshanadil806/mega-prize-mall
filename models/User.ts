@@ -14,9 +14,9 @@ export const UserSchema = z.object({
     .optional(),
   emailVerified: z.date().optional().nullable(),
   points: z.number().min(0).default(0),
-  referredBy: { type: String, default: null }, // Referral code used
-  referralPointsEarned: { type: Number, default: 0 }, // Points from referrals given
-  totalReferrals: { type: Number, default: 0 },
+  referredBy: z.string().nullable().default(null), // Referral code used
+  referralPointsEarned: z.number().int().min(0).default(0), // Points from referrals given
+  totalReferrals: z.number().int().min(0).default(0),
   createdAt: z.date().default(() => new Date()),
   updatedAt: z.date().default(() => new Date()),
 });
@@ -51,7 +51,6 @@ const UserSchemaMongoose = new Schema<IUser>({
 // Pre-save middleware to update updatedAt
 UserSchemaMongoose.pre("save", function () {
   this.updatedAt = new Date();
-  //   next();
 });
 
 // Export model (check if already compiled in dev)

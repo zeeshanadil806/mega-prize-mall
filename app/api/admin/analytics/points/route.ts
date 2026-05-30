@@ -1,31 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { WalletTransactionModel } from '@/models/WalletTransaction';
-// import { UserModel } from '@/models/User';
+import { UserModel } from '@/models/User';
 import { OrderModel } from '@/models/Order';
-// import { auth } from '@/auth';
+import { auth } from '@/auth';
 import { log } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
-    // const session = await auth();
-    
-    // // Check admin authentication
-    // if (!session?.user?.id) {
-    //   return NextResponse.json(
-    //     { error: 'Unauthorized' },
-    //     { status: 401 }
-    //   );
-    // }
-    
-    // const adminUser = await UserModel.findById(session.user.id);
-    // if (!adminUser || adminUser.role !== 'admin') {
-    //   return NextResponse.json(
-    //     { error: 'Forbidden: Admin access required' },
-    //     { status: 403 }
-    //   );
-    // }
-    
+    const session = await auth();
+
+    // Check admin authentication
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    const adminUser = await UserModel.findById(session.user.id);
+    if (!adminUser || adminUser.role !== 'admin') {
+      return NextResponse.json(
+        { error: 'Forbidden: Admin access required' },
+        { status: 403 }
+      );
+    }
+
     await connectToDatabase();
     
     // Get query parameters

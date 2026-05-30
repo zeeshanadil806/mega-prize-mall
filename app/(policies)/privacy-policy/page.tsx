@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     ],
     images: [
       {
-        url: "https://megaprizemall.com/og-privacy.jpg",
+        url: "https://megaprizemall.com/logo.png",
         width: 1200,
         height: 630,
         alt: "Mega Prize Mall Privacy Policy Overview",
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     title: "Privacy Policy | Mega Prize Mall - Your Data Protection Guide",
     description:
       "Your privacy matters. Learn how we handle your shopping data, lucky draw entries, and secure your information.",
-    images: ["https://megaprizemall.com/twitter-privacy.jpg"],
+    images: ["https://megaprizemall.com/logo.png"],
     creator: "@megaprizemall",
     site: "@megaprizemall",
   },

@@ -95,7 +95,7 @@ export default function UsersTable({
   onDeleteUser,
 }: UsersTableProps) {
   const [localSearch, setLocalSearch] = useState(filters.search || '');
-console.log(users)
+
   const handleSearch = (value: string) => {
     setLocalSearch(value);
     // Debounce search

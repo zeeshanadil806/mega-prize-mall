@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
 import { connectToDatabase } from "@/lib/mongodb";
 import { tiktokConversionAPI } from "@/lib/tiktok/server/conversion-api";
 import { deduplicationService } from "@/lib/tiktok/server/deduplication";
 import { rateLimit } from "@/lib/rate-limit";
+import { log } from "@/lib/logger";
 
 const limiter = rateLimit({
   interval: 60 * 1000,
@@ -14,7 +16,7 @@ export async function POST(request: NextRequest) {
   try {
     const source = request.headers.get('x-webhook-source') || 'unknown';
     const rateLimitResult = limiter.check(5, source);
-    
+
     if (rateLimitResult.isRateLimited) {
       return NextResponse.json(
         { error: 'Webhook rate limit exceeded' },
@@ -22,16 +24,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Connect to MongoDB
-    await connectToDatabase();
+    // Fail closed if the shared secret is not configured.
+    const secret = process.env.TIKTOK_PURCHASE_WEBHOOK_SECRET;
+    if (!secret) {
+      log.error("TIKTOK_PURCHASE_WEBHOOK_SECRET is not set; rejecting webhook");
+      return NextResponse.json(
+        { error: "Webhook receiver not configured" },
+        { status: 503 }
+      );
+    }
+
+    // Read the raw body once so we can both verify the signature against it
+    // and parse it as JSON. request.json() would consume the stream.
+    const rawBody = await request.text();
 
     // Verify webhook signature
     const signature = request.headers.get("x-webhook-signature");
-    if (!verifySignature(signature)) {
+    if (!verifySignature(signature, rawBody, secret)) {
       return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
     }
 
-    const body = await request.json();
+    // Connect to MongoDB after signature passes — avoid DB work on bad requests.
+    await connectToDatabase();
+
+    const body = JSON.parse(rawBody);
     const { event, order_id, amount, currency, customer, items, metadata } =
       body;
 
@@ -91,7 +107,7 @@ export async function POST(request: NextRequest) {
       event_id: eventId,
     });
   } catch (error) {
-    console.error("TikTok purchase webhook error:", error);
+    log.error("TikTok purchase webhook error", { error: error as Error });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -99,10 +115,38 @@ export async function POST(request: NextRequest) {
   }
 }
 
-function verifySignature(signature: string | null): boolean {
-  // Implement based on your payment processor
-  // Example for Stripe:
-  // const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-  // return stripe.webhooks.constructEvent(...);
-  return !!signature;
+// Verify HMAC-SHA256 webhook signature over the raw request body.
+// Accepts either a bare hex digest or a `sha256=<hex>` prefix (common convention
+// used by GitHub, Shopify, and many payment processors). Uses constant-time
+// comparison to avoid timing attacks.
+function verifySignature(
+  signature: string | null,
+  rawBody: string,
+  secret: string
+): boolean {
+  if (!signature) return false;
+
+  const provided = signature.startsWith("sha256=")
+    ? signature.slice("sha256=".length)
+    : signature;
+
+  // Hex digests are always even-length; bail early on malformed input so the
+  // Buffer.from below can't silently truncate.
+  if (provided.length === 0 || provided.length % 2 !== 0) return false;
+
+  const expected = crypto
+    .createHmac("sha256", secret)
+    .update(rawBody)
+    .digest("hex");
+
+  if (provided.length !== expected.length) return false;
+
+  try {
+    return crypto.timingSafeEqual(
+      Buffer.from(provided, "hex"),
+      Buffer.from(expected, "hex")
+    );
+  } catch {
+    return false;
+  }
 }

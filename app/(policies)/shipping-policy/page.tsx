@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     ],
     images: [
       {
-        url: "https://megaprizemall.com/og-shipping-policy.jpg",
+        url: "https://megaprizemall.com/logo.png",
         width: 1200,
         height: 630,
         alt: "Shipping Policy - Mega Prize Mall",
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     title: "Shipping Policy - Mega Prize Mall | Delivery Guidelines",
     description:
       "Complete shipping policy with timelines, tracking, and mandatory unboxing video requirements.",
-    images: ["https://megaprizemall.com/twitter-shipping-policy.jpg"],
+    images: ["https://megaprizemall.com/logo.png"],
     creator: "@megaprizemall",
     site: "@megaprizemall",
   },

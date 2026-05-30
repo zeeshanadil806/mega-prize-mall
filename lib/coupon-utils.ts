@@ -58,9 +58,20 @@ export async function validateBargainCoupon(
       };
     }
 
-    // Check if product price matches (within tolerance)
-    const priceTolerance = currentPrice * 0.1; // 10% tolerance
-    if (Math.abs(coupon.originalPrice - currentPrice) > priceTolerance) {
+    // Price guard:
+    //  - If the current price has dropped below the bargained original, reject.
+    //    Otherwise the bargain discount stacks on top of the admin's price cut.
+    //  - If the current price is up to 10% above the bargained original, accept
+    //    (covers small admin tweaks). Larger increases require re-bargaining.
+    if (currentPrice < coupon.originalPrice) {
+      return {
+        valid: false,
+        message:
+          "Product price has dropped — your bargain no longer applies. Buy at the current price or request a new bargain.",
+      };
+    }
+    const upperTolerance = coupon.originalPrice * 0.1;
+    if (currentPrice > coupon.originalPrice + upperTolerance) {
       return {
         valid: false,
         message: "Product price has changed significantly",

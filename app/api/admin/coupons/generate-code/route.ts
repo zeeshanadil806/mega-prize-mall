@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { CouponServices } from '@/models/GlobalCoupon';
+import { log } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -22,7 +23,7 @@ if (!session?.user || (session.user.role !== "admin" && session.user.role !== "s
     });
     
   } catch (error) {
-    console.error('Error generating coupon code:', error);
+    log.error('Error generating coupon code', { error: error as Error });
     return NextResponse.json(
       { error: 'Failed to generate code' },
       { status: 500 }

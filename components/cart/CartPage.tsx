@@ -23,7 +23,6 @@ import { signIn, useSession } from "next-auth/react";
 
 export default function CartPage() {
   const { data: session, status } = useSession();
-  console.log(session?.user);
   const {
     items,
     removeItem,

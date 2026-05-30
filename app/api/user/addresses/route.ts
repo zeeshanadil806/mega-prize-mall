@@ -32,7 +32,6 @@ const isValidObjectId = (id: string): boolean => {
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
-console.log("session...",session)
     if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: "Unauthorized" },

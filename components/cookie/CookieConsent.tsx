@@ -54,7 +54,6 @@ export default function CookieConsent() {
         <div className="flex gap-3">
           <button
             onClick={handleReject}
-            disabled
             className="px-4 py-2 text-sm border border-gray-600 bg-gray-400 rounded hover:bg-gray-800"
           >
             Reject

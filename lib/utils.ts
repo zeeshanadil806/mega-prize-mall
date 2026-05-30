@@ -16,7 +16,7 @@ export function generateSlug(text: string): string {
 
 // Format currency
 export function formatCurrency(amount: number, currency: string = "PKR"): string {
-  return new Intl.NumberFormat("en-IN", {
+  return new Intl.NumberFormat("en-PK", {
     style: "currency",
     currency,
     minimumFractionDigits: 0,
@@ -30,7 +30,7 @@ export function formatNumber(num: number): string {
 
 // Format date
 export function formatDate(date: Date | string): string {
-  return new Intl.DateTimeFormat("en-IN", {
+  return new Intl.DateTimeFormat("en-PK", {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -46,4 +46,12 @@ export function truncateText(text: string, length: number): string {
 // Generate unique ID
 export function generateId(prefix: string = ""): string {
   return `${prefix}${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+}
+
+// Escape user input before using it in a Mongo $regex query.
+// Without this, a search like "(.+)+$" can trigger catastrophic backtracking,
+// and characters like `.` `*` `?` `(` `)` would be treated as regex operators
+// instead of literal characters the user typed.
+export function escapeRegex(input: string): string {
+  return input.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
 }

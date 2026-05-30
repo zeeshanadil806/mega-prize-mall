@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     url: 'https://megaprizemall.com/register',
     siteName: 'Mega Prize Mall',
     images: [{
-      url: '/og-register.jpg',
+      url: '/logo.png',
       width: 1200,
       height: 630,
       alt: 'Mega Prize Mall Registration',
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Create Account | Mega Prize Mall',
     description: 'Join Mega Prize Mall for exclusive deals and bargain shopping',
-    images: ['/og-register.jpg'],
+    images: ['/logo.png'],
   },
   alternates: {
     canonical: 'https://megaprizemall.com/register',

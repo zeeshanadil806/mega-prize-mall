@@ -1,10 +1,15 @@
 import type { Config } from 'tailwindcss'
 
+// This project uses Tailwind v4, which reads theme tokens from `app/globals.css`
+// via `@theme inline {...}` — this file is no longer the build-time source of
+// truth. It's kept so that shadcn-cli (`components.json` -> `tailwind.config`)
+// can still resolve a config path when running `npx shadcn add ...`. The
+// `content` globs point at the real project layout so any tool that does parse
+// this file sees the correct file list.
 const config: Config = {
   content: [
-    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
@@ -19,7 +24,6 @@ const config: Config = {
           DEFAULT: 'hsl(var(--secondary))',
           foreground: 'hsl(var(--secondary-foreground))',
         },
-        // Add more colors as needed
       },
     },
   },

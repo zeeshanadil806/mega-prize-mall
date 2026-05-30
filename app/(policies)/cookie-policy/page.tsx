@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     ],
     images: [
       {
-        url: "https://megaprizemall.com/og-cookie-policy.jpg",
+        url: "https://megaprizemall.com/logo.png",
         width: 1200,
         height: 630,
         alt: "Mega Prize Mall Cookie Policy Overview",
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     title: "Cookie Policy | Mega Prize Mall - Cookie Usage Guide",
     description:
       "Learn about cookie usage, types, management, and Shop & Win system integration at Mega Prize Mall.",
-    images: ["https://megaprizemall.com/twitter-cookie-policy.jpg"],
+    images: ["https://megaprizemall.com/logo.png"],
     creator: "@megaprizemall",
     site: "@megaprizemall",
   },

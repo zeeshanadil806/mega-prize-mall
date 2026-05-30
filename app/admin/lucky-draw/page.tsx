@@ -4,6 +4,7 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { Metadata } from 'next';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
+import { escapeRegex } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: 'Lucky Draw Management - Admin Dashboard',
@@ -58,10 +59,11 @@ interface LuckyDrawQuery {
   }
   
   if (search) {
+    const safe = escapeRegex(search);
     query.$or = [
-      { title: { $regex: search, $options: 'i' } },
-      { prizeName: { $regex: search, $options: 'i' } },
-      { description: { $regex: search, $options: 'i' } },
+      { title: { $regex: safe, $options: 'i' } },
+      { prizeName: { $regex: safe, $options: 'i' } },
+      { description: { $regex: safe, $options: 'i' } },
     ];
   }
 

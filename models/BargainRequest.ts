@@ -57,7 +57,6 @@ BargainRequestSchemaMongoose.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 // Update timestamp on save
 BargainRequestSchemaMongoose.pre('save', function() {
   this.updatedAt = new Date();
-//   next();
 });
 
 // Virtual for discount percentage

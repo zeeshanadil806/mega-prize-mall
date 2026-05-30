@@ -35,10 +35,12 @@ export async function validateReferralCode(
     // Clean the code
     const cleanCode = referralCode.trim().toUpperCase();
 
-    // Find the referral code owner
+    // Find the referral code owner. `isActive: { $ne: false }` matches active
+    // and legacy rows where the field is missing, but blocks explicit false —
+    // the model sets isActive=false once a code hits its max-uses limit.
     const subscriber = await EmailSubscriber.findOne({
       referralCode: cleanCode,
-    //   isActive: true,
+      isActive: { $ne: false },
     });
 
     if (!subscriber) {
@@ -105,10 +107,10 @@ export async function processReferral(
 
     const cleanCode = referralCode.trim().toUpperCase();
 
-    // Get referral code owner
+    // Get referral code owner (same isActive gate as validateReferralCode).
     const subscriber = await EmailSubscriber.findOne({
       referralCode: cleanCode,
-    //   isActive: true,
+      isActive: { $ne: false },
     }).session(session);
 
     if (!subscriber) {

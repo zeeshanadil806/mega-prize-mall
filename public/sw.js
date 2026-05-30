@@ -1,5 +1,6 @@
-// public/sw.js
-const CACHE_NAME = 'megaprizemall-v1.0';
+// Bump this on every deploy that changes cached assets so the activate handler
+// deletes the previous cache and clients fetch fresh resources.
+const CACHE_NAME = 'megaprizemall-v2';
 const urlsToCache = [
   '/',
   '/manifest.json',
@@ -10,12 +11,13 @@ const urlsToCache = [
 
 // Install event - cache core assets
 self.addEventListener('install', (event) => {
+  // Activate the new SW immediately instead of waiting for all old tabs to
+  // close. Without this, deploys don't reach users until they fully exit
+  // the browser.
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
+      .then((cache) => cache.addAll(urlsToCache))
   );
 });
 
@@ -68,19 +70,25 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// Activate event - clean up old caches
+// Activate event - clean up old caches and take control of open tabs
 self.addEventListener('activate', (event) => {
   const cacheWhitelist = [CACHE_NAME];
-  
+
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+    Promise.all([
+      // Drop any caches that aren't the current version.
+      caches.keys().then((cacheNames) =>
+        Promise.all(
+          cacheNames.map((cacheName) => {
+            if (cacheWhitelist.indexOf(cacheName) === -1) {
+              return caches.delete(cacheName);
+            }
+          })
+        )
+      ),
+      // Make the new SW take control of all open clients immediately so
+      // they stop being served the previous version's cached responses.
+      self.clients.claim(),
+    ])
   );
 });

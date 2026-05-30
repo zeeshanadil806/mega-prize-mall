@@ -4,6 +4,7 @@ import { OrderModel } from "@/models/Order";
 import { auth } from "@/auth";
 import { formatCurrency } from "@/lib/bargain-utils";
 import { Types } from "mongoose";
+import { log } from "@/lib/logger";
 
 // --- Types based on your DB Dump ---
 interface InvoiceItem {
@@ -312,7 +313,7 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error("Error generating invoice:", error);
+    log.error("Error generating invoice", { error: error as Error });
     const errorMessage =
       error instanceof Error ? error.message : "Failed to generate invoice";
 

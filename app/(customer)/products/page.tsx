@@ -42,7 +42,7 @@ export async function generateMetadata(props: {
         url: `https://megaprizemall.com/products?category=${encodeURIComponent(category)}`,
         images: [
           {
-            url: `/og-${category.toLowerCase()}.jpg`,
+            url: `/logo.png`,
             width: 1200,
             height: 630,
             alt: `${categoryFormatted} Collection - Mega Prize Mall`,
@@ -54,7 +54,7 @@ export async function generateMetadata(props: {
         card: "summary_large_image",
         title: `${categoryFormatted} Collection - Bargain Feature`,
         description: `Browse ${categoryFormatted} with price negotiation option`,
-        images: [`/twitter-${category.toLowerCase()}.jpg`],
+        images: [`/logo.png`],
       },
       
       alternates: {
@@ -100,7 +100,7 @@ export async function generateMetadata(props: {
       url: "https://megaprizemall.com/products",
       images: [
         {
-          url: "/og-products.jpg",
+          url: "/logo.png",
           width: 1200,
           height: 630,
           alt: "Mega Prize Mall Mobile Accessories Collection",
@@ -113,7 +113,7 @@ export async function generateMetadata(props: {
       card: "summary_large_image",
       title: "Mobile Accessories Collection - Bargain Feature",
       description: "Browse all mobile accessories with price negotiation option",
-      images: ["/twitter-products.jpg"],
+      images: ["/logo.png"],
     },
     
     // Canonical

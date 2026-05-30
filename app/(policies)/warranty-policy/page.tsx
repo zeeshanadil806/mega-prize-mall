@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     ],
     images: [
       {
-        url: "https://megaprizemall.com/og-warranty.jpg",
+        url: "https://megaprizemall.com/logo.png",
         width: 1200,
         height: 630,
         alt: "Mega Prize Mall Warranty Policy Coverage",
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     title: "Warranty Policy | Mega Prize Mall - Product Protection",
     description:
       "Your product protection guide. Learn about warranty coverage, claim processes, and important policies for mobile accessories.",
-    images: ["https://megaprizemall.com/twitter-warranty.jpg"],
+    images: ["https://megaprizemall.com/logo.png"],
     creator: "@megaprizemall",
     site: "@megaprizemall",
   },

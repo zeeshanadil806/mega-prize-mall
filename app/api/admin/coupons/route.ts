@@ -4,6 +4,7 @@ import { auth } from '@/auth';
 import { connectToDatabase } from '@/lib/mongodb';
 import { CouponServices, GlobalCouponModel, GlobalCouponSchema } from '@/models/GlobalCoupon';
 import { log } from '@/lib/logger';
+import { escapeRegex } from '@/lib/utils';
 import { z } from 'zod';
 
 // Schema for creating/updating coupons
@@ -97,10 +98,11 @@ if (!session?.user || (session.user.role !== "admin" && session.user.role !== "s
     
     // Search filter
     if (search) {
+      const safe = escapeRegex(search);
       query.$or = [
-        { code: { $regex: search, $options: 'i' } },
-        { name: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } },
+        { code: { $regex: safe, $options: 'i' } },
+        { name: { $regex: safe, $options: 'i' } },
+        { description: { $regex: safe, $options: 'i' } },
       ];
     }
     

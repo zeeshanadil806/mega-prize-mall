@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     ],
     images: [
       {
-        url: "https://megaprizemall.com/og-shop-n-win-contest.jpg",
+        url: "https://megaprizemall.com/logo.png",
         width: 1200,
         height: 630,
         alt: "Shop-n-Win Contest Official Rules - Mega Prize Mall",
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     title: "Shop-n-Win Contest Rules | Mega Prize Mall - Official Terms",
     description:
       "Official rules and terms for Mega Prize Mall's promotional Shop-n-Win Contest. Learn how to participate and win.",
-    images: ["https://megaprizemall.com/twitter-shop-n-win-contest.jpg"],
+    images: ["https://megaprizemall.com/logo.png"],
     creator: "@megaprizemall",
     site: "@megaprizemall",
   },

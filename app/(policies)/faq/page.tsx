@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     siteName: "Mega Prize Mall",
     images: [
       {
-        url: "https://megaprizemall.com/og-faq.jpg",
+        url: "https://megaprizemall.com/logo.png",
         width: 1200,
         height: 630,
         alt: "Mega Prize Mall FAQ & Help Center",
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     title: "FAQ & Help Center | Mega Prize Mall - Get Answers",
     description:
       "Your questions answered about mobile accessories shopping, Shop-n-Win, shipping, and returns.",
-    images: ["https://megaprizemall.com/twitter-faq.jpg"],
+    images: ["https://megaprizemall.com/logo.png"],
     creator: "@megaprizemall",
     site: "@megaprizemall",
   },

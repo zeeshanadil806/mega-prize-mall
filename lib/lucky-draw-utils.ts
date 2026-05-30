@@ -38,16 +38,10 @@ export async function checkOrderQualifiesForDraw(orderId: string): Promise<{
     if (order.status !== 'delivered') {
       return { qualifies: false, reason: `Order status is ${order.status}, needs to be delivered` };
     }
-    
-    // Check order amount
-    if (order.grandTotal < 3000) {
-      return { 
-        qualifies: false, 
-        reason: `Order amount ${order.grandTotal} is less than 3000`,
-        orderAmount: order.grandTotal 
-      };
-    }
-    
+
+    // No hardcoded minimum — the active-draw query below enforces the
+    // per-draw `entryCriteria.minOrderAmount` (configurable on each LuckyDraw).
+
     // Check if entry already exists for this order
     const existingEntry = await LuckyDrawEntryModel.findOne({ orderId }).lean();
     if (existingEntry) {

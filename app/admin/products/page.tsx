@@ -3,6 +3,7 @@ import { auth } from "@/auth"
 import { redirect } from "next/navigation"
 import { connectToDatabase } from "@/lib/mongodb"
 import { ProductModel } from "@/models/Product"
+import { escapeRegex } from "@/lib/utils"
 
 type MongoQuery = {
   $or?: Array<{
@@ -40,10 +41,11 @@ if (!session?.user || (session.user.role !== "admin" && session.user.role !== "s
   const query: MongoQuery = {}
 
   if (search) {
+    const safe = escapeRegex(search)
     query.$or = [
-      { name: { $regex: search, $options: "i" } },
-      { sku: { $regex: search, $options: "i" } },
-      { description: { $regex: search, $options: "i" } },
+      { name: { $regex: safe, $options: "i" } },
+      { sku: { $regex: safe, $options: "i" } },
+      { description: { $regex: safe, $options: "i" } },
     ]
   }
 

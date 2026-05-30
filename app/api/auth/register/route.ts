@@ -87,17 +87,13 @@ export async function POST(
     // --- END NEW ---
 
     // NEW: Validate referral code if provided
-    console.log("validatedData.referralCode>>>", validatedData.referralCode);
-
     if (validatedData.referralCode) {
       const referralValidation = await validateReferralCode(
         validatedData.referralCode.trim(),
         validatedData.email
       );
-      console.log("referralValidation>>>", referralValidation);
 
       if (!referralValidation.valid) {
-        console.log("referralValidation.valid>>>", referralValidation.valid);
         return NextResponse.json<ErrorResponse>(
           { error: referralValidation.error || "Invalid referral code" },
           { status: 400 }
@@ -118,8 +114,6 @@ export async function POST(
       points: emailSubscriberPoints || 0, // Start with 0, referral will add if valid
       referredBy: validatedData.referralCode?.trim() || null,
     });
-    console.log("emailSubscriberPoints>>>", emailSubscriberPoints);
-    console.log("user>>>", user);
     let referralBonus = 0;
 
     // NEW: Process referral if valid code provided
@@ -140,8 +134,6 @@ export async function POST(
           if (updatedUser) {
             user.points = updatedUser.points;
           }
-        } else {
-          console.log(referralResult);
         }
       } catch (referralError) {
         log.error("Referral processing error", {

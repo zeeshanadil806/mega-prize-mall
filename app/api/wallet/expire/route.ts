@@ -4,6 +4,7 @@ import { IWalletTransaction, WalletTransactionModel } from '@/models/WalletTrans
 import { UserModel } from '@/models/User';
 import mongoose from 'mongoose';
 import { AnyBulkWriteOperation } from 'mongoose';
+import { log } from '@/lib/logger';
 
 // This would be called by a cron job (e.g., Vercel Cron, GitHub Actions, etc.)
 export async function POST(request: NextRequest) {
@@ -128,7 +129,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to generate invoice';
-    console.error('Error expiring points:', error);
+    log.error('Error expiring points', { error: error as Error });
     return NextResponse.json(
       { error: errorMessage || 'Failed to expire points' },
       { status: 400 }

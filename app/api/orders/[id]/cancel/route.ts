@@ -4,6 +4,7 @@ import { OrderModel } from '@/models/Order';
 import { WalletTransactionModel } from '@/models/WalletTransaction';
 import { auth } from '@/auth';
 import mongoose from 'mongoose';
+import { log } from '@/lib/logger';
 
 export async function POST(
   request: NextRequest,
@@ -90,7 +91,7 @@ export async function POST(
     }
 
   } catch (error) {
-    console.error('Error cancelling order:', error);
+    log.error('Error cancelling order', { error: error as Error });
     const errorMessage = error instanceof Error ? error.message : 'Failed to cancel order';
     return NextResponse.json(
       { error: errorMessage || 'Failed to cancel order' },

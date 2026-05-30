@@ -6,6 +6,11 @@ const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID!
 const CLOUDFLARE_R2_ACCESS_KEY_ID = process.env.CLOUDFLARE_R2_ACCESS_KEY!
 const CLOUDFLARE_R2_SECRET_ACCESS_KEY = process.env.CLOUDFLARE_R2_SECRET_KEY!
 const CLOUDFLARE_R2_BUCKET = process.env.CLOUDFLARE_R2_BUCKET!
+// Public read-only R2 bucket endpoint. Falls back to the prior hardcoded value
+// so existing deployments keep working until CLOUDFLARE_R2_PUBLIC_ENDPOINT is set.
+const CLOUDFLARE_R2_PUBLIC_ENDPOINT =
+  process.env.CLOUDFLARE_R2_PUBLIC_ENDPOINT ||
+  'https://pub-b072b472844f414b9c691e5a9b16d1e1.r2.dev'
 
 if (!CLOUDFLARE_ACCOUNT_ID || !CLOUDFLARE_R2_ACCESS_KEY_ID || !CLOUDFLARE_R2_SECRET_ACCESS_KEY) {
   throw new Error('Missing Cloudflare R2 environment variables')
@@ -100,13 +105,6 @@ export async function uploadToCloudflareImages(
 
     // Upload to R2
     const uploadUrl = `https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com${pathname}`
-    
-    console.log('Uploading to R2:', {
-      bucket: CLOUDFLARE_R2_BUCKET,
-      filename: fileName,
-      size: file.length,
-      url: uploadUrl
-    })
 
     const response = await fetch(uploadUrl, {
       method: 'PUT',
@@ -131,11 +129,8 @@ export async function uploadToCloudflareImages(
       })
       throw new Error(`R2 upload failed: ${response.status} ${response.statusText}`)
     }
-const R2_PUBLIC_ENDPOINT = 'https://pub-b072b472844f414b9c691e5a9b16d1e1.r2.dev'
 
-const publicUrl = `${R2_PUBLIC_ENDPOINT}/${fileName}`
-console.log('Generated public URL:', publicUrl) // Check this in logs
-
+    const publicUrl = `${CLOUDFLARE_R2_PUBLIC_ENDPOINT}/${fileName}`
     const imageId = generateImageId()
 
     log.info('Image uploaded to R2', {
@@ -165,9 +160,4 @@ console.log('Generated public URL:', publicUrl) // Check this in logs
     })
     throw new Error(errorMessage)
   }
-}
-
-// Simple delete (you'll need to track filenames)
-export async function deleteCloudflareImage(imageId: string): Promise<void> {
-  log.warn('Delete not implemented for R2 yet', { imageId })
 }

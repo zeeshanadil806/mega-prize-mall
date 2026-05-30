@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     ],
     images: [
       {
-        url: "https://megaprizemall.com/og-terms-and-conditions.jpg",
+        url: "https://megaprizemall.com/logo.png",
         width: 1200,
         height: 630,
         alt: "Terms & Conditions - Mega Prize Mall",
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     title: "Terms & Conditions - Mega Prize Mall | Legal Platform Terms",
     description:
       "Complete legal terms and conditions for Mega Prize Mall platform usage, purchases, and promotions.",
-    images: ["https://megaprizemall.com/twitter-terms-and-conditions.jpg"],
+    images: ["https://megaprizemall.com/logo.png"],
     creator: "@megaprizemall",
     site: "@megaprizemall",
   },

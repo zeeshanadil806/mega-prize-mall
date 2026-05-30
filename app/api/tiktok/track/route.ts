@@ -3,6 +3,7 @@ import { connectToDatabase } from '@/lib/mongodb'; // Your existing MongoDB conn
 import { tiktokConversionAPI } from '@/lib/tiktok/server/conversion-api';
 import { deduplicationService } from '@/lib/tiktok/server/deduplication';
 import { rateLimit } from '@/lib/rate-limit';
+import { log } from '@/lib/logger';
 
 const limiter = rateLimit({
   interval: 60 * 1000, // 1 minute
@@ -97,7 +98,7 @@ export async function POST(request: NextRequest) {
       response,
     });
   } catch (error) {
-    console.error('TikTok tracking API error:', error);
+    log.error('TikTok tracking API error', { error: error as Error });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

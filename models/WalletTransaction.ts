@@ -58,7 +58,6 @@ WalletTransactionSchemaMongoose.index({ orderId: 1, type: 1 });
 // Update timestamp
 WalletTransactionSchemaMongoose.pre('save', function() {
   this.updatedAt = new Date();
-//   next();
 });
 
 // Virtual for monetary value

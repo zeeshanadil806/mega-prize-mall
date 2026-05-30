@@ -3,6 +3,7 @@ import { LuckyDrawModel } from '@/models/LuckyDraw';
 import { connectToDatabase } from '@/lib/mongodb';
 import { auth } from '@/auth';
 import { z } from 'zod';
+import { log } from '@/lib/logger';
 
 // Validation schema
 const createDrawSchema = z.object({
@@ -83,7 +84,7 @@ interface LuckyDrawQuery {
     });
 
   } catch (error) {
-    console.error('Error fetching draws:', error);
+    log.error('Error fetching draws', { error: error as Error });
         const errorMessage = error instanceof Error ? error.message : 'Failed to cancel order';
 
     return NextResponse.json(
@@ -157,7 +158,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to cancel order';
 
-    console.error('Error creating lucky draw:', error);
+    log.error('Error creating lucky draw', { error: error as Error });
     return NextResponse.json(
       { 
         success: false,

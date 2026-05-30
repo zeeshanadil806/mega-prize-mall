@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { IOrder, OrderModel } from '@/models/Order';
 import { auth } from '@/auth';
+import { log } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   try {
@@ -83,7 +84,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error processing bulk action:', error);
+    log.error('Error processing bulk action', { error: error as Error });
         const errorMessage = error instanceof Error ? error.message : 'Failed to cancel order';
     return NextResponse.json(
       { error: errorMessage || 'Failed to process bulk action' },

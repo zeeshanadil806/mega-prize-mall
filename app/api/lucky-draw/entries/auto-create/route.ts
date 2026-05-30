@@ -1,14 +1,43 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createLuckyDrawEntry } from '@/lib/lucky-draw-utils';
 import { OrderModel } from '@/models/Order';
+import { UserModel } from '@/models/User';
 import { connectToDatabase } from '@/lib/mongodb';
 import { sendLuckyDrawEntryEmail } from '@/lib/email-templates';
+import { auth } from '@/auth';
+import { log } from '@/lib/logger';
 
 // This API will be called when order status changes to 'delivered'
+// Accepts either:
+//   - Authorization: Bearer <CRON_SECRET>  (for cron / server-to-server triggers)
+//   - an authenticated admin session       (for admin-initiated triggers)
 export async function POST(request: NextRequest) {
   try {
+    const cronSecret = process.env.CRON_SECRET;
+    const authHeader = request.headers.get('authorization');
+    const isCronRequest =
+      !!cronSecret && authHeader === `Bearer ${cronSecret}`;
+
+    if (!isCronRequest) {
+      const session = await auth();
+      if (!session?.user?.id) {
+        return NextResponse.json(
+          { error: 'Unauthorized' },
+          { status: 401 }
+        );
+      }
+      await connectToDatabase();
+      const caller = await UserModel.findById(session.user.id).select('role');
+      if (!caller || caller.role !== 'admin') {
+        return NextResponse.json(
+          { error: 'Forbidden: Admin access required' },
+          { status: 403 }
+        );
+      }
+    }
+
     const { orderId } = await request.json();
-    
+
     if (!orderId) {
       return NextResponse.json(
         { error: 'Order ID is required' },
@@ -52,7 +81,7 @@ setTimeout(async () => {
       console.log(`Lucky draw entry email sent for entry ${entry._id}`);
     }
   } catch (emailError) {
-    console.error('Failed to send lucky draw entry email:', emailError);
+    log.error('Failed to send lucky draw entry email', { error: emailError as Error });
   }
 }, 0);
 
@@ -78,7 +107,7 @@ setTimeout(async () => {
     });
 
   } catch (error) {
-    console.error('Error creating lucky draw entry:', error);
+    log.error('Error creating lucky draw entry', { error: error as Error });
         const errorMessage = error instanceof Error ? error.message : 'Failed to cancel order';
 
     return NextResponse.json(

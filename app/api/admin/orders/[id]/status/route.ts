@@ -8,6 +8,7 @@ import {
   sendOrderShippedEmail,
   sendOrderDeliveredEmail,
 } from "@/lib/email-templates";
+import { log } from "@/lib/logger";
 
 export async function PATCH(
   request: NextRequest,
@@ -76,7 +77,7 @@ export async function PATCH(
               console.log(`Shipped email sent for order ${order._id}`);
             }
           } catch (emailError) {
-            console.error("Failed to send shipped email:", emailError);
+            log.error("Failed to send shipped email", { error: emailError as Error });
           }
         }, 0);
       }
@@ -126,7 +127,7 @@ export async function PATCH(
               console.log(`Delivered email sent for order ${order._id}`);
             }
           } catch (emailError) {
-            console.error("Failed to send delivered email:", emailError);
+            log.error("Failed to send delivered email", { error: emailError as Error });
           }
         }, 0);
 
@@ -177,10 +178,7 @@ export async function PATCH(
               );
             }
           } catch (luckyDrawError) {
-            console.error(
-              "Error in lucky draw entry creation:",
-              luckyDrawError
-            );
+            log.error("Error in lucky draw entry creation", { error: luckyDrawError as Error });
             // Don't fail the order status update if lucky draw fails
           }
         }
@@ -229,7 +227,7 @@ export async function PATCH(
       sessionDb.endSession();
     }
   } catch (error) {
-    console.error("Error updating order status:", error);
+    log.error("Error updating order status", { error: error as Error });
     const errorMessage =
       error instanceof Error ? error.message : "Failed to cancel order";
     return NextResponse.json(

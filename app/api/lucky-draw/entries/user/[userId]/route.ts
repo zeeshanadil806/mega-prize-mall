@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserLuckyDrawEntries } from '@/lib/lucky-draw-utils';
 import { auth } from '@/auth';
+import { log } from '@/lib/logger';
 
 export async function GET(
   request: NextRequest,
@@ -33,7 +34,7 @@ export async function GET(
     });
 
   } catch (error) {
-    console.error('Error fetching user entries:', error);
+    log.error('Error fetching user entries', { error: error as Error });
         const errorMessage = error instanceof Error ? error.message : 'Failed to cancel order';
 
     return NextResponse.json(

@@ -29,25 +29,23 @@ export default async function AdminLayout({
   }
 
   return (
-    <html lang="en">
-      <body className={`${inter.className} bg-gray-50`}>
-        <div className="flex min-h-screen">
-          {/* Sidebar */}
-          <AdminSidebar />
-          
-          {/* Main Content */}
-          <div className="flex-1 flex flex-col">
-            {/* Header */}
-            <AdminHeader user={session.user} />
-            
-            {/* Page Content */}
-            <main className="flex-1 p-6 overflow-auto">
-              {children}
-            </main>
-          </div>
+    <div className={`${inter.className} bg-gray-50`}>
+      <div className="flex min-h-screen">
+        {/* Sidebar */}
+        <AdminSidebar />
+
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col">
+          {/* Header */}
+          <AdminHeader user={session.user} />
+
+          {/* Page Content */}
+          <main className="flex-1 p-6 overflow-auto">
+            {children}
+          </main>
         </div>
-        {/* <Toaster position="top-right" /> */}
-      </body>
-    </html>
+      </div>
+      {/* <Toaster position="top-right" /> */}
+    </div>
   )
 }

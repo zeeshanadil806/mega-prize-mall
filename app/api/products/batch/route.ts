@@ -3,19 +3,49 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { ProductModel } from '@/models/Product';
 import { log } from '@/lib/logger';
+import { rateLimit } from '@/lib/rate-limit';
 import { CartItem } from '@/types';
 
-type BatchProduct = Pick<CartItem, 
-  | 'name' 
-  | 'bargainEnabled' 
-  | 'minBargainPrice' 
-  | 'maxBargainRounds' 
-  | 'bargainValidityHours' 
+const BATCH_RATE_LIMIT = 60; // requests per minute per IP
+const limiter = rateLimit({
+  interval: 60 * 1000,
+  uniqueTokenPerInterval: 500,
+});
+
+type BatchProduct = Pick<CartItem,
+  | 'name'
+  | 'bargainEnabled'
+  | 'minBargainPrice'
+  | 'maxBargainRounds'
+  | 'bargainValidityHours'
   | 'images'
 > & { _id: string };
 
 export async function POST(request: NextRequest) {
   try {
+    const ip =
+      request.headers.get('x-forwarded-for') ||
+      request.headers.get('x-real-ip') ||
+      'unknown';
+    const rateLimitResult = limiter.check(BATCH_RATE_LIMIT, ip);
+    if (rateLimitResult.isRateLimited) {
+      const retryAfter = Math.ceil(
+        (rateLimitResult.resetTime - Date.now()) / 1000
+      );
+      return NextResponse.json(
+        { error: 'Too many requests', retryAfter },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': retryAfter.toString(),
+            'X-RateLimit-Limit': String(BATCH_RATE_LIMIT),
+            'X-RateLimit-Remaining': '0',
+            'X-RateLimit-Reset': rateLimitResult.resetTime.toString(),
+          },
+        }
+      );
+    }
+
     const { productIds } = await request.json();
     
     if (!Array.isArray(productIds) || productIds.length === 0) {

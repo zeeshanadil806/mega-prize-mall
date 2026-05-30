@@ -39,9 +39,9 @@ export async function generateMetadata({
   const bargainText = product.bargainEnabled ? " | Bargain Available" : "";
   const colorText = product.color ? ` ${product.color}` : "";
 
-  const title =
-    product.metaTitle + " | Mega Prize Mall" ||
-    `${product.name}${colorText} | ${product.brand} ${product.category} | Rs ${price}${bargainText} | Mega Prize Mall`;
+  const title = product.metaTitle
+    ? `${product.metaTitle} | Mega Prize Mall`
+    : `${product.name}${colorText} | ${product.brand} ${product.category} | Rs ${price}${bargainText} | Mega Prize Mall`;
   const description =
     product.metaDescription ||
     `${product.description.slice(0, 120)}. Buy ${product.name} for ${

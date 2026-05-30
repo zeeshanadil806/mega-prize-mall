@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     ],
     images: [
       {
-        url: "https://megaprizemall.com/og-returns-refunds-policy.jpg",
+        url: "https://megaprizemall.com/logo.png",
         width: 1200,
         height: 630,
         alt: "Returns & Refunds Policy - Mega Prize Mall",
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     title: "Returns & Refunds Policy - Mega Prize Mall | 72-Hour Return Window",
     description:
       "Complete returns and refunds policy with Shop-n-Win contest impact details and evidence requirements.",
-    images: ["https://megaprizemall.com/twitter-returns-refunds-policy.jpg"],
+    images: ["https://megaprizemall.com/logo.png"],
     creator: "@megaprizemall",
     site: "@megaprizemall",
   },

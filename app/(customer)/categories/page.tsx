@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     siteName: "Mega Prize Mall",
     images: [
       {
-        url: "/og-categories.jpg",
+        url: "/logo.png",
         width: 1200,
         height: 630,
         alt: "Electronics Accessories Categories at Mega Prize Mall",
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     title: "Electronics Accessories Categories | Mega Prize Mall",
     description:
       "Browse electronics accessories by category - Mobile, Audio, Gaming, PC/Laptop, Power & Charging",
-    images: ["/og-categories.jpg"],
+    images: ["/logo.png"],
     creator: "@megaprizemall",
   },
   alternates: {

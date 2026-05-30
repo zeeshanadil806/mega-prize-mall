@@ -5,6 +5,7 @@ import { OrderModel } from '@/models/Order';
 import { BargainRequestModel } from '@/models/BargainRequest';
 import { auth } from '@/auth';
 import { ProductProps } from '@/types';
+import { log } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -70,7 +71,7 @@ export async function GET(request: NextRequest) {
     const recentOrders = orders.slice(0, 3).map(order => ({
       id: order._id.toString().slice(-8).toUpperCase(),
       date: formatDate(order.createdAt),
-      amount: `Rs ${order.grandTotal.toLocaleString('en-IN')}`,
+      amount: `Rs ${order.grandTotal.toLocaleString('en-PK')}`,
       status: formatStatus(order.status),
       fullId: order._id.toString(),
     }));
@@ -84,8 +85,8 @@ export async function GET(request: NextRequest) {
         return {
           product: product?.name || 'Unknown Product',
           productId: product?._id || '',
-          offer: `Rs ${br.offeredPrice.toLocaleString('en-IN')}`,
-          original: `Rs ${br.originalPrice.toLocaleString('en-IN')}`,
+          offer: `Rs ${br.offeredPrice.toLocaleString('en-PK')}`,
+          original: `Rs ${br.originalPrice.toLocaleString('en-PK')}`,
           status: br.status.charAt(0).toUpperCase() + br.status.slice(1),
           savingAmount: br.originalPrice - br.offeredPrice,
           bargainId: br._id.toString(),
@@ -108,7 +109,7 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error fetching user stats:', error);
+    log.error('Error fetching user stats', { error: error as Error });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -126,7 +127,7 @@ function formatDate(date: Date): string {
   if (diffDays === 0) return 'Today';
   if (diffDays === 1) return 'Yesterday';
   if (diffDays < 7) return `${diffDays} days ago`;
-  return orderDate.toLocaleDateString('en-IN', {
+  return orderDate.toLocaleDateString('en-PK', {
     day: 'numeric',
     month: 'short',
   });

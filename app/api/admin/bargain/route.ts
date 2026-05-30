@@ -7,6 +7,7 @@ import { ProductModel } from "@/models/Product";
 import { UserModel } from "@/models/User";
 import { auth } from "@/auth";
 import { log } from "@/lib/logger";
+import { escapeRegex } from "@/lib/utils";
 import { formatCurrency } from "@/lib/bargain-utils";
 
 // GET: Fetch bargain requests with filters
@@ -61,9 +62,10 @@ interface BargainRequestQuery {
 
     // Search filter
     if (search) {
+      const safe = escapeRegex(search);
       query.$or = [
-        { couponCode: { $regex: search, $options: "i" } },
-        { message: { $regex: search, $options: "i" } },
+        { couponCode: { $regex: safe, $options: "i" } },
+        { message: { $regex: safe, $options: "i" } },
       ];
     }
 

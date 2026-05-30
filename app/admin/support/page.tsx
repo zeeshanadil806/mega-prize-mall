@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import SupportAccountsClient from "@/components/admin/support/SupportAccountsClient";
 import { connectToDatabase } from "@/lib/mongodb";
+import { escapeRegex } from "@/lib/utils";
 
 export default async function AdminSupportPage(props: {
   // 2. Update Type: searchParams is now a Promise
@@ -41,10 +42,11 @@ export default async function AdminSupportPage(props: {
   const query: SupportUserQuery = { role: "support" };
   
   if (search) {
+    const safe = escapeRegex(search);
     query.$or = [
-      { name: { $regex: search, $options: "i" } },
-      { email: { $regex: search, $options: "i" } },
-      { phone: { $regex: search, $options: "i" } },
+      { name: { $regex: safe, $options: "i" } },
+      { email: { $regex: safe, $options: "i" } },
+      { phone: { $regex: safe, $options: "i" } },
     ];
   }
   

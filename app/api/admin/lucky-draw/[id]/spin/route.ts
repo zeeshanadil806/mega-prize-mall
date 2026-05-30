@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDrawEntriesForSpin, selectDrawWinner } from '@/lib/lucky-draw-utils';
 import { auth } from '@/auth';
+import { log } from '@/lib/logger';
 // import { UserModel } from '@/models/User';
 
 export async function GET(
@@ -42,7 +43,7 @@ export async function GET(
 
   } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to cancel order';
-    console.error('Error getting draw entries for spin:', error);
+    log.error('Error getting draw entries for spin', { error: error as Error });
     return NextResponse.json(
       { 
         success: false,
@@ -126,7 +127,7 @@ setTimeout(async () => {
     
     console.log(`Winner emails sent for draw ${id}`);
   } catch (emailError) {
-    console.error('Failed to send winner emails:', emailError);
+    log.error('Failed to send winner emails', { error: emailError as Error });
   }
 }, 0);
 
@@ -152,7 +153,7 @@ setTimeout(async () => {
   } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to cancel order';
 
-    console.error('Error selecting winner:', error);
+    log.error('Error selecting winner', { error: error as Error });
     return NextResponse.json(
       { 
         success: false,

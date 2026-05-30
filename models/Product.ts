@@ -149,7 +149,6 @@ ProductSchemaMongoose.pre('save', function() {
   if (!this.createdAt) {
     this.createdAt = new Date();
   }
-  // next();
 });
 
 // Virtual for discount percentage

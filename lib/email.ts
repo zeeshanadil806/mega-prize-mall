@@ -10,15 +10,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Verify connection on startup
-transporter.verify((error) => {
-  if (error) {
-    log.error('Email transporter verification failed:', {error});
-  } else {
-    log.info('Email transporter is ready to send messages');
-  }
-});
-
 interface EmailOptions {
   to: string | string[];
   subject: string;

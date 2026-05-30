@@ -45,7 +45,6 @@ export const metadata: Metadata = {
 
 export default async function CheckoutPage() {
   const session = await auth();
-  console.log(session);
   // Redirect if not authenticated
   // if (!session?.user) {
   //   redirect("/login?redirect=/checkout");

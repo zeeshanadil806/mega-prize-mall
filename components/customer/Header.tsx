@@ -78,7 +78,7 @@ const Header = () => {
     {
       name: "Power and Charging",
       icon: <Zap className="h-4 w-4" />,
-      href: "/products?category+Power+and+Charging",
+      href: "/products?category=Power+and+Charging",
     },
   ];
 

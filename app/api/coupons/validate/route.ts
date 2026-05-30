@@ -2,7 +2,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateGlobalCoupon, validateBargainCoupon } from '@/lib/coupon-utils';
 import { log } from '@/lib/logger';
+import { rateLimit } from '@/lib/rate-limit';
 import { z } from 'zod';
+
+// Tight rate limit: this endpoint can be abused to brute-force coupon codes.
+const COUPON_VALIDATE_RATE_LIMIT = 20; // requests per minute per IP
+const limiter = rateLimit({
+  interval: 60 * 1000,
+  uniqueTokenPerInterval: 1000,
+});
 
 const ValidationSchema = z.object({
   couponCode: z.string().min(1),
@@ -20,6 +28,29 @@ const ValidationSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    const ip =
+      request.headers.get('x-forwarded-for') ||
+      request.headers.get('x-real-ip') ||
+      'unknown';
+    const rateLimitResult = limiter.check(COUPON_VALIDATE_RATE_LIMIT, ip);
+    if (rateLimitResult.isRateLimited) {
+      const retryAfter = Math.ceil(
+        (rateLimitResult.resetTime - Date.now()) / 1000
+      );
+      return NextResponse.json(
+        { error: 'Too many requests', retryAfter },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': retryAfter.toString(),
+            'X-RateLimit-Limit': String(COUPON_VALIDATE_RATE_LIMIT),
+            'X-RateLimit-Remaining': '0',
+            'X-RateLimit-Reset': rateLimitResult.resetTime.toString(),
+          },
+        }
+      );
+    }
+
     const body = await request.json();
     const validatedData = ValidationSchema.parse(body);
     

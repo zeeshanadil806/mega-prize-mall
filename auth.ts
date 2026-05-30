@@ -18,8 +18,23 @@ const credentialsSchema = z.object({
 
 const uri = process.env.MONGODB_URI!;
 
-const client = new MongoClient(uri);
-const clientPromise = client.connect();
+// Cache the MongoClient promise in development so hot-reload doesn't leak
+// connections. In production each instance gets its own client (intended).
+// This is the pattern from the next-auth + MongoDB docs.
+let clientPromise: Promise<MongoClient>;
+if (process.env.NODE_ENV === "development") {
+  const globalWithMongo = globalThis as typeof globalThis & {
+    _mongoClientPromise?: Promise<MongoClient>;
+  };
+  if (!globalWithMongo._mongoClientPromise) {
+    const client = new MongoClient(uri);
+    globalWithMongo._mongoClientPromise = client.connect();
+  }
+  clientPromise = globalWithMongo._mongoClientPromise;
+} else {
+  const client = new MongoClient(uri);
+  clientPromise = client.connect();
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: MongoDBAdapter(clientPromise),
@@ -27,7 +42,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: "/login",
     newUser: "/register",
-    error: "/auth-error",
+    // `error` intentionally omitted — no /auth-error page exists.
+    // NextAuth falls back to its built-in error page on rare OAuth failures.
   },
   // allowDangerousEmailAccountLinking: true,
 
@@ -35,7 +51,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      allowDangerousEmailAccountLinking: true,
       async profile(profile) {
         // Check if email exists in EmailSubscriber model
         const isSubscriber = await Promise.race([
@@ -46,9 +61,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const basePoints = 0;
         const bonusPoints = isSubscriber ? 500 : 0;
         const totalPoints = basePoints + bonusPoints;
-        console.log("isSubscriber)>>>", isSubscriber);
-        console.log("totalPoints)>>>", totalPoints);
-        console.log("bonusPoints)>>>", bonusPoints);
 
         return {
           id: profile.sub,
