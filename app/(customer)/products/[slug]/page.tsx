@@ -1,4 +1,5 @@
 // app/(customer)/products/[slug]/page.tsx
+import { cache } from "react";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { connectToDatabase } from "@/lib/mongodb";
@@ -10,22 +11,26 @@ import { auth } from "@/auth";
 import { log } from "@/lib/logger";
 import { ImageProps } from "@/types";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
+import { serialize } from "@/lib/serialize";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
+// React.cache() memoizes per-request: generateMetadata and ProductPage
+// both end up resolving to the same promise within a single render of
+// this route, so Mongo sees one findOne per page load instead of two.
+const getProductBySlug = cache(async (slug: string) => {
+  await connectToDatabase();
+  return ProductModel.findOne({ slug, isActive: true }).lean();
+});
+
 export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
-  await connectToDatabase();
-
-  const product = await ProductModel.findOne({ slug, isActive: true })
-    .select("name description metaTitle metaDescription keywords images")
-    .lean()
-    .exec();
+  const product = await getProductBySlug(slug);
 
   if (!product) {
     return {
@@ -106,8 +111,8 @@ export default async function ProductPage({
 
     // Fetch product and related data in parallel
     const [product, bargainHistory, sessionData] = await Promise.all([
-      // Fetch product with essential fields only
-      ProductModel.findOne({ slug, isActive: true }).lean(),
+      // Memoized — shared with generateMetadata, one Mongo query per request.
+      getProductBySlug(slug),
 
       // Fetch user's bargain history if logged in
       session?.user
@@ -160,7 +165,7 @@ export default async function ProductPage({
         <div className="container mx-auto px-4 py-8">
           {/* Product Detail */}
           <ProductDetailClient
-            product={JSON.parse(JSON.stringify(product))}
+            product={serialize(product)}
             userId={sessionData?.user?.id}
             // userBargainHistory={updatedBargainHistory}
           />

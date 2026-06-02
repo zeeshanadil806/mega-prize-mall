@@ -2,6 +2,11 @@
 import { connectToDatabase } from "@/lib/mongodb";
 import { ProductModel } from "@/models/Product";
 import { Metadata } from "next";
+
+// Categories change rarely (only when admin adds/removes a category from any
+// product). 10-minute cache window is fine; ISR rebuilds on first visitor
+// after expiry.
+export const revalidate = 600;
 import Link from "next/link";
 import {
   Smartphone,

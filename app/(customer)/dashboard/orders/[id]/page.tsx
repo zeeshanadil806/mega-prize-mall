@@ -5,6 +5,7 @@ import { Metadata } from 'next';
 import { auth } from '@/auth';
 import { redirect, notFound } from 'next/navigation';
 import { ProductModel } from '@/models/Product';
+import { serialize } from '@/lib/serialize';
 
 // Define a minimal interface for the product data we are fetching
 // This avoids using 'any' for the product map
@@ -84,7 +85,7 @@ export default async function OrderDetailPage({
 
   return (
     <OrderDetailClient 
-      order={JSON.parse(JSON.stringify(enhancedOrder))}
+      order={serialize(enhancedOrder)}
     />
   );
 }

@@ -48,6 +48,11 @@ const UserSchemaMongoose = new Schema<IUser>({
   updatedAt: { type: Date, default: Date.now },
 });
 
+// Admin user list filters by role + sorts by createdAt desc. Compound
+// index backs that exact query shape so pagination doesn't COLLSCAN
+// once the user table grows past a few thousand rows.
+UserSchemaMongoose.index({ role: 1, createdAt: -1 });
+
 // Pre-save middleware to update updatedAt
 UserSchemaMongoose.pre("save", function () {
   this.updatedAt = new Date();

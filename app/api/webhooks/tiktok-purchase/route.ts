@@ -15,7 +15,7 @@ const limiter = rateLimit({
 export async function POST(request: NextRequest) {
   try {
     const source = request.headers.get('x-webhook-source') || 'unknown';
-    const rateLimitResult = limiter.check(5, source);
+    const rateLimitResult = await limiter.check(5, source);
 
     if (rateLimitResult.isRateLimited) {
       return NextResponse.json(

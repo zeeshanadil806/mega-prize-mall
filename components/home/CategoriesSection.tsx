@@ -1,7 +1,7 @@
 // components/home/CategoriesSection.tsx
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, useAnimation, useInView, Variants } from "framer-motion";
 import {
@@ -110,10 +110,11 @@ interface CategoryStats {
   count: number;
 }
 
-const CategoriesSection = () => {
-  const [categories, setCategories] = useState<CategoryData[]>([]);
-  const [loading, setLoading] = useState(true);
-  //   const [activeCategory, setActiveCategory] = useState<CategorySlug | null>(null);
+interface CategoriesSectionProps {
+  categoryStats: CategoryStats[];
+}
+
+const CategoriesSection = ({ categoryStats }: CategoriesSectionProps) => {
   const controls = useAnimation();
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, amount: 0.3 });
@@ -124,72 +125,30 @@ const CategoriesSection = () => {
     }
   }, [controls, inView]);
 
-  // Fetch category data from API
-  useEffect(() => {
-    async function fetchCategories() {
-      try {
-        setLoading(true);
+  // Build the category list from the static config + counts passed in
+  const categories: CategoryData[] = Object.entries(CATEGORY_CONFIG)
+    .map(([slug, config]) => {
+      const stats = categoryStats.find(
+        (stat) =>
+          stat.category.toLowerCase() === slug.toLowerCase() ||
+          stat.category.toLowerCase() === config.name.toLowerCase(),
+      );
 
-        // Fetch category counts from your API
-        const response = await fetch("/api/products/categories");
-        if (!response.ok) {
-          throw new Error("Failed to fetch categories");
-        }
-
-        const categoryStats: CategoryStats[] = await response.json();
-
-        // Transform data with your configuration
-        const categoryData: CategoryData[] = Object.entries(CATEGORY_CONFIG)
-          .map(([slug, config]) => {
-            const stats = categoryStats.find(
-              (stat) =>
-                stat.category.toLowerCase() === slug.toLowerCase() ||
-                stat.category.toLowerCase() === config.name.toLowerCase(),
-            );
-
-            return {
-              id: slug as CategorySlug,
-              name: config.name,
-              description: getCategoryDescription(config.name),
-              icon: config.icon,
-              color: config.color,
-              productCount: stats?.count || 0,
-              link: `/products?category=${slug}`,
-              isActive: (stats?.count || 0) > 0,
-            };
-          })
-          .filter((category) => category.isActive)
-          .sort((a, b) => b.productCount - a.productCount); // Sort by product count
-
-        setCategories(categoryData);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-        // Fallback to default categories if API fails
-        setCategories(getFallbackCategories());
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchCategories();
-  }, []);
-
-  const getFallbackCategories = (): CategoryData[] => {
-    return Object.entries(CATEGORY_CONFIG)
-      .map(([slug, config]) => ({
+      return {
         id: slug as CategorySlug,
         name: config.name,
         description: getCategoryDescription(config.name),
         icon: config.icon,
         color: config.color,
-        productCount: Math.floor(Math.random() * 100) + 50, // Fallback random count
+        productCount: stats?.count || 0,
         link: `/products?category=${slug}`,
-        isActive: true,
-      }))
-      .slice(0, 8); // Show top 8 categories as fallback
-  };
+        isActive: (stats?.count || 0) > 0,
+      };
+    })
+    .filter((category) => category.isActive)
+    .sort((a, b) => b.productCount - a.productCount);
 
-  const getCategoryDescription = (categoryName: string): string => {
+  function getCategoryDescription(categoryName: string): string {
     const descriptions: Record<string, string> = {
       "Mobile Accessories": "Cases, Chargers, Screen Protectors",
       "Gaming Accessories": "Controllers, Headsets, Keyboards",
@@ -206,7 +165,7 @@ const CategoriesSection = () => {
       "Other Accessories": "Miscellaneous Tech Accessories",
     };
     return descriptions[categoryName] || `${categoryName} Collection`;
-  };
+  }
 
   const containerVariants: Variants = {
     hidden: { opacity: 1 },
@@ -251,22 +210,6 @@ const CategoriesSection = () => {
       transition: { duration: 0.3 },
     },
   };
-
-  if (loading) {
-    return (
-      <section className="bg-linear-to-b from-white to-gray-50 py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[...Array(8)].map((_, index) => (
-              <div key={index} className="animate-pulse">
-                <div className="bg-gray-200 rounded-2xl h-48"></div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <section ref={ref} className="bg-linear-to-b from-white to-gray-50 py-6">

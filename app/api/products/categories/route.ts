@@ -17,7 +17,7 @@ export async function GET(request: Request) {
       request.headers.get('x-forwarded-for') ||
       request.headers.get('x-real-ip') ||
       'unknown';
-    const rateLimitResult = limiter.check(CATEGORIES_RATE_LIMIT, ip);
+    const rateLimitResult = await limiter.check(CATEGORIES_RATE_LIMIT, ip);
     if (rateLimitResult.isRateLimited) {
       const retryAfter = Math.ceil(
         (rateLimitResult.resetTime - Date.now()) / 1000
@@ -62,7 +62,13 @@ export async function GET(request: Request) {
         $sort: { count: -1 }
       }
     ]);
-    return NextResponse.json(categoryStats);
+    return NextResponse.json(categoryStats, {
+      headers: {
+        // Category list + counts change only when products are added/
+        // archived; a 5-minute edge cache with 10-minute SWR is plenty.
+        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+      },
+    });
   } catch (error) {
     log.error('Error fetching categories', { error: error as Error });
     return NextResponse.json(

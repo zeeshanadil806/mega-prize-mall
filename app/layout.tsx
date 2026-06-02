@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/components/providers/ToastProvider";
 // import { CartProvider } from "@/components/cart/CartProvider";
 import { SessProvider } from "@/components/providers/SessionProvider";
+import { auth } from "@/auth";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import { ServiceWorkerRegistration } from "@/components/seo/ServiceWorkerRegistration";
@@ -13,14 +14,19 @@ import CookieConsent from "@/components/cookie/CookieConsent";
 import TiktokScript from "@/components/providers/TiktokScript";
 import MetaProvider from "@/components/providers/MetaProvider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Single Inter load that drives `font-sans` and the body's default
+// font-family across every page. Display=swap avoids FOIT on slow networks.
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
+// Mono kept for SKUs, order IDs, code-style displays via `font-mono`.
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -66,27 +72,32 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
   return (
     <html lang="en">
       <head>
         <link
           rel="preconnect"
-          href="https://cdn.megaprizemall.com"
+          href="https://pub-b072b472844f414b9c691e5a9b16d1e1.r2.dev"
           crossOrigin="anonymous"
+        />
+        <link
+          rel="dns-prefetch"
+          href="https://pub-b072b472844f414b9c691e5a9b16d1e1.r2.dev"
         />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
       </head>
       {/* <CartProvider> */}
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${inter.variable} ${geistMono.variable} font-sans antialiased`}
       >
         <CookieConsent />
-        <SessProvider>
+        <SessProvider session={session}>
           <ToastProvider />
           <TiktokProvider enabled={process.env.NODE_ENV === "production"}>
             <MetaProvider enabled={process.env.NODE_ENV === "production"}>

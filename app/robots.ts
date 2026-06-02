@@ -11,38 +11,38 @@ export default function robots(): MetadataRoute.Robots {
         '/',
         '/products/',
         '/categories/',
-        '/about',
-        '/contact',
-        '/bargain',
-        '/lucky-draw-info',
-        '/terms',
-        '/privacy',
-        '/shipping',
-        '/refund',
+        '/terms-and-conditions',
+        '/privacy-policy',
+        '/shipping-policy',
+        '/returns-refunds-policy',
+        '/warranty-policy',
+        '/cookie-policy',
+        '/disclaimer',
+        '/shop-n-win-contest',
+        '/faq',
       ],
       disallow: [
         // Private user areas
         '/dashboard/',
         '/cart',
         '/checkout',
-        
+
         // Authentication
         '/login',
         '/register',
         '/forgot-password',
         '/reset-password',
-        
+
         // Admin areas
         '/admin/',
-        
+
         // API endpoints
         '/api/',
-        
-        // Search pages (avoid parameter crawl waste)
+
+        // Defensive: reserve /search if/when a search route is added
         '/search',
-        '/products?', // Query parameter pages
-        
-        // Temporary/development
+
+        // Next internals
         '/_next/',
         '/static/',
       ],

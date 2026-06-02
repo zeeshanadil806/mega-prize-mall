@@ -20,27 +20,50 @@ export function generateImageId(): string {
   return `img_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
 }
 
+// Object filenames embed Date.now() + a random suffix, so a given URL
+// is never reused for different content. That makes the response
+// immutable from the CDN's perspective: cache for a year and never
+// revalidate. R2 stores this header at PUT time and returns it on
+// every GET, so the pub-*.r2.dev CDN respects it automatically.
+const R2_OBJECT_CACHE_CONTROL = 'public, max-age=31536000, immutable'
+
 // AWS S4 Signature Helper
 function getS3Signature(
   method: string,
   pathname: string,
   accessKeyId: string,
   secretAccessKey: string,
-  region = 'auto'
+  region = 'auto',
+  cacheControl?: string,
 ) {
   const now = new Date()
   const amzdate = now.toISOString().replace(/[:-]|\.\d{3}/g, '')
   const datestamp = amzdate.substring(0, 8)
-  
+
+  // Canonical headers must be sorted alphabetically by lowercased name.
+  // Adding cache-control means it sorts before host and goes first.
+  const canonicalHeaders: string[] = []
+  const signedHeaderNames: string[] = []
+  if (cacheControl) {
+    canonicalHeaders.push(`cache-control:${cacheControl}`)
+    signedHeaderNames.push('cache-control')
+  }
+  canonicalHeaders.push(`host:${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`)
+  signedHeaderNames.push('host')
+  canonicalHeaders.push(`x-amz-content-sha256:UNSIGNED-PAYLOAD`)
+  signedHeaderNames.push('x-amz-content-sha256')
+  canonicalHeaders.push(`x-amz-date:${amzdate}`)
+  signedHeaderNames.push('x-amz-date')
+
+  const signedHeaders = signedHeaderNames.join(';')
+
   const canonicalRequest = [
     method,
     pathname,
     '',
-    `host:${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-    `x-amz-content-sha256:UNSIGNED-PAYLOAD`,
-    `x-amz-date:${amzdate}`,
+    ...canonicalHeaders,
     '',
-    'host;x-amz-content-sha256;x-amz-date',
+    signedHeaders,
     'UNSIGNED-PAYLOAD'
   ].join('\n')
 
@@ -63,7 +86,7 @@ function getS3Signature(
 
   return {
     amzdate,
-    authorization: `AWS4-HMAC-SHA256 Credential=${accessKeyId}/${datestamp}/${region}/s3/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=${signature}`
+    authorization: `AWS4-HMAC-SHA256 Credential=${accessKeyId}/${datestamp}/${region}/s3/aws4_request, SignedHeaders=${signedHeaders}, Signature=${signature}`
   }
 }
 
@@ -100,7 +123,9 @@ export async function uploadToCloudflareImages(
       'PUT',
       pathname,
       CLOUDFLARE_R2_ACCESS_KEY_ID,
-      CLOUDFLARE_R2_SECRET_ACCESS_KEY
+      CLOUDFLARE_R2_SECRET_ACCESS_KEY,
+      'auto',
+      R2_OBJECT_CACHE_CONTROL,
     )
 
     // Upload to R2
@@ -111,6 +136,7 @@ export async function uploadToCloudflareImages(
       headers: {
         'Host': `${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`,
         'Authorization': signature.authorization,
+        'Cache-Control': R2_OBJECT_CACHE_CONTROL,
         'x-amz-content-sha256': 'UNSIGNED-PAYLOAD',
         'x-amz-date': signature.amzdate,
         'Content-Type': metadata.contentType,

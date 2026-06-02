@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
                'unknown';
     
     // Apply rate limit (10 requests/minute per IP)
-    const rateLimitResult = limiter.check(10, ip);
+    const rateLimitResult = await limiter.check(10, ip);
     if (rateLimitResult.isRateLimited) {
       const retryAfter = Math.ceil(
         (rateLimitResult.resetTime - Date.now()) / 1000

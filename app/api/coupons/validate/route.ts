@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
       request.headers.get('x-forwarded-for') ||
       request.headers.get('x-real-ip') ||
       'unknown';
-    const rateLimitResult = limiter.check(COUPON_VALIDATE_RATE_LIMIT, ip);
+    const rateLimitResult = await limiter.check(COUPON_VALIDATE_RATE_LIMIT, ip);
     if (rateLimitResult.isRateLimited) {
       const retryAfter = Math.ceil(
         (rateLimitResult.resetTime - Date.now()) / 1000

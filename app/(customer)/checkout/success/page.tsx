@@ -6,6 +6,7 @@ import OrderSuccessClient from "@/components/checkout/OrderSuccessClient";
 import { connectToDatabase } from "@/lib/mongodb";
 import { OrderModel } from "@/models/Order";
 import { Types } from "mongoose";
+import { serialize } from "@/lib/serialize";
 
 export const metadata: Metadata = {
   title: "Order Confirmed - Mega Prize Mall",
@@ -71,6 +72,6 @@ export default async function OrderSuccessPage({
     redirect("/orders");
   }
 
-  const orderPlain = JSON.parse(JSON.stringify(order));
+  const orderPlain = serialize(order);
   return <OrderSuccessClient order={orderPlain} />;
 }

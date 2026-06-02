@@ -1,6 +1,7 @@
 // lib/product-utils.ts
 import { ProductModel } from '@/models/Product';
 import { connectToDatabase } from './mongodb';
+import { escapeRegex } from './utils';
 
 // Cache categories and price range for 5 minutes
 let cachedCategories: string[] | null = null;
@@ -48,6 +49,70 @@ export async function getPriceRange(): Promise<{ min: number; max: number }> {
   cacheTimestamp = now;
   
   return priceRange;
+}
+
+/**
+ * Lightweight fetch of products matching the listing-page filters, used to
+ * build the `ItemList` JSON-LD on the products page. Returns only the fields
+ * required for structured data (no images/specs) and the total match count.
+ */
+export interface ProductListingFilters {
+  category?: string;
+  minPrice?: string;
+  maxPrice?: string;
+  search?: string;
+  bargain?: string;
+}
+
+export interface ListingProductForSchema {
+  name: string;
+  slug: string;
+  price: number;
+  discountedPrice?: number;
+  stock: number;
+  bargainEnabled: boolean;
+}
+
+export async function getProductsForListingSchema(
+  filters: ProductListingFilters,
+  limit = 24,
+): Promise<{ products: ListingProductForSchema[]; totalCount: number }> {
+  await connectToDatabase();
+
+  // Build the same filter ProductGrid uses so the JSON-LD matches what
+  // the user actually sees on the page.
+  const query: Record<string, unknown> = { isActive: true };
+
+  if (filters.category) {
+    query.category = filters.category;
+  }
+  if (filters.bargain === 'true') {
+    query.bargainEnabled = true;
+  }
+  if (filters.minPrice || filters.maxPrice) {
+    const price: { $gte?: number; $lte?: number } = {};
+    if (filters.minPrice) price.$gte = parseFloat(filters.minPrice);
+    if (filters.maxPrice) price.$lte = parseFloat(filters.maxPrice);
+    query.price = price;
+  }
+  if (filters.search) {
+    const safe = escapeRegex(filters.search);
+    query.$or = [
+      { name: { $regex: safe, $options: 'i' } },
+      { description: { $regex: safe, $options: 'i' } },
+      { tags: { $regex: safe, $options: 'i' } },
+    ];
+  }
+
+  const [products, totalCount] = await Promise.all([
+    ProductModel.find(query)
+      .select('name slug price discountedPrice stock bargainEnabled')
+      .limit(limit)
+      .lean<ListingProductForSchema[]>(),
+    ProductModel.countDocuments(query),
+  ]);
+
+  return { products, totalCount };
 }
 
 // Pagination helper

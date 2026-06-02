@@ -54,7 +54,13 @@ export interface ProductProps {
   isBestSeller: boolean;
   isNewArrival: boolean;
 
+  // Analytics counters (present on Mongoose docs, may be absent on hand-built objects)
   purchaseCount?: number;
+  bargainCount?: number;
+  viewCount?: number;
+
+  // Persisted timestamp, ISO-string on the wire
+  createdAt?: string;
 }
 
 /**
@@ -190,11 +196,11 @@ export interface ClientAddress {
 }
 
 export interface ClientOrderItem {
-  _id: string;
+  _id?: string;
   productId: string;
   productName: string;
   productSlug: string;
-  productImage: string;
+  productImage?: string;
   quantity: number;
   price: number;
   discountAmount: number;
@@ -204,7 +210,7 @@ export interface ClientOrderItem {
 
 export interface ClientOrder {
   _id: string;
-  billingAddress: ClientAddress;
+  billingAddress?: ClientAddress;
   shippingMethod: string;
   userId: string;
   items: ClientOrderItem[];

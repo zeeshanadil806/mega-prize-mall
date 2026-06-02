@@ -6,6 +6,7 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { Metadata } from 'next';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
+import { serialize } from '@/lib/serialize';
 
 export const metadata: Metadata = {
   title: 'Lucky Draw - Mega Prize Mall',
@@ -59,8 +60,8 @@ export default async function LuckyDrawPage() {
     <LuckyDrawDashboardClient
       userEntries={userEntries}
       activeDraws={activeDraws}
-      completedDraws={JSON.parse(JSON.stringify(completedDraws))}
-      eligibleOrders={JSON.parse(JSON.stringify(eligibleOrders))}
+      completedDraws={serialize(completedDraws)}
+      eligibleOrders={serialize(eligibleOrders)}
       userId={session.user.id}
     />
   );

@@ -1,55 +1,25 @@
 // components/home/NewArrivals.tsx
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useRef } from "react";
 import { motion, useInView, Variants } from "framer-motion";
 import {
   Clock,
   TrendingUp,
-  Sparkles,
   ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Skeleton } from "@/components/ui/skeleton";
 import ProductCard from "../products/ProductCard";
 import { CustomerProductProps } from "@/types";
 
+interface NewArrivalsProps {
+  products: CustomerProductProps[];
+}
 
-const NewArrivals = () => {
+const NewArrivals = ({ products }: NewArrivalsProps) => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, amount: 0.2 });
-  const [products, setProducts] = useState<CustomerProductProps[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  // Fetch new arrival products
-  useEffect(() => {
-    async function fetchNewArrivals() {
-      try {
-        setLoading(true);
-        setError(null);
-
-        // Fetch products with isNewArrival = true
-        const response = await fetch("/api/products?new=true&limit=5");
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch new arrivals");
-        }
-
-        const data = await response.json();
-        setProducts(data);
-      } catch (err) {
-        console.error("Error fetching new arrivals:", err);
-        setError("Unable to load new arrivals");
-        setProducts([]);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchNewArrivals();
-  }, []);
 
   const containerVariants: Variants = {
     hidden: { opacity: 1 },
@@ -61,61 +31,6 @@ const NewArrivals = () => {
       },
     },
   };
-
-  // Loading state
-  if (loading) {
-    return (
-      <section className="py-6 bg-linear-to-b from-white to-gray-50">
-        <div className="container mx-auto px-4">
-          {/* Section Header Skeleton */}
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-12">
-            <div className="mb-6 lg:mb-0">
-              <Skeleton className="h-8 w-32 mb-4" />
-              <Skeleton className="h-12 w-64 mb-2" />
-              <Skeleton className="h-4 w-96" />
-            </div>
-            <Skeleton className="h-10 w-32" />
-          </div>
-
-          {/* Products Grid Skeleton */}
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[...Array(4)].map((_, index) => (
-              <div key={index} className="space-y-3">
-                <Skeleton className="h-56 rounded-2xl" />
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-4 w-1/2" />
-                <Skeleton className="h-10 w-full rounded-lg" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <section className="py-20 bg-linear-to-b from-white to-gray-50">
-        <div className="container mx-auto px-4 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-linear-to-r from-red-100 to-red-50 text-red-600 text-sm font-medium mb-4">
-            <Sparkles className="h-4 w-4" />
-            <span>Unable to load new arrivals</span>
-          </div>
-
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            New Arrivals
-          </h2>
-
-          <p className="text-gray-600 mb-6">{error}. Please try again later.</p>
-
-          <Link href="/products">
-            <Button>Browse All Products</Button>
-          </Link>
-        </div>
-      </section>
-    );
-  }
 
   // No products state
   if (products.length === 0) {
@@ -200,13 +115,13 @@ const NewArrivals = () => {
           animate={inView ? "visible" : "hidden"}
           className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6"
         >
-          {products.map((product) => {
-            return (
-              <>
-                <ProductCard key={product._id.toString()} product={product} />
-              </>
-            );
-          })}
+          {products.map((product, idx) => (
+            <ProductCard
+              key={product._id.toString()}
+              product={product}
+              priority={idx < 5}
+            />
+          ))}
         </motion.div>
 
         {/* View More Button if more than 4 products */}

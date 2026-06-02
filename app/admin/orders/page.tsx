@@ -6,6 +6,7 @@ import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { UserModel } from '@/models/User';
 import { escapeRegex } from '@/lib/utils';
+import { serialize } from '@/lib/serialize';
 
 export const metadata: Metadata = {
   title: 'Order Management - Admin Dashboard',
@@ -161,7 +162,7 @@ export default async function AdminOrdersPage({
 
   return (
     <AdminOrdersClient
-      orders={JSON.parse(JSON.stringify(enhancedOrders))}
+      orders={serialize(enhancedOrders)}
       currentPage={currentPage}
       totalPages={totalPages}
       currentStatus={status || 'all'}

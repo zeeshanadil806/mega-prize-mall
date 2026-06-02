@@ -1,19 +1,17 @@
 // components/home/BargainZone.tsx
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { 
-  Tag, 
-  Zap, 
-  // TrendingDown, 
-  Clock, 
+import {
+  Tag,
+  Zap,
+  Clock,
   Smartphone,
   Headphones,
   Gamepad2,
   Battery,
   ArrowRight,
-//   Loader2,
   ShoppingBag,
   Laptop,
   Watch,
@@ -23,29 +21,9 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Skeleton } from '@/components/ui/skeleton';
+import { CustomerProductProps } from '@/types';
 
-interface BargainProduct {
-  _id: string;
-  name: string;
-  slug: string;
-  price: number;
-  discountedPrice?: number;
-  minBargainPrice?: number;
-  bargainEnabled: boolean;
-  bargainCount: number;
-  bargainValidityHours: number;
-  category: string;
-  brand: string;
-  images: Array<{
-    id?: string;
-    url: string;
-    alt?: string;
-  }>;
-  stock: number;
-  createdAt: string;
-  bargainExpiresAt?: string;
-}
+type BargainProduct = CustomerProductProps;
 
 interface BargainStats {
   totalCustomerSavings: number;
@@ -54,62 +32,28 @@ interface BargainStats {
 //   successRate: number;
 }
 
-const BargainZone = () => {
+interface BargainZoneProps {
+  products: BargainProduct[];
+}
+
+const BargainZone = ({ products }: BargainZoneProps) => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
-  const [products, setProducts] = useState<BargainProduct[]>([]);
-  const [stats, setStats] = useState<BargainStats>({
-    totalCustomerSavings: 2500000,
-    activeBargains: 500,
-    bargainValidityHours: 24,
-    // successRate: 85
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  // Fetch bargain products
-  useEffect(() => {
-    async function fetchBargainProducts() {
-      try {
-        setLoading(true);
-        setError(null);
-        
-        // Fetch bargain products (bargainEnabled = true)
-        const response = await fetch('/api/products?bargain=true&limit=4');
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch bargain products');
-        }
-        
-        const data = await response.json();
-        setProducts(data);
-        
-        // Calculate real stats
-        const totalSavings = data.reduce((sum: number, product: BargainProduct) => {
-          if (product.discountedPrice && product.price) {
-            return sum + (product.price - product.discountedPrice);
-          }
-          return sum;
-        }, 0);
-        
-        // For now using mock stats - in production, fetch from analytics API
-        setStats({
-          totalCustomerSavings: totalSavings || 2500000,
-          activeBargains: data.length || 0,
-          bargainValidityHours: 24, // Default from your product schema
-        //   successRate: 85 // Could calculate from actual bargain success rate
-        });
-      } catch (err) {
-        console.error('Error fetching bargain products:', err);
-        setError('Unable to load bargain deals');
-        setProducts([]);
-      } finally {
-        setLoading(false);
-      }
+  // Derive stats from the products passed in. Falls back to defaults when the
+  // numbers come back zero so the UI never shows blank counters.
+  const totalSavings = products.reduce((sum, product) => {
+    if (product.discountedPrice && product.price) {
+      return sum + (product.price - product.discountedPrice);
     }
+    return sum;
+  }, 0);
 
-    fetchBargainProducts();
-  }, []);
+  const stats: BargainStats = {
+    totalCustomerSavings: totalSavings || 2500000,
+    activeBargains: products.length || 0,
+    bargainValidityHours: 24,
+  };
 
   const getCategoryIcon = (category: string) => {
     const icons: Record<string, React.ReactNode> = {
@@ -153,68 +97,6 @@ const BargainZone = () => {
     const discountPercentage = 10 + Math.floor(Math.random() * 21); // 10-30%
     return Math.round(product.price * (1 - discountPercentage / 100));
   };
-
-  // Loading state
-  if (loading) {
-    return (
-      <section className="py-20 bg-linear-to-r from-[#7C2C78]/5 to-[#A43875]/5">
-        <div className="container mx-auto px-4">
-          {/* Header Skeleton */}
-          <div className="text-center mb-12">
-            <Skeleton className="h-8 w-48 mx-auto mb-4" />
-            <Skeleton className="h-12 w-64 mx-auto mb-4" />
-            <Skeleton className="h-4 w-96 mx-auto" />
-          </div>
-
-          {/* Stats Skeleton */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            {[...Array(4)].map((_, index) => (
-              <div key={index} className="bg-white rounded-2xl p-6">
-                <Skeleton className="h-8 w-8 mx-auto mb-3" />
-                <Skeleton className="h-8 w-32 mx-auto mb-2" />
-                <Skeleton className="h-4 w-24 mx-auto" />
-              </div>
-            ))}
-          </div>
-
-          {/* Products Skeleton */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-            {[...Array(4)].map((_, index) => (
-              <Skeleton key={index} className="h-48 rounded-2xl" />
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <section className="py-20 bg-linear-to-r from-[#7C2C78]/5 to-[#A43875]/5">
-        <div className="container mx-auto px-4 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-linear-to-r from-red-100 to-red-50 text-red-600 text-sm font-medium mb-4">
-            <Tag className="h-4 w-4" />
-            <span>Unable to load bargain deals</span>
-          </div>
-          
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Bargain Zone
-          </h2>
-          
-          <p className="text-gray-600 mb-6">
-            {error}. Please try again later.
-          </p>
-          
-          <Link href="/products">
-            <Button>
-              Browse All Products
-            </Button>
-          </Link>
-        </div>
-      </section>
-    );
-  }
 
   // No bargain products state
   if (products.length === 0) {
@@ -308,7 +190,7 @@ const BargainZone = () => {
           {products.map((product, index) => {
             const bargainPrice = calculateBargainPrice(product);
             const saving = product.price - bargainPrice;
-            const timeLeft = calculateTimeLeft(product.createdAt, product.bargainValidityHours);
+            const timeLeft = calculateTimeLeft(product.createdAt ?? new Date().toISOString(), product.bargainValidityHours);
             
             return (
               <motion.div

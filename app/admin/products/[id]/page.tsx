@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation"
 import { auth } from "@/auth"
 import { connectToDatabase } from "@/lib/mongodb"
 import { ProductModel } from "@/models/Product"
+import { serialize } from "@/lib/serialize"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -37,7 +38,7 @@ if (!session?.user || (session.user.role !== "admin" && session.user.role !== "s
     notFound()
   }
 
-  const productData = JSON.parse(JSON.stringify(product))
+  const productData = serialize(product)
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-PK", {

@@ -2,6 +2,7 @@
 import { MetadataRoute } from 'next';
 import { connectToDatabase } from '@/lib/mongodb';
 import { ProductModel } from '@/models/Product';
+import { log } from '@/lib/logger';
 // import { BlogModel } from '@/models/Blog'; // If you have blog
 // import { CategoryModel } from '@/models/Category'; // If you have category model
 
@@ -87,9 +88,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
 
     sitemapEntries.push(...productEntries);
-    console.log(`✅ Added ${productEntries.length} products to sitemap`);
   } catch (error) {
-    console.error('❌ Error fetching products for sitemap:', error);
+    log.error('Error fetching products for sitemap', { error: error as Error });
     // Continue with other pages even if products fail
   }
 
@@ -101,9 +101,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     new Map(sitemapEntries.map(entry => [entry.url, entry])).values()
   );
 
-  console.log(`📊 Total unique URLs in sitemap: ${uniqueEntries.length}`);
-  console.log(`🏆 Sitemap generated successfully at: ${new Date().toISOString()}`);
-  
   return uniqueEntries;
 }
 

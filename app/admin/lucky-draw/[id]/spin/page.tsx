@@ -4,6 +4,7 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { Metadata } from 'next';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
+import { serialize } from '@/lib/serialize';
 
 export async function generateMetadata({
   params,
@@ -54,8 +55,8 @@ export default async function SpinWheelPage({
 
   return (
     <SpinWheelClient
-      draw={JSON.parse(JSON.stringify(draw))}
-      entries={JSON.parse(JSON.stringify(entries))}
+      draw={serialize(draw)}
+      entries={serialize(entries)}
       adminId={session.user.id}
     />
   );

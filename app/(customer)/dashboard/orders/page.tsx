@@ -5,6 +5,7 @@ import { Metadata } from "next";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { ClientOrder } from "@/types";
+import { serialize } from "@/lib/serialize";
 
 export const metadata: Metadata = {
   title: "My Orders | Track & Manage Purchases - Mega Prize Mall",
@@ -97,9 +98,9 @@ export default async function OrdersPage({
   };
 
   // 4. Serialization
-  // We strictly convert MongoDB objects (like _id and Date) to strings here
-  // to avoid the "Only plain objects" error in Next.js
-  const serializedOrders = JSON.parse(JSON.stringify(rawOrders));
+  // Strip MongoDB ObjectId / Date / Mongoose internals so the result is safe
+  // to pass to the client component.
+  const serializedOrders = serialize(rawOrders);
 
   const structuredData = {
     '@context': 'https://schema.org',

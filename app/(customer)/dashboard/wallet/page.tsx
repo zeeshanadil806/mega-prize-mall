@@ -5,6 +5,7 @@ import { connectToDatabase } from "@/lib/mongodb";
 import { Metadata } from "next";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { serialize } from "@/lib/serialize";
 
 interface WalletTransactionQuery {
   userId: string;
@@ -261,7 +262,7 @@ export default async function WalletPage({
         }}
       />
       <WalletDashboardClient
-        transactions={JSON.parse(JSON.stringify(transactions))}
+        transactions={serialize(transactions)}
         currentPage={currentPage}
         totalPages={totalPages}
         currentType={type || "all"}

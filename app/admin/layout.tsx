@@ -1,11 +1,8 @@
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
 import AdminSidebar from "@/components/admin/AdminSidebar"
 import AdminHeader from "@/components/admin/AdminHeader"
 import { auth } from "@/auth"
 import { redirect } from "next/navigation"
-
-const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Admin Dashboard - Mega Prize Mall",
@@ -29,7 +26,7 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className={`${inter.className} bg-gray-50`}>
+    <div className="bg-gray-50">
       <div className="flex min-h-screen">
         {/* Sidebar */}
         <AdminSidebar />

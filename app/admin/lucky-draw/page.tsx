@@ -5,6 +5,7 @@ import { Metadata } from 'next';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { escapeRegex } from '@/lib/utils';
+import { serialize } from '@/lib/serialize';
 
 export const metadata: Metadata = {
   title: 'Lucky Draw Management - Admin Dashboard',
@@ -89,7 +90,7 @@ interface LuckyDrawQuery {
 
   return (
     <AdminLuckyDrawClient
-      draws={JSON.parse(JSON.stringify(draws))}
+      draws={serialize(draws)}
       currentPage={currentPage}
       totalPages={totalPages}
       currentStatus={status || 'all'}

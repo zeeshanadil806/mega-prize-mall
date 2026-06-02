@@ -5,6 +5,7 @@ import { AdminBargainClient } from "@/components/admin/bargain/AdminBargainClien
 import { connectToDatabase } from "@/lib/mongodb";
 import { ProductModel, UserModel } from "@/models";
 import { escapeRegex } from "@/lib/utils";
+import { serialize } from "@/lib/serialize";
 interface BargainRequestQuery {
   isActive: boolean;
   status?: string;
@@ -184,7 +185,7 @@ export default async function AdminBargainPage({
     <div className="flex min-h-screen bg-gray-50">
       <div className="flex-1">
         <main className="p-6">
-          <AdminBargainClient initialData={JSON.parse(JSON.stringify(initialData))} />
+          <AdminBargainClient initialData={serialize(initialData)} />
         </main>
       </div>
     </div>

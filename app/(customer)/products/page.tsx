@@ -4,9 +4,14 @@ import ProductGrid from "@/components/products/ProductGrid";
 import ProductFilters from "@/components/products/ProductFilters";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Metadata } from "next";
-import { getCategories, getPriceRange } from "@/lib/product-utils";
+import { getCategories, getPriceRange, getProductsForListingSchema } from "@/lib/product-utils";
 import { connectToDatabase } from "@/lib/mongodb";
 import Link from "next/link";
+
+// Cache the listing page for 60s. Each unique (?category, ?search, ?page,
+// ?sortBy, ?minPrice, ?maxPrice) combo is cached separately by Next's ISR.
+// Admin product edits should call revalidatePath('/products') to bust early.
+export const revalidate = 60;
 // import { Filter, X } from "lucide-react";
 // import MobileFilters from "@/components/products/ProductFilters";
 import MobileFilterTrigger from "@/components/products/MobileFilterTrigger";
@@ -68,15 +73,26 @@ export async function generateMetadata(props: {
     };
   }
   
-  // For search results
+  // For search results — noindex so each user query doesn't spawn its own
+  // crawlable URL, and point the canonical back at /products so any inbound
+  // link signal consolidates on the main listing.
   if (searchParams.search) {
     const query = decodeURIComponent(searchParams.search);
-    
+
     return {
       title: `"${query}" Mobile Accessories | Search Results | Mega Prize Mall`,
       description: `Find ${query} mobile accessories with bargain option. Shop best ${query} online with price negotiation & lucky draw rewards. Free shipping across Pakistan.`,
       keywords: `${query}, ${query} mobile accessories, buy ${query} online, ${query} with bargain`,
-      
+
+      robots: {
+        index: false,
+        follow: true,
+      },
+
+      alternates: {
+        canonical: "https://megaprizemall.com/products",
+      },
+
       openGraph: {
         title: `Search Results for "${query}" - Mobile Accessories`,
         description: `Find ${query} mobile accessories with price negotiation feature.`,
@@ -147,62 +163,52 @@ export default async function ProductsPage(props: ProductsPageProps) {
 
   // Await searchParams before accessing properties
   const searchParams = await props.searchParams;
-  // Fetch filter data in parallel
-  const [categories, priceRange] = await Promise.all([
+  // Fetch filter data + a snapshot of the actual products on this page in parallel
+  const [categories, priceRange, listingForSchema] = await Promise.all([
     getCategories(),
     getPriceRange(),
+    getProductsForListingSchema(searchParams, 24),
   ]);
 
-  // ✅ Prepare structured data
+  const listName = searchParams.category
+    ? `${decodeURIComponent(searchParams.category)} Collection`
+    : "Mobile Accessories Collection";
+  const listDescription = searchParams.category
+    ? `Browse ${decodeURIComponent(searchParams.category)} with bargain option`
+    : "Complete range of mobile accessories with bargain option";
+
+  // Build ItemList JSON-LD from the real products being rendered on this page
+  // so Google's structured-data view matches the actual listing.
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "item": {
-          "@type": "Product",
-          "name": "Premium Phone Case",
-          "url": "https://megaprizemall.com/products/premium-phone-case",
-          "offers": {
-            "@type": "Offer",
-            "price": "599",
-            "priceCurrency": "PKR",
-            "availability": "https://schema.org/InStock",
-            "additionalProperty": {
+    name: listName,
+    description: listDescription,
+    numberOfItems: listingForSchema.totalCount,
+    itemListElement: listingForSchema.products.map((product, idx) => ({
+      "@type": "ListItem",
+      position: idx + 1,
+      item: {
+        "@type": "Product",
+        name: product.name,
+        url: `https://megaprizemall.com/products/${product.slug}`,
+        offers: {
+          "@type": "Offer",
+          price: String(product.discountedPrice && product.discountedPrice > 0 ? product.discountedPrice : product.price),
+          priceCurrency: "PKR",
+          availability: product.stock > 0
+            ? "https://schema.org/InStock"
+            : "https://schema.org/OutOfStock",
+          ...(product.bargainEnabled && {
+            additionalProperty: {
               "@type": "PropertyValue",
-              "name": "Bargain Available",
-              "value": "true"
-            }
-          }
-        }
+              name: "Bargain Available",
+              value: "true",
+            },
+          }),
+        },
       },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "item": {
-          "@type": "Product",
-          "name": "Wireless Earbuds",
-          "url": "https://megaprizemall.com/products/wireless-earbuds",
-          "offers": {
-            "@type": "Offer",
-            "price": "1299",
-            "priceCurrency": "PKR",
-            "availability": "https://schema.org/InStock",
-            "additionalProperty": {
-              "@type": "PropertyValue",
-              "name": "Bargain Available",
-              "value": "true"
-            }
-          }
-        }
-      }
-      // Note: In production, you would dynamically generate this from actual products
-    ],
-    "numberOfItems": 1000,
-    "name": "Mobile Accessories Collection",
-    "description": "Complete range of mobile accessories with bargain option"
+    })),
   };
 
   const breadcrumbData = {

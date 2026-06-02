@@ -4,6 +4,7 @@ import { redirect } from "next/navigation"
 import { connectToDatabase } from "@/lib/mongodb"
 import { ProductModel } from "@/models/Product"
 import { escapeRegex } from "@/lib/utils"
+import { serialize } from "@/lib/serialize"
 
 type MongoQuery = {
   $or?: Array<{
@@ -70,8 +71,7 @@ if (!session?.user || (session.user.role !== "admin" && session.user.role !== "s
     ProductModel.countDocuments(query),
   ])
 
-  // Convert to plain objects for serialization
-  const serializedProducts = JSON.parse(JSON.stringify(products))
+  const serializedProducts = serialize(products)
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">

@@ -8,11 +8,16 @@ import { Tag, Star, TrendingUp } from "lucide-react";
 import { ProductProps } from "@/types";
 
 interface ProductCardProps {
-  // product: Product & { _id: string };
   product: ProductProps;
+  /**
+   * Mark as the LCP image — passes `priority` to Next/Image so the first
+   * above-the-fold card gets eager loading + fetchpriority=high. Off by
+   * default so non-LCP cards stay lazy.
+   */
+  priority?: boolean;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, priority = false }: ProductCardProps) {
   const finalPrice = product.discountedPrice || product.price;
   const discountPercentage = product.discountedPrice
     ? Math.round(
@@ -78,7 +83,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-300"
             sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
-            loading="lazy"
+            {...(priority ? { priority: true } : { loading: "lazy" })}
           />
         ) : (
           <div className="h-full w-full flex items-center justify-center bg-linear-to-br from-gray-100 to-gray-200">

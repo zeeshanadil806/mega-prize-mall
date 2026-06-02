@@ -7,6 +7,7 @@ import { connectToDatabase } from "@/lib/mongodb";
 import { UserModel } from "@/models/User";
 import { AddressModel } from "@/models";
 import { Address } from "@/types";
+import { serialize } from "@/lib/serialize";
 
 export const metadata: Metadata = {
   title: "Secure Checkout | Complete Your Purchase - Mega Prize Mall",
@@ -154,9 +155,9 @@ export default async function CheckoutPage() {
         }}
       />
       <CheckoutClient
-        user={user ? JSON.parse(JSON.stringify(user)) : null}
+        user={user ? serialize(user) : null}
         userId={userId}
-        addresses={JSON.parse(JSON.stringify(addresses))}
+        addresses={serialize(addresses)}
       />
     </>
   );

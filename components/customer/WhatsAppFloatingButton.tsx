@@ -38,14 +38,37 @@ export default function WhatsAppFloatingButton({
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Bouncing animation
+  // Bouncing animation — runs a fixed number of times to draw attention
+  // on first load, then stops permanently. The original implementation
+  // bounced forever, re-rendering the framer-motion subtree every 3s for
+  // the entire session — wasted CPU and battery, and visually nagging.
+  // Also respects prefers-reduced-motion to disable bouncing entirely.
   useEffect(() => {
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
+
+    const MAX_BOUNCES = 4;
+    let bounceCount = 0;
+    let cancelled = false;
+    let bounceTimeout: ReturnType<typeof setTimeout> | undefined;
+
     const interval = setInterval(() => {
+      if (cancelled) return;
       setIsBouncing(true);
-      setTimeout(() => setIsBouncing(false), 600);
+      bounceTimeout = setTimeout(() => setIsBouncing(false), 600);
+      bounceCount += 1;
+      if (bounceCount >= MAX_BOUNCES) clearInterval(interval);
     }, bounceInterval);
 
-    return () => clearInterval(interval);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+      if (bounceTimeout) clearTimeout(bounceTimeout);
+    };
   }, [bounceInterval]);
 
   // Show button after delay for better UX

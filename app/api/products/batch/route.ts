@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       request.headers.get('x-forwarded-for') ||
       request.headers.get('x-real-ip') ||
       'unknown';
-    const rateLimitResult = limiter.check(BATCH_RATE_LIMIT, ip);
+    const rateLimitResult = await limiter.check(BATCH_RATE_LIMIT, ip);
     if (rateLimitResult.isRateLimited) {
       const retryAfter = Math.ceil(
         (rateLimitResult.resetTime - Date.now()) / 1000
@@ -76,8 +76,15 @@ export async function POST(request: NextRequest) {
       return acc;
     }, {} as Record<string, BatchProduct>);
     
-    return NextResponse.json(productsMap);
-    
+    return NextResponse.json(productsMap, {
+      headers: {
+        // POST + per-cart request body — not CDN-cacheable. Set the
+        // header explicitly so no shared cache between client and
+        // origin (e.g. service worker) holds onto a stale list.
+        "Cache-Control": "private, no-store",
+      },
+    });
+
   } catch (error) {
     log.error('Error fetching batch products', { error: error as Error });
     return NextResponse.json(

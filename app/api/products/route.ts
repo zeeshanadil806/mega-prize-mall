@@ -89,7 +89,7 @@ export async function GET(request: Request) {
       request.headers.get("x-forwarded-for") ||
       request.headers.get("x-real-ip") ||
       "unknown";
-    const rateLimitResult = limiter.check(PRODUCTS_RATE_LIMIT, ip);
+    const rateLimitResult = await limiter.check(PRODUCTS_RATE_LIMIT, ip);
     if (rateLimitResult.isRateLimited) {
       const retryAfter = Math.ceil(
         (rateLimitResult.resetTime - Date.now()) / 1000
@@ -208,7 +208,16 @@ export async function GET(request: Request) {
       }),
     );
 
-    return NextResponse.json(transformedProducts);
+    return NextResponse.json(transformedProducts, {
+      headers: {
+        // CDN caches for 60s, then serves stale up to 5 min while
+        // revalidating in the background. Product catalog data changes
+        // on admin actions only, so a minute of staleness is fine and
+        // the DB sees ~1 query/minute per (URL, region) instead of
+        // one query per visitor.
+        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+      },
+    });
   } catch (error) {
     log.error("Error fetching products", { error: error as Error });
     return NextResponse.json(

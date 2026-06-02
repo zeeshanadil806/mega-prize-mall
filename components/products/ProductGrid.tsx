@@ -98,10 +98,13 @@ let sort: Record<string, SortOrder> = { createdAt: -1 };  switch (searchParams.s
     <>
       {/* Product Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
-        {products.map((product) => (
-          <ProductCard 
-            key={product._id.toString()} 
+        {products.map((product, idx) => (
+          <ProductCard
+            key={product._id.toString()}
             product={product}
+            // First row (up to xl:grid-cols-4) is above the fold on the
+            // listing page — give those cards eager loading + fetchpriority.
+            priority={idx < 4}
           />
         ))}
       </div>

@@ -15,15 +15,15 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { CustomerProductProps } from "@/types";
 import ProductCard from "../products/ProductCard";
 
-const FeaturedProducts = () => {
-  const [products, setProducts] = useState<CustomerProductProps[]>([]);
+interface FeaturedProductsProps {
+  products: CustomerProductProps[];
+}
+
+const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [itemsPerSlide, setItemsPerSlide] = useState(1);
   const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(
     null,
@@ -64,33 +64,6 @@ const FeaturedProducts = () => {
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // Fetch featured products
-  useEffect(() => {
-    async function fetchFeaturedProducts() {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const response = await fetch("/api/products?featured=true&limit=12");
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch products");
-        }
-
-        const data = await response.json();
-        setProducts(data);
-      } catch (err) {
-        console.error("Error fetching featured products:", err);
-        setError("Unable to load featured products");
-        setProducts([]);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchFeaturedProducts();
   }, []);
 
   const containerVariants: Variants = {
@@ -173,62 +146,6 @@ const FeaturedProducts = () => {
     (currentIndex + 1) * itemsPerSlide,
   );
   const totalSlides = Math.ceil(products.length / itemsPerSlide);
-
-  // Loading state
-  if (loading) {
-    return (
-      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-linear-to-b from-gray-50 to-white">
-        <div className="container mx-auto px-3 sm:px-4 md:px-6">
-          {/* Section Header Skeleton */}
-          <div className="text-center mb-8 sm:mb-12 md:mb-16">
-            <Skeleton className="h-5 sm:h-6 md:h-7 w-32 sm:w-40 md:w-48 mx-auto mb-3" />
-            <Skeleton className="h-6 sm:h-8 md:h-10 lg:h-12 w-40 sm:w-48 md:w-56 lg:w-64 mx-auto mb-3" />
-            <Skeleton className="h-3 sm:h-4 w-64 sm:w-72 md:w-80 lg:w-96 mx-auto" />
-          </div>
-
-          {/* Products Grid Skeleton */}
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5 md:gap-6">
-            {[...Array(itemsPerSlide)].map((_, index) => (
-              <div key={index} className="space-y-2 sm:space-y-3">
-                <Skeleton className="h-48 sm:h-52 md:h-56 lg:h-60 xl:h-64 rounded-lg sm:rounded-xl md:rounded-2xl" />
-                <Skeleton className="h-3 sm:h-4 w-3/4" />
-                <Skeleton className="h-3 sm:h-4 w-1/2" />
-                <Skeleton className="h-8 sm:h-9 md:h-10 rounded-lg" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-linear-to-b from-gray-50 to-white">
-        <div className="container mx-auto px-4 sm:px-6 text-center">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-linear-to-r from-red-100 to-red-50 text-red-600 text-sm font-medium mb-3 sm:mb-4">
-            <Sparkles className="h-4 w-4" />
-            <span>Unable to load featured products</span>
-          </div>
-
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">
-            Featured Products
-          </h2>
-
-          <p className="text-sm sm:text-base text-gray-600 mb-5 sm:mb-6 max-w-md mx-auto">
-            {error}. Please try again later.
-          </p>
-
-          <Link href="/products">
-            <Button size="default" className="text-sm sm:text-base">
-              Browse All Products
-            </Button>
-          </Link>
-        </div>
-      </section>
-    );
-  }
 
   // No products state
   if (products.length === 0) {
@@ -368,10 +285,12 @@ const FeaturedProducts = () => {
             whileInView="visible"
             viewport={{ once: true, amount: 0.1 }}
           >
-            {visibleProducts.map((product) => (
-              <>
-                <ProductCard key={product._id.toString()} product={product} />
-              </>
+            {visibleProducts.map((product, idx) => (
+              <ProductCard
+                key={product._id.toString()}
+                product={product}
+                priority={currentIndex === 0 && idx < itemsPerSlide}
+              />
             ))}
           </motion.div>
         </div>

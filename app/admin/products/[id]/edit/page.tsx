@@ -3,6 +3,7 @@ import { auth } from "@/auth"
 import { redirect } from "next/navigation"
 import { connectToDatabase } from "@/lib/mongodb"
 import { ProductModel } from "@/models/Product"
+import { serialize } from "@/lib/serialize"
 
 export default async function EditProductPage({
   params,
@@ -26,8 +27,7 @@ if (!session?.user || (session.user.role !== "admin" && session.user.role !== "s
     redirect("/admin/products")
   }
 
-  // Convert MongoDB document to plain object
-  const productData = JSON.parse(JSON.stringify(product))
+  const productData = serialize(product)
 
   return (
     <div className="max-w-7xl mx-auto p-6">
