@@ -6,7 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:all": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run tests/unit --coverage"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.11.1",
@@ -67,9 +72,13 @@
     "@types/pdfkit": "^0.17.4",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/coverage-v8": "^4.1.8",
     "eslint": "^9",
     "eslint-config-next": "16.0.7",
+    "mongodb-memory-server": "^11.2.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "tsx": "^4.22.4",
+    "typescript": "^5",
+    "vitest": "^4.1.8"
   }
 }

@@ -4,7 +4,7 @@ import ProductGrid from "@/components/products/ProductGrid";
 import ProductFilters from "@/components/products/ProductFilters";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Metadata } from "next";
-import { getCategories, getPriceRange, getProductsForListingSchema } from "@/lib/product-utils";
+import { getCategories, getPriceRange, getProductsForListingSchema } from "@/features/product/service";
 import { connectToDatabase } from "@/lib/mongodb";
 import Link from "next/link";
 

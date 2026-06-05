@@ -12,7 +12,7 @@ import {
   getNewArrivals,
   getBargainProducts,
   getCategoryStats,
-} from "@/lib/home-products";
+} from "@/features/product/service";
 
 // Cache the homepage for 5 minutes so MongoDB only gets hit once per window
 // instead of on every visitor. Product/category mutations from admin can
