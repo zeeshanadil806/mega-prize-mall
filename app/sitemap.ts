@@ -104,29 +104,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return uniqueEntries;
 }
 
-// Generate dynamic sitemaps if you have more than 50,000 URLs
-// export async function generateSitemaps() {
-//   // If you expect to have > 50,000 products, split them
-//   const productCount = await ProductModel.countDocuments({ isActive: true });
-  
-//   if (productCount > 20000) {
-//     // Split into multiple sitemaps
-//     const sitemapCount = Math.ceil(productCount / 10000);
-//     const sitemaps = [];
-    
-//     for (let i = 0; i < sitemapCount; i++) {
-//       sitemaps.push({ id: `products-${i}` });
-//     }
-    
-//     // Add main pages sitemap
-//     sitemaps.push({ id: 'main-pages' });
-    
-//     return sitemaps;
-//   }
-  
-//   // Single sitemap for small to medium sites
-//   return [{ id: 'main' }];
-// }
 
 export async function generateSitemaps() {
   // Return a single sitemap for now
