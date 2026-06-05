@@ -15,7 +15,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { useCartStore } from "@/stores/cart-store";
-import { formatCurrency } from "@/lib/bargain-utils";
+import { formatCurrency } from "@/shared/format";
 import BargainButton from "@/components/bargain/BargainButton";
 import { toast } from "sonner";
 import Image from "next/image";

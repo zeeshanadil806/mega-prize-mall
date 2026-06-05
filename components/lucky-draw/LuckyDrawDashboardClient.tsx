@@ -28,7 +28,7 @@ import {
   Smartphone,
   ShoppingBag,
 } from 'lucide-react';
-import { formatCurrency } from '@/lib/bargain-utils';
+import { formatCurrency } from '@/shared/format';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 

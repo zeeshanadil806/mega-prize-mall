@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { OrderModel } from "@/models/Order";
 import { auth } from "@/auth";
-import { formatCurrency } from "@/lib/bargain-utils";
+import { formatCurrency } from "@/shared/format";
 import { Types } from "mongoose";
 import { log } from "@/lib/logger";
 

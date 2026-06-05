@@ -4,10 +4,8 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useCartStore } from "@/stores/cart-store";
-import {
-  formatCurrency,
-  calculateMaxRedeemablePoints,
-} from "@/lib/bargain-utils";
+import { formatCurrency } from "@/shared/format";
+import { calculateMaxRedeemablePoints } from "@/features/wallet/domain";
 import {
   Package,
   Shield,

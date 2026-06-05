@@ -1,6 +1,6 @@
 import { LuckyDrawDashboardClient } from '@/components/lucky-draw/LuckyDrawDashboardClient';
-import { getActiveDraws } from '@/lib/lucky-draw-utils';
-import { getUserLuckyDrawEntries } from '@/lib/lucky-draw-utils';
+import { getActiveDraws } from '@/features/lucky-draw/service';
+import { getUserLuckyDrawEntries } from '@/features/lucky-draw/service';
 import { LuckyDrawModel } from '@/models/LuckyDraw';
 import { connectToDatabase } from '@/lib/mongodb';
 import { Metadata } from 'next';

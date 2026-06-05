@@ -8,7 +8,7 @@ import {
   calculateDiscountPercentage,
   generateBargainCouponCode,
 } from "@/features/bargain/domain";
-import { formatCurrency, formatPoints } from "@/lib/bargain-utils";
+import { formatCurrency, formatPoints } from "@/shared/format";
 
 // These tests lock in the current behavior of the pure bargain
 // utility functions. They survive the Phase 2 refactor unchanged

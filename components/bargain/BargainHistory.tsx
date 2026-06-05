@@ -19,7 +19,7 @@ import {
   Percent
 } from "lucide-react"
 import { toast } from "sonner"
-import { formatCurrency } from "@/lib/bargain-utils"
+import { formatCurrency } from "@/shared/format"
 import Link from "next/link"
 import { BargainHistoryItem } from "@/types"
 

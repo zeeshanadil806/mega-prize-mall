@@ -161,7 +161,7 @@ export async function PATCH(
         if (status === "delivered" && order.grandTotal >= 3000) {
           try {
             const { createLuckyDrawEntry } = await import(
-              "@/lib/lucky-draw-utils"
+              "@/features/lucky-draw/service"
             );
             const luckyDrawResult = await createLuckyDrawEntry(
               order._id.toString()

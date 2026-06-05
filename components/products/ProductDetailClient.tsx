@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 // import Image from 'next/image';
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { formatCurrency } from "@/lib/bargain-utils";
+import { formatCurrency } from "@/shared/format";
 import AddToCartButton from "@/components/cart/AddToCartButton";
 import BargainButton from "@/components/bargain/BargainButton";
 import {

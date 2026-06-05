@@ -14,7 +14,7 @@ import { Slider } from '@/components/ui/slider';
 // import { Checkbox } from '@/components/ui/checkbox';
 // import { Label } from '@/components/ui/label';
 import { Filter, X } from 'lucide-react';
-import { formatCurrency } from '@/lib/bargain-utils';
+import { formatCurrency } from '@/shared/format';
 
 interface MobileFiltersProps {
   categories: string[];

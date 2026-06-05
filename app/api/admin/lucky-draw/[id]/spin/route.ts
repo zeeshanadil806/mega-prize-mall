@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDrawEntriesForSpin, selectDrawWinner } from '@/lib/lucky-draw-utils';
+import { getDrawEntriesForSpin, selectDrawWinner } from '@/features/lucky-draw/service';
 import { auth } from '@/auth';
 import { log } from '@/lib/logger';
 // import { UserModel } from '@/models/User';

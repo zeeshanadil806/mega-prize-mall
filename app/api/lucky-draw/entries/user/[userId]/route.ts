@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserLuckyDrawEntries } from '@/lib/lucky-draw-utils';
+import { getUserLuckyDrawEntries } from '@/features/lucky-draw/service';
 import { auth } from '@/auth';
 import { log } from '@/lib/logger';
 

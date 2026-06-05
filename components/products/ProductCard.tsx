@@ -2,7 +2,7 @@
 import Link from "next/link";
 import Image from "next/image";
 // import { Product } from '@/models/Product';
-import { formatCurrency } from "@/lib/bargain-utils";
+import { formatCurrency } from "@/shared/format";
 import { Badge } from "@/components/ui/badge";
 import { Tag, Star, TrendingUp } from "lucide-react";
 import { ProductProps } from "@/types";

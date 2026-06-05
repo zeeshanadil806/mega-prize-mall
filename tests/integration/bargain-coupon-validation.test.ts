@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from "vitest";
-import { validateBargainCoupon } from "@/lib/coupon-utils";
+import { validateBargainCoupon } from "@/features/bargain/service";
 import { setupTestDb, teardownTestDb, clearCollections } from "../helpers/db";
 import { createBargainCoupon } from "../helpers/fixtures";
 

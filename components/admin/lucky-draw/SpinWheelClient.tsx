@@ -21,7 +21,7 @@ import {
   AlertCircle,
   PartyPopper,
 } from 'lucide-react';
-import { formatCurrency } from '@/lib/bargain-utils';
+import { formatCurrency } from '@/shared/format';
 import Link from 'next/link';
 
 interface DrawEntry {

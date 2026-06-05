@@ -124,7 +124,7 @@ export default async function AdminBargainPage({
   const totalCount = Object.values(statsMap).reduce((sum, stat) => sum + stat.count, 0);
 
   // Format response
-  const { formatCurrency } = await import("@/lib/bargain-utils");
+  const { formatCurrency } = await import("@/shared/format");
   const formattedRequests = bargainRequests.map((request) => ({
     id: request._id.toString(),
     product: request.productId ? {

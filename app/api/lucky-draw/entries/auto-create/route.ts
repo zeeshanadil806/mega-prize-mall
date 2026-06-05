@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createLuckyDrawEntry } from '@/lib/lucky-draw-utils';
+import { createLuckyDrawEntry } from '@/features/lucky-draw/service';
 import { OrderModel } from '@/models/Order';
 import { UserModel } from '@/models/User';
 import { connectToDatabase } from '@/lib/mongodb';

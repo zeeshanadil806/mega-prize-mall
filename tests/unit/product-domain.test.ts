@@ -168,7 +168,9 @@ describe("transformProductForCustomer", () => {
     const before = Date.now();
     const result = transformProductForCustomer(raw);
     const after = Date.now();
-    const ts = Date.parse(result.createdAt);
+    // CustomerProductProps.createdAt inherits optionality from ProductProps;
+    // the transform always emits a string, so the non-null assertion is safe.
+    const ts = Date.parse(result.createdAt!);
     expect(ts).toBeGreaterThanOrEqual(before);
     expect(ts).toBeLessThanOrEqual(after);
   });

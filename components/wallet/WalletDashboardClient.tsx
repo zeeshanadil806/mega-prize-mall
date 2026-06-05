@@ -29,7 +29,7 @@ import {
   // CheckCircle,
   // XCircle,
 } from 'lucide-react';
-import { formatCurrency } from '@/lib/bargain-utils';
+import { formatCurrency } from '@/shared/format';
 // import {
 //   Select,
 //   SelectContent,

@@ -24,7 +24,7 @@ import {
   Sparkles,
   Loader2
 } from 'lucide-react';
-import { formatCurrency } from '@/lib/bargain-utils';
+import { formatCurrency } from '@/shared/format';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 // import { Progress } from '@/components/ui/progress';

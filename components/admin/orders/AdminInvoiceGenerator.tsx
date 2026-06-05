@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Printer, Loader2, FileText } from 'lucide-react';
-import { formatCurrency } from '@/lib/bargain-utils';
+import { formatCurrency } from '@/shared/format';
 import jsPDF, { TextOptionsLight } from 'jspdf';
 import { UserOptions } from 'jspdf-autotable';
 

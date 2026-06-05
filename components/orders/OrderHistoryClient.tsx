@@ -24,7 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatCurrency } from "@/lib/bargain-utils";
+import { formatCurrency } from "@/shared/format";
 import { ClientOrder } from "@/types";
 
 interface OrderHistoryClientProps {

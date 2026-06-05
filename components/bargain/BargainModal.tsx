@@ -27,10 +27,8 @@ import {
   Sparkles,
   Timer,
 } from "lucide-react";
-import {
-  formatCurrency,
-  calculateDiscountPercentage,
-} from "@/lib/bargain-utils";
+import { formatCurrency } from "@/shared/format";
+import { calculateDiscountPercentage } from "@/features/bargain/domain";
 // import { useTikTokTracking } from "@/hooks/useTikTokTracking";
 import { useAllTracking } from '@/hooks/useAllTracking';
 

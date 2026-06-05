@@ -5,7 +5,7 @@ import { ProductModel } from "@/models/Product";
 import { UserModel } from "@/models/User";
 import { auth } from "@/auth";
 import { log } from "@/lib/logger";
-import { formatCurrency } from "@/lib/bargain-utils";
+import { formatCurrency } from "@/shared/format";
 import { sendBargainCouponEmail } from "@/lib/email-templates";
 import {
   submitBargainOffer,

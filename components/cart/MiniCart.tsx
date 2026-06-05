@@ -14,7 +14,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { ShoppingCart, Trash2, Plus, Minus, ArrowRight } from "lucide-react"
 import { useCartStore } from "@/stores/cart-store"
-import { formatCurrency } from "@/lib/bargain-utils"
+import { formatCurrency } from "@/shared/format"
 import { Separator } from "@/components/ui/separator"
 
 export function MiniCart() {

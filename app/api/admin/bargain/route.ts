@@ -8,7 +8,7 @@ import { UserModel } from "@/models/User";
 import { auth } from "@/auth";
 import { log } from "@/lib/logger";
 import { escapeRegex } from "@/lib/utils";
-import { formatCurrency } from "@/lib/bargain-utils";
+import { formatCurrency } from "@/shared/format";
 
 // GET: Fetch bargain requests with filters
 export async function GET(request: NextRequest) {
@@ -232,7 +232,9 @@ export async function PATCH(request: NextRequest) {
       // Check if coupon already exists
       if (!bargainRequest.couponCode) {
         // Generate coupon code
-        const { generateBargainCouponCode } = await import("@/lib/bargain-utils");
+        const { generateBargainCouponCode } = await import(
+          "@/features/bargain/domain"
+        );
         const couponCode = generateBargainCouponCode();
         const validUntil = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
         

@@ -4,7 +4,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { CheckCircle, Package, Truck, Home } from 'lucide-react';
-import { formatCurrency } from '@/lib/bargain-utils';
+import { formatCurrency } from '@/shared/format';
 import { useEffect } from 'react';
 import { ClientOrder } from '@/types';
 // import { useTikTokTracking } from '@/hooks/useTikTokTracking';

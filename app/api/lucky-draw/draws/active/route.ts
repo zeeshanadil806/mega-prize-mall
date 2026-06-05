@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getActiveDraws } from '@/lib/lucky-draw-utils';
+import { getActiveDraws } from '@/features/lucky-draw/service';
 import { log } from '@/lib/logger';
 
 export async function GET() {

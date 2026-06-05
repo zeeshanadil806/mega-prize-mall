@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { WalletTransactionModel } from '@/models/WalletTransaction';
 import { auth } from '@/auth';
-import { formatCurrency } from '@/lib/bargain-utils';
+import { formatCurrency } from '@/shared/format';
 import { log } from '@/lib/logger';
 
 interface WalletExportQuery {

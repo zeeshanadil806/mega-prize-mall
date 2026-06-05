@@ -34,7 +34,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 // import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 // import { Alert, AlertDescription } from '@/components/ui/alert';
-import { formatCurrency } from '@/lib/bargain-utils';
+import { formatCurrency } from '@/shared/format';
 import { ClientOrder } from '@/types';
 import { AdminInvoiceGenerator } from './AdminInvoiceGenerator';
 import Link from 'next/link';

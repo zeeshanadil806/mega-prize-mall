@@ -1,6 +1,7 @@
 // app/api/coupons/validate/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { validateGlobalCoupon, validateBargainCoupon } from '@/lib/coupon-utils';
+import { validateGlobalCoupon } from '@/features/coupon/service';
+import { validateBargainCoupon } from '@/features/bargain/service';
 import { log } from '@/lib/logger';
 import { rateLimit } from '@/lib/rate-limit';
 import { z } from 'zod';
