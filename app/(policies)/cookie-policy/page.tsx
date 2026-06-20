@@ -163,7 +163,7 @@ export const metadata: Metadata = {
   },
 
   // Manifest
-  manifest: "/site.webmanifest",
+  manifest: "/manifest.webmanifest",
 };
 
 // Generate comprehensive structured data

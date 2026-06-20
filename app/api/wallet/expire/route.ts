@@ -7,15 +7,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { log } from "@/lib/logger";
 import { expireDailyPoints } from "@/features/wallet/service";
+import { requireCronBearer } from "@/shared/http";
 
 export async function POST(request: NextRequest) {
   try {
-    const authHeader = request.headers.get("authorization");
-    const cronSecret = process.env.CRON_SECRET;
-
-    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const cron = requireCronBearer(request);
+    if (!cron.ok) return cron.response;
 
     const result = await expireDailyPoints();
 

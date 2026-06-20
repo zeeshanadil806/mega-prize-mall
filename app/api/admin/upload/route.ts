@@ -1,19 +1,14 @@
 import { NextRequest, NextResponse } from "next/server"
 import sharp from "sharp"
 import { uploadToCloudflareImages, generateImageId } from "@/lib/cloudflare"
-import { auth } from "@/auth"
+import { requireSessionRoles } from "@/shared/http"
 import { log } from "@/lib/logger"
 
 export async function POST(request: NextRequest) {
   try {
     // Check authentication
-    const session = await auth()
-    if (!session?.user || session.user.role !== "admin") {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      )
-    }
+    const session = await requireSessionRoles(["admin"]);
+    if (!session.ok) return session.response;
 
     const formData = await request.formData()
     const file = formData.get("file") as File

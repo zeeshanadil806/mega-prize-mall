@@ -33,12 +33,24 @@ interface ImageUploadProps {
   value: UploadedImage[]
   onChange: (images: UploadedImage[]) => void
   maxImages?: number
+  title?: string
+  description?: string
+  countLabel?: string
+  primaryBadgeLabel?: string
+  showPrimaryBadge?: boolean
+  guidelines?: string[]
 }
 
 export default function ImageUpload({ 
   value = [], 
   onChange, 
-  maxImages = 20 
+  maxImages = 20,
+  title = "Upload product images",
+  description = "Drag & drop or click to browse",
+  countLabel = "Uploaded Images",
+  primaryBadgeLabel = "Main",
+  showPrimaryBadge = true,
+  guidelines,
 }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState<number[]>([])
@@ -135,7 +147,7 @@ export default function ImageUpload({
 
       onChange([...value, ...newImages])
       toast.success(`Successfully uploaded ${newImages.length} image(s)`)
-    } catch (error) {
+    } catch {
       toast.error("Upload process failed")
     } finally {
       setUploading(false)
@@ -221,10 +233,10 @@ export default function ImageUpload({
             
             <div>
               <h3 className="text-lg font-semibold text-gray-900">
-                {isDragActive ? 'Drop images here' : 'Upload product images'}
+                {isDragActive ? 'Drop images here' : title}
               </h3>
               <p className="text-gray-600 mt-1">
-                Drag & drop or click to browse
+                {description}
               </p>
               <p className="text-sm text-gray-500 mt-2">
                 Supports JPG, PNG, WebP • Max 10MB per image • Max {maxImages} images
@@ -264,11 +276,13 @@ export default function ImageUpload({
         <div>
           <div className="flex items-center justify-between mb-4">
             <h4 className="font-semibold text-gray-900">
-              Uploaded Images ({value.length}/{maxImages})
+              {countLabel} ({value.length}/{maxImages})
             </h4>
-            <p className="text-sm text-gray-500">
-              First image will be the main thumbnail
-            </p>
+            {showPrimaryBadge && (
+              <p className="text-sm text-gray-500">
+                First image will be the main thumbnail
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -294,10 +308,10 @@ export default function ImageUpload({
                       />
                       
                       {/* Order Badge */}
-                      {index === 0 && (
+                      {showPrimaryBadge && index === 0 && (
                         <div className="absolute top-2 left-2">
                           <span className="px-2 py-1 text-xs font-bold bg-gradient-to-r from-[#7C2C78] to-[#A43875] text-white rounded-full">
-                            Main
+                            {primaryBadgeLabel}
                           </span>
                         </div>
                       )}
@@ -372,6 +386,13 @@ export default function ImageUpload({
           <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
           <div className="space-y-2">
             <h4 className="font-medium text-blue-900">Image Guidelines</h4>
+            {guidelines ? (
+              <ul className="text-sm text-blue-800 space-y-1">
+                {guidelines.map((item) => (
+                  <li key={item}>• {item}</li>
+                ))}
+              </ul>
+            ) : (
             <ul className="text-sm text-blue-800 space-y-1">
               <li>• First image will be used as the main product thumbnail</li>
               <li>• Use high-quality images with white or neutral background</li>
@@ -379,6 +400,7 @@ export default function ImageUpload({
               <li>• Add descriptive alt text for better accessibility and SEO</li>
               <li>• Images will be automatically optimized and converted to WebP</li>
             </ul>
+            )}
           </div>
         </div>
       </div>

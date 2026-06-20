@@ -14,15 +14,8 @@ export function generateSlug(text: string): string {
     .trim()
 }
 
-// Format currency
-export function formatCurrency(amount: number, currency: string = "PKR"): string {
-  return new Intl.NumberFormat("en-PK", {
-    style: "currency",
-    currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount)
-}
+import { formatCurrency } from "@/shared/format";
+export { formatCurrency };
 
 export function formatNumber(num: number): string {
   return new Intl.NumberFormat('en-PK').format(num);
@@ -34,6 +27,17 @@ export function formatDate(date: Date | string): string {
     year: "numeric",
     month: "short",
     day: "numeric",
+  }).format(new Date(date))
+}
+
+// Format date and time
+export function formatDateTime(date: Date | string): string {
+  return new Intl.DateTimeFormat("en-PK", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   }).format(new Date(date))
 }
 

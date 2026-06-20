@@ -1,8 +1,36 @@
 import Link from "next/link";
 import { Tag } from "lucide-react";
-import { headerCategories } from "./header-categories";
+import { headerCategories, getCategoryIcon } from "./header-categories";
+import type { CategoryStat } from "@/features/product/domain";
 
-export default function QuickCategoriesBar() {
+interface QuickCategoriesBarProps {
+  categoryStats?: CategoryStat[];
+}
+
+export default function QuickCategoriesBar({ categoryStats = [] }: QuickCategoriesBarProps) {
+  // If stats are empty, use fallback hardcoded categories
+  const displayCategories = categoryStats.length > 0
+    ? categoryStats
+        .slice(0, 5)
+        .map((c) => {
+          let displayName = c.category;
+          if (c.category === "PC and Laptop Accessories") {
+            displayName = "PC and Laptop";
+          } else if (c.category === "Power Charging") {
+            displayName = "Power and Charging";
+          }
+          return {
+            name: displayName,
+            href: `/products?category=${encodeURIComponent(c.category)}`,
+            icon: getCategoryIcon(c.category, "h-3.5 w-3.5"),
+          };
+        })
+    : headerCategories.map((c) => ({
+        name: c.name,
+        href: c.href,
+        icon: c.icon,
+      }));
+
   return (
     <div className="bg-linear-to-r from-gray-50 to-white border-b border-gray-200 py-2 overflow-x-auto scrollbar-hide">
       <div className="container mx-auto px-4">
@@ -11,7 +39,7 @@ export default function QuickCategoriesBar() {
             Shop by:
           </span>
           <div className="flex items-center gap-2">
-            {headerCategories.map((category, index) => (
+            {displayCategories.map((category, index) => (
               <Link
                 key={index}
                 href={category.href}

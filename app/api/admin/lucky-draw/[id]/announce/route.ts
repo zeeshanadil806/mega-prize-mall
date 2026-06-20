@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { LuckyDrawModel } from '@/models/LuckyDraw';
 import { connectToDatabase } from '@/lib/mongodb';
-import { auth } from '@/auth';
+import { requireAdmin } from '@/shared/http';
 import { log } from '@/lib/logger';
 
 export async function POST(
@@ -9,24 +9,8 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    // Check if user is admin
-    const UserModel = (await import('@/models/User')).UserModel;
-    const user = await UserModel.findById(session.user.id);
-    
-    if (!user || user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 }
-      );
-    }
+    const admin = await requireAdmin();
+    if (!admin.ok) return admin.response;
 
     const { id } = await params;
     await connectToDatabase();
@@ -49,7 +33,7 @@ export async function POST(
     // Announce the draw
     draw.status = 'announced';
     draw.announcementDate = new Date();
-    draw.updatedBy = session.user.id;
+    draw.updatedBy = admin.user.id;
     
     await draw.save();
 

@@ -41,6 +41,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { useEffect } from "react";
 import Link from "next/link";
+import { STORE_CONFIG } from "@/shared/config";
 
 interface WarrantyType {
   id: string;
@@ -1348,12 +1349,12 @@ export default function WarrantyPolicyPage() {
                     <div className="space-y-3">
                       <div>
                         <Link
-                          href="https://wa.me/923254007037"
+                          href={STORE_CONFIG.whatsappLink}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="font-medium text-green-700 hover:text-green-800 hover:underline inline-flex items-center gap-1"
                         >
-                          +92 325 4007037
+                          +{STORE_CONFIG.supportPhone}
                           <ExternalLink className="h-3 w-3" />
                         </Link>
                       </div>

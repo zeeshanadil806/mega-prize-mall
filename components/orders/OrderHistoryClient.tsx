@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { getWhatsAppSupportLink } from '@/shared/config';
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -432,7 +433,9 @@ export function OrderHistoryClient({
                         {order.status === "delivered" && (
                           <Button variant="default" size="sm" asChild>
                             <Link
-                              href={`/dashboard/orders/${order._id}/review`}
+                              href={getWhatsAppSupportLink(`Hi, I'd like to share feedback/review for order ID: ${order._id.slice(-8).toUpperCase()}`)}
+                              target="_blank"
+                              rel="noopener noreferrer"
                             >
                               Write Review
                             </Link>

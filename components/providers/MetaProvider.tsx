@@ -2,7 +2,6 @@
 
 import { useEffect, Suspense } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { isMetaTestMode } from '@/lib/meta/constants';
 import { useMetaPixel } from '@/lib/meta/client/meta-pixel';
 
 // Global flag to ensure single initialization
@@ -68,28 +67,5 @@ function MetaProviderContent({
     return () => clearTimeout(timer);
   }, [pathname, searchParams, enabled, isInitialized, trackPageView]);
 
-  // Debug overlay in test mode
-  if (isMetaTestMode && typeof window !== 'undefined') {
-    return (
-      <>
-        {children}
-        <div style={{
-          position: 'fixed',
-          bottom: '10px',
-          left: '10px',
-          background: isInitialized ? '#1877F2' : '#f44336', // Facebook blue
-          color: 'white',
-          padding: '5px 10px',
-          borderRadius: '4px',
-          fontSize: '12px',
-          zIndex: 9999,
-          opacity: 0.9,
-        }}>
-          Meta: {isInitialized ? 'ACTIVE' : 'INACTIVE'}
-        </div>
-      </>
-    );
-  }
-  
   return <>{children}</>;
 }

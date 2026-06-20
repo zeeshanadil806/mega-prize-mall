@@ -1,13 +1,18 @@
 import AnnouncementBar from "./AnnouncementBar";
 import HeaderInteractive from "./HeaderInteractive";
 import QuickCategoriesBar from "./QuickCategoriesBar";
+import type { CategoryStat } from "@/features/product/domain";
 
-export default function Header() {
+interface HeaderProps {
+  categoryStats?: CategoryStat[];
+}
+
+export default function Header({ categoryStats = [] }: HeaderProps) {
   return (
     <>
       <AnnouncementBar />
-      <HeaderInteractive />
-      <QuickCategoriesBar />
+      <HeaderInteractive categoryStats={categoryStats} />
+      <QuickCategoriesBar categoryStats={categoryStats} />
     </>
   );
 }

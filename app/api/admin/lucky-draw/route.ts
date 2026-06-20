@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { LuckyDrawModel } from '@/models/LuckyDraw';
 import { connectToDatabase } from '@/lib/mongodb';
-import { auth } from '@/auth';
+import { requireAdmin } from '@/shared/http';
 import { z } from 'zod';
 import { log } from '@/lib/logger';
 
@@ -28,24 +28,8 @@ const createDrawSchema = z.object({
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    // Check if user is admin
-    const UserModel = (await import('@/models/User')).UserModel;
-    const user = await UserModel.findById(session.user.id);
-    
-    if (!user || user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 }
-      );
-    }
+    const admin = await requireAdmin();
+    if (!admin.ok) return admin.response;
 
     await connectToDatabase();
     
@@ -99,24 +83,8 @@ interface LuckyDrawQuery {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    // Check if user is admin
-    const UserModel = (await import('@/models/User')).UserModel;
-    const user = await UserModel.findById(session.user.id);
-    
-    if (!user || user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 }
-      );
-    }
+    const admin = await requireAdmin();
+    if (!admin.ok) return admin.response;
 
     const body = await request.json();
     const validation = createDrawSchema.safeParse(body);
@@ -136,7 +104,7 @@ export async function POST(request: NextRequest) {
 
     const drawData = {
       ...validation.data,
-      createdBy: session.user.id,
+      createdBy: admin.user.id,
       status: 'draft', // Start as draft
       isActive: true,
       announcementDate: validation.data.announcementDate 

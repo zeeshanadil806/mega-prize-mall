@@ -83,24 +83,25 @@ export async function validateGlobalCoupon(
       };
     }
 
-    // User-restriction block. NOTE: this is gated on
-    // `if (user)` — when userId points to a missing/deleted user,
-    // firstOrderOnly + userEligibility + per-user cap are all
-    // silently bypassed. Documented bug; locked in by integration
-    // test "bypasses firstOrderOnly when userId references a
-    // non-existent user".
+    // User-restriction block. Ensure user exists when userId is supplied to prevent bypass.
     if (userId) {
       const user = await UserModel.findById(userId);
-      if (user) {
-        if (coupon.firstOrderOnly) {
-          const orderCount = await countOrdersForUser(userId);
-          if (orderCount > 0) {
-            return {
-              valid: false,
-              message: "This coupon is for first orders only",
-            };
-          }
+      if (!user) {
+        return {
+          valid: false,
+          message: "User not found or invalid account details",
+        };
+      }
+
+      if (coupon.firstOrderOnly) {
+        const orderCount = await countOrdersForUser(userId);
+        if (orderCount > 0) {
+          return {
+            valid: false,
+            message: "This coupon is for first orders only",
+          };
         }
+      }
 
         const userOrderCount = await countOrdersForUser(userId);
         if (!isUserEligible(coupon, userId, userOrderCount)) {
@@ -120,7 +121,6 @@ export async function validateGlobalCoupon(
             message: "You have already used this coupon",
           };
         }
-      }
     }
 
     if (coupon.maxUses && coupon.usedCount >= coupon.maxUses) {

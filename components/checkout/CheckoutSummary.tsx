@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { useCartStore } from "@/stores/cart-store";
 import { formatCurrency } from "@/shared/format";
 import { calculateMaxRedeemablePoints } from "@/features/wallet/domain";
+import { STORE_CONFIG } from "@/shared/config";
 import {
   Package,
   Shield,
@@ -35,15 +36,53 @@ export default function CheckoutSummary({
   const { data: session } = useSession(); // ADD THIS
   const { items, getSubtotal, getDiscountTotal, getGrandTotal } =
     useCartStore();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const [userPoints, setUserPoints] = useState(0);
   const [couponInput, setCouponInput] = useState("");
   const [applyingCoupon, setApplyingCoupon] = useState(false);
   const [showCouponInput, setShowCouponInput] = useState(false);
 
+  // Fetch user points (skip for guests)
+  useEffect(() => {
+    if (session?.user?.isGuest) {
+      setUserPoints(0);
+      return;
+    }
+
+    const fetchUserPoints = async () => {
+      try {
+        const response = await fetch("/api/user/points");
+        if (response.ok) {
+          const data = await response.json();
+          setUserPoints(data.points || 0);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user points:", error);
+      }
+    };
+
+    fetchUserPoints();
+  }, [session?.user?.isGuest]);
+
   const subtotal = getSubtotal();
   const discountTotal = getDiscountTotal();
   const grandTotal = getGrandTotal();
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+
+  if (!mounted) {
+    return (
+      <div className="sticky top-24">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden p-6 text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-[#7C2C78] mx-auto mb-4" />
+          <p className="text-gray-600 text-sm">Loading order summary...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Calculate shipping
   const freeDeliveryThreshold = 2000;
@@ -54,7 +93,7 @@ export default function CheckoutSummary({
     ? { maxPoints: 0, maxDiscount: 0 }
     : calculateMaxRedeemablePoints(grandTotal - shippingFee, userPoints);
 
-  const pointsDiscount = checkoutData.pointsToUse * 0.1; // 10 points = Rs 1
+  const pointsDiscount = checkoutData.pointsToUse * STORE_CONFIG.pointsToRupeeRate; // 10 points = Rs 1
 
   // Coupon discount
   const couponDiscount = checkoutData.appliedCoupons.reduce(
@@ -80,28 +119,6 @@ export default function CheckoutSummary({
     0,
     grandTotal + shippingFee - couponDiscount - pointsDiscount,
   );
-
-  // Fetch user points (skip for guests)
-  useEffect(() => {
-    if (session?.user?.isGuest) {
-      setUserPoints(0);
-      return;
-    }
-
-    const fetchUserPoints = async () => {
-      try {
-        const response = await fetch("/api/user/points");
-        if (response.ok) {
-          const data = await response.json();
-          setUserPoints(data.points || 0);
-        }
-      } catch (error) {
-        console.error("Failed to fetch user points:", error);
-      }
-    };
-
-    fetchUserPoints();
-  }, [session?.user?.isGuest]);
 
   // Handle coupon application
   const handleApplyCoupon = async () => {
@@ -305,7 +322,7 @@ export default function CheckoutSummary({
                 >
                   <div className="font-medium">{points}</div>
                   <div className="text-xs text-gray-600">
-                    {formatCurrency(points * 0.1)}
+                    {formatCurrency(points * STORE_CONFIG.pointsToRupeeRate)}
                   </div>
                 </button>
               ))}

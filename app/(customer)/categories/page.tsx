@@ -19,7 +19,16 @@ import {
   ShoppingBag,
   Star,
   TrendingUp,
+  Watch,
+  Camera,
+  Tv,
+  Wifi,
+  Shield,
+  Battery,
+  SmartphoneCharging,
+  Package,
 } from "lucide-react";
+import { getCategoryStats } from "@/features/product/service";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -71,69 +80,106 @@ export const metadata: Metadata = {
   },
 };
 
-// Your categories from Header
-const categoryData = [
-  {
-    id: "mobile-accessories",
-    name: "Mobile Accessories",
-    icon: Smartphone,
-    description: "Cases, screen protectors, chargers, stands for smartphones",
+// Helper mappings for category styling
+const STYLE_CONFIGS: Record<string, { color: string; bgColor: string; borderColor: string; description: string }> = {
+  "Mobile Accessories": {
     color: "from-blue-500 to-cyan-500",
     bgColor: "bg-blue-50",
     borderColor: "border-blue-200",
+    description: "Cases, screen protectors, chargers, stands for smartphones",
   },
-  {
-    id: "audio-and-multimedia",
-    name: "Audio and Multimedia",
-    icon: Headphones,
-    description: "Headphones, earphones, speakers, audio accessories",
+  "Audio and Multimedia": {
     color: "from-purple-500 to-pink-500",
     bgColor: "bg-purple-50",
     borderColor: "border-purple-200",
+    description: "Headphones, earphones, speakers, audio gear",
   },
-  {
-    id: "gaming-accessories",
-    name: "Gaming Accessories",
-    icon: Gamepad2,
-    description: "Gaming controllers, headsets, keyboards, mouse pads",
+  "Gaming Accessories": {
     color: "from-green-500 to-emerald-500",
     bgColor: "bg-green-50",
     borderColor: "border-green-200",
+    description: "Gaming controllers, headsets, keyboards, mouse pads",
   },
-  {
-    id: "pc-and-laptop-accessories",
-    name: "PC and Laptop Accessories",
-    icon: Laptop,
-    description: "Laptop stands, cooling pads, keyboards, mice, webcams",
+  "PC and Laptop Accessories": {
     color: "from-orange-500 to-red-500",
     bgColor: "bg-orange-50",
     borderColor: "border-orange-200",
+    description: "Laptop stands, cooling pads, keyboards, mice, webcams",
   },
-  // {
-  //   id: "power-and-charging",
-  //   name: "Charging & cables",
-  //   icon: Zap,
-  //   description: "Power banks, chargers, cables, adapters, wireless chargers",
-  //   color: "from-yellow-500 to-amber-500",
-  //   bgColor: "bg-yellow-50",
-  //   borderColor: "border-yellow-200",
-  // },
-];
+  "Power Charging": {
+    color: "from-yellow-500 to-amber-500",
+    bgColor: "bg-yellow-50",
+    borderColor: "border-yellow-200",
+    description: "Power banks, chargers, cables, adapters, wireless chargers",
+  },
+};
+
+function getCategoryStyles(categoryName: string) {
+  const matched = Object.entries(STYLE_CONFIGS).find(
+    ([key]) => key.toLowerCase() === categoryName.toLowerCase()
+  );
+  if (matched) return matched[1];
+
+  return {
+    color: "from-[#7C2C78] to-[#A43875]",
+    bgColor: "bg-[#7C2C78]/5",
+    borderColor: "border-[#7C2C78]/10",
+    description: `Shop the latest ${categoryName} at Mega Prize Mall.`,
+  };
+}
+
+function getCategoryIconComponent(name: string) {
+  const normalized = name.toLowerCase().trim();
+  if (normalized.includes("mobile acc") || normalized.includes("mobile accessories")) {
+    return Smartphone;
+  }
+  if (normalized.includes("gaming")) {
+    return Gamepad2;
+  }
+  if (normalized.includes("audio") || normalized.includes("multimedia") || normalized.includes("headphones")) {
+    return Headphones;
+  }
+  if (normalized.includes("pc") || normalized.includes("laptop")) {
+    return Laptop;
+  }
+  if (normalized.includes("power") || normalized.includes("charging") || normalized.includes("cable") || normalized.includes("battery")) {
+    return Zap;
+  }
+  if (normalized.includes("wearable") || normalized.includes("watch")) {
+    return Watch;
+  }
+  if (normalized.includes("camera") || normalized.includes("content") || normalized.includes("vlog")) {
+    return Camera;
+  }
+  if (normalized.includes("tv")) {
+    return Tv;
+  }
+  if (normalized.includes("wifi") || normalized.includes("connectivity") || normalized.includes("router")) {
+    return Wifi;
+  }
+  if (normalized.includes("case") || normalized.includes("protector") || normalized.includes("shield")) {
+    return Shield;
+  }
+  if (normalized.includes("holder") || normalized.includes("stand")) {
+    return SmartphoneCharging;
+  }
+  return Package;
+}
 
 export default async function CategoriesPage() {
   await connectToDatabase();
+  const categoryStats = await getCategoryStats();
 
-  // Get product counts for each category
+  // Get dynamic category details and counts
   const categoryCounts = await Promise.all(
-    categoryData.map(async (category) => {
-      const count = await ProductModel.countDocuments({
-        category: category.name,
-        isActive: true,
-      });
+    categoryStats.map(async (stat) => {
+      const catName = stat.category;
+      const styles = getCategoryStyles(catName);
+      const IconComp = getCategoryIconComponent(catName);
 
       // Get featured products for this category
       const featuredProducts = await ProductModel.find({
-        category: category.name,
+        category: catName,
         isActive: true,
         isFeatured: true,
       })
@@ -142,8 +188,14 @@ export default async function CategoriesPage() {
         .lean();
 
       return {
-        ...category,
-        productCount: count,
+        id: catName.toLowerCase().replace(/\s+/g, "-"),
+        name: catName,
+        icon: IconComp,
+        productCount: stat.count,
+        color: styles.color,
+        bgColor: styles.bgColor,
+        borderColor: styles.borderColor,
+        description: styles.description,
         featuredProducts: featuredProducts.map((p) => ({
           ...p,
           _id: p._id.toString(),
@@ -173,7 +225,7 @@ export default async function CategoriesPage() {
     url: "https://megaprizemall.com/categories",
     mainEntity: {
       "@type": "ItemList",
-      numberOfItems: categoryData.length,
+      numberOfItems: categoryCounts.length,
       itemListElement: categoryCounts.map((category, index) => ({
         "@type": "ListItem",
         position: index + 1,

@@ -1,4 +1,5 @@
 import { formatCurrency } from '@/lib/utils';
+import { STORE_CONFIG } from '@/shared/config';
 import { sendEmail, ADMIN_EMAIL } from '@/lib/email';
 import { ClientOrder, ClientOrderItem, OrderDetails } from '@/types';
 import { BRAND_COLORS, baseEmailTemplate, formatDate } from './_base';
@@ -55,7 +56,7 @@ export async function sendOrderConfirmationEmail(
           </span>
         </p>
         <p style="margin-top: 0.5rem; font-size: 0.875rem;">
-          Use points for discounts in future orders! (10 points = Rs 1)
+          Use points for discounts in future orders! (1 point = Rs ${STORE_CONFIG.pointsToRupeeRate})
         </p>
       </div>
     </div>
@@ -131,7 +132,7 @@ export async function sendAdminOrderNotification(order: ClientOrder): Promise<bo
       ${order.pointsRedeemed > 0 ? `
       <div style="background: rgba(234, 183, 95, 0.1); padding: 0.75rem; border-radius: 6px; margin-top: 1rem;">
         <p class="mb-1"><strong>🪙 Points Redeemed:</strong></p>
-        <p style="margin: 0;">${order.pointsRedeemed} points (Rs ${(order.pointsRedeemed * 0.1).toFixed(2)})</p>
+        <p style="margin: 0;">${order.pointsRedeemed} points (Rs ${(order.pointsRedeemed * STORE_CONFIG.pointsToRupeeRate).toFixed(2)})</p>
       </div>
       ` : ''}
 
@@ -296,15 +297,15 @@ export async function sendOrderDeliveredEmail(
       </div>
 
       <p style="text-align: center; margin-bottom: 0;">
-        <strong>💰 Value:</strong> ${formatCurrency(pointsEarned * 0.1)}
-        <span style="color: #6b7280; margin-left: 0.5rem;">(10 points = Rs 1)</span>
+        <strong>💰 Value:</strong> ${formatCurrency(pointsEarned * STORE_CONFIG.pointsToRupeeRate)}
+        <span style="color: #6b7280; margin-left: 0.5rem;">(1 point = Rs ${STORE_CONFIG.pointsToRupeeRate})</span>
       </p>
 
       <div style="background: ${BRAND_COLORS.white}; border-radius: 8px; padding: 1rem; margin-top: 1rem;">
         <p class="mb-2"><strong>🎯 How to Use Points:</strong></p>
         <ul style="padding-left: 1.5rem; margin: 0;">
           <li>Redeem in checkout (max 10% of order value)</li>
-          <li>1 point = Rs 0.10 discount</li>
+          <li>1 point = Rs ${STORE_CONFIG.pointsToRupeeRate.toFixed(2)} discount</li>
           <li>No minimum redemption</li>
           <li>Points never expire</li>
         </ul>

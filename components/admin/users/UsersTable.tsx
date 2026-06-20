@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { getPointsValue } from '@/shared/config';
 import {
   Table,
   TableBody,
@@ -241,7 +242,7 @@ export default function UsersTable({
                       <Gift className="h-4 w-4 mr-2 text-[#EAB75F]" />
                       <span className="font-bold text-gray-900">{user.points}</span>
                       <span className="text-sm text-gray-500 ml-1">
-                        (Rs {(user.points * 0.1).toFixed(2)})
+                        (Rs {getPointsValue(user.points).toFixed(2)})
                       </span>
                     </div>
                   </TableCell>

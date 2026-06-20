@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { UserModel } from '@/models/User';
-import { auth } from '@/auth';
+import { requireAdmin } from '@/shared/http';
 import { z } from 'zod';
 import { log } from '@/lib/logger';
 import { escapeRegex } from '@/lib/utils';
@@ -26,24 +26,8 @@ const updatePointsSchema = z.object({
 // GET all users with pagination and filtering
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
-    
-    // Check admin authentication
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-    
-    const adminUser = await UserModel.findById(session.user.id);
-    if (!adminUser || adminUser.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 }
-      );
-    }
-    
+    const admin = await requireAdmin();
+    if (!admin.ok) return admin.response;
     await connectToDatabase();
     
     // Get query parameters
@@ -146,24 +130,8 @@ interface UserQuery {
 // POST - Create new user (admin only)
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    
-    // Check admin authentication
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-    
-    const adminUser = await UserModel.findById(session.user.id);
-    if (!adminUser || adminUser.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 }
-      );
-    }
-    
+    const admin = await requireAdmin();
+    if (!admin.ok) return admin.response;
     await connectToDatabase();
     
     const body = await request.json();
@@ -205,7 +173,7 @@ export async function POST(request: NextRequest) {
     };
     
     log.info('Admin created user', {
-      adminId: session.user.id,
+      adminId: admin.user.id,
       userId: user._id.toString(),
       role: validatedData.role,
     });
@@ -246,24 +214,8 @@ export async function POST(request: NextRequest) {
 // PATCH - Update user points (admin only)
 export async function PATCH(request: NextRequest) {
   try {
-    const session = await auth();
-    
-    // Check admin authentication
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-    
-    const adminUser = await UserModel.findById(session.user.id);
-    if (!adminUser || adminUser.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 }
-      );
-    }
-    
+    const admin = await requireAdmin();
+    if (!admin.ok) return admin.response;
     await connectToDatabase();
     
     const body = await request.json();
@@ -301,7 +253,7 @@ export async function PATCH(request: NextRequest) {
     // await WalletTransactionModel.create({ ... })
     
     log.info('Admin updated user points', {
-      adminId: session.user.id,
+      adminId: admin.user.id,
       userId: user._id.toString(),
       action: validatedData.action,
       points: validatedData.points,

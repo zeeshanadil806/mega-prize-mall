@@ -3,20 +3,14 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { UserModel } from '@/models/User';
 import { OrderModel } from '@/models/Order';
 import { BargainRequestModel } from '@/models/BargainRequest';
-import { auth } from '@/auth';
+import { requireSession } from '@/shared/http';
 import { ProductProps } from '@/types';
 import { log } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
-    
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const session = await requireSession();
+    if (!session.ok) return session.response;
 
     await connectToDatabase();
     const userId = session.user.id;

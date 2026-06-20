@@ -44,6 +44,11 @@ export default function CartPage() {
     discount: number;
   } | null>(null);
 
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Fetch product details for all items in cart
   const fetchProductDetails = useCallback(async () => {
     if (items.length === 0) return;
@@ -71,8 +76,10 @@ export default function CartPage() {
 
   // Fetch on mount and when items change
   useEffect(() => {
-    fetchProductDetails();
-  }, [fetchProductDetails]);
+    if (mounted) {
+      fetchProductDetails();
+    }
+  }, [fetchProductDetails, mounted]);
 
   // Handle bargain removal
   const handleRemoveBargain = useCallback(
@@ -83,7 +90,13 @@ export default function CartPage() {
     [removeBargainFromItem],
   );
 
-  const handleGuestCheckout = async () => {
+  const handleCheckout = async () => {
+    // Logged-in users go straight to checkout
+    if (session?.user) {
+      window.location.href = "/checkout";
+      return;
+    }
+    // Non-logged-in users: silently sign in as guest then redirect
     try {
       await signIn("guest", {
         callbackUrl: "/checkout",
@@ -91,7 +104,7 @@ export default function CartPage() {
       });
     } catch (error) {
       console.error("Guest checkout failed:", error);
-      toast.error("Failed to proceed as guest. Please try again.");
+      toast.error("Failed to proceed. Please try again.");
     }
   };
 
@@ -103,6 +116,15 @@ export default function CartPage() {
     }
     return grandTotal;
   };
+
+  if (!mounted) {
+    return (
+      <div className="container mx-auto px-3 sm:px-4 lg:px-8 py-16 flex flex-col items-center justify-center min-h-[300px]">
+        <Loader2 className="h-8 w-8 animate-spin text-[#7C2C78] mb-4" />
+        <p className="text-gray-600 text-sm">Loading your cart...</p>
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (
@@ -164,14 +186,15 @@ export default function CartPage() {
               return (
                 <div
                   key={item.productId}
-                  className="bg-white rounded-xl sm:rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden"
+                  className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
                 >
-                  <div className="p-3 sm:p-4 lg:p-6">
-                    <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-                      {/* Product Image */}
+                  {/* ── Mobile Layout: tight horizontal row ── */}
+                  <div className="sm:hidden p-3">
+                    <div className="flex gap-3">
+                      {/* Image — fixed square */}
                       <Link
                         href={`/products/${item.slug}`}
-                        className="relative h-24 w-24 sm:h-28 sm:w-28 lg:h-32 lg:w-32 shrink-0 bg-gray-100 rounded-lg sm:rounded-xl overflow-hidden self-center sm:self-start"
+                        className="relative h-20 w-20 shrink-0 rounded-xl overflow-hidden bg-gray-100 border border-gray-100"
                       >
                         {imageUrl ? (
                           <Image
@@ -179,148 +202,245 @@ export default function CartPage() {
                             alt={item.name}
                             fill
                             className="object-cover"
-                            sizes="(max-width: 640px) 96px, (max-width: 768px) 112px, 128px"
+                            sizes="80px"
                           />
                         ) : (
-                          <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-gray-100 to-gray-200">
-                            <ShoppingBag className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400" />
+                          <div className="flex h-full w-full items-center justify-center bg-gray-100">
+                            <ShoppingBag className="h-6 w-6 text-gray-400" />
                           </div>
                         )}
                       </Link>
 
-                      {/* Product Details */}
+                      {/* Right side content */}
+                      <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+                        {/* Name + Remove */}
+                        <div className="flex items-start justify-between gap-2">
+                          <Link
+                            href={`/products/${item.slug}`}
+                            className="text-sm font-semibold text-gray-900 hover:text-[#7C2C78] line-clamp-2 leading-tight"
+                          >
+                            {item.name}
+                          </Link>
+                          <button
+                            onClick={() => removeItem(item.productId)}
+                            className="shrink-0 p-1 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                            aria-label="Remove item"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+
+                        {/* Price row */}
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-base font-bold text-gray-900">
+                            {formatCurrency(itemPrice * item.quantity)}
+                          </span>
+                          {item.discountedPrice && (
+                            <span className="text-xs text-gray-400 line-through">
+                              {formatCurrency(item.price * item.quantity)}
+                            </span>
+                          )}
+                          {item.discountedPrice && (
+                            <span className="text-[10px] font-bold bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full">
+                              -{Math.round(((item.price - itemPrice) / item.price) * 100)}%
+                            </span>
+                          )}
+                        </div>
+
+                        <span className="text-[11px] text-gray-400">
+                          {formatCurrency(itemPrice)} each
+                        </span>
+
+                        {/* Qty stepper + bargain badge */}
+                        <div className="flex items-center justify-between mt-1">
+                          {/* Stepper */}
+                          <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden bg-gray-50">
+                            <button
+                              onClick={() => updateQuantity(item.productId, item.quantity - 1)}
+                              className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors"
+                              aria-label="Decrease quantity"
+                            >
+                              <Minus className="h-3 w-3" />
+                            </button>
+                            <span className="w-8 text-center text-sm font-bold text-gray-900">
+                              {item.quantity}
+                            </span>
+                            <button
+                              onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                              className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors"
+                              aria-label="Increase quantity"
+                            >
+                              <Plus className="h-3 w-3" />
+                            </button>
+                          </div>
+
+                          {/* Bargain badge if applied */}
+                          {item.bargainCouponId && (
+                            <div className="flex items-center gap-1 bg-green-50 border border-green-200 rounded-lg px-2 py-1">
+                              <Tag className="h-3 w-3 text-green-600" />
+                              <span className="text-[10px] font-semibold text-green-700">
+                                -{formatCurrency(item.bargainDiscount || 0)}
+                              </span>
+                              <button
+                                onClick={() => handleRemoveBargain(item.productId)}
+                                className="text-green-500 hover:text-red-500 ml-0.5"
+                                aria-label="Remove bargain"
+                              >
+                                <Trash2 className="h-2.5 w-2.5" />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Bargain button for eligible — full width below */}
+                    {isBargainEligible && product && (
+                      <div className="mt-3">
+                        <BargainButton
+                          product={{
+                            id: item.productId,
+                            name: item.name,
+                            price: item.price,
+                            discountedPrice: item.discountedPrice,
+                            bargainEnabled: product?.bargainEnabled || false,
+                            minBargainPrice: product?.minBargainPrice || 0,
+                            maxBargainRounds: product?.maxBargainRounds || 3,
+                            bargainValidityHours: product?.bargainValidityHours || 24,
+                            images: item.images,
+                          }}
+                          className="text-xs py-2 h-auto w-full"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* ── Desktop Layout (sm+): original wider style, cleaned up ── */}
+                  <div className="hidden sm:block p-4 lg:p-6">
+                    <div className="flex gap-5 lg:gap-6">
+                      {/* Image */}
+                      <Link
+                        href={`/products/${item.slug}`}
+                        className="relative h-28 w-28 lg:h-32 lg:w-32 shrink-0 bg-gray-100 rounded-xl overflow-hidden"
+                      >
+                        {imageUrl ? (
+                          <Image
+                            src={imageUrl}
+                            alt={item.name}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 1024px) 112px, 128px"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center bg-gray-100">
+                            <ShoppingBag className="h-8 w-8 text-gray-400" />
+                          </div>
+                        )}
+                      </Link>
+
+                      {/* Details */}
                       <div className="flex-1 min-w-0">
-                        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 sm:gap-4">
+                        <div className="flex items-start justify-between gap-4">
                           <div className="flex-1 min-w-0">
                             <Link
                               href={`/products/${item.slug}`}
-                              className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 hover:text-[#7C2C78] transition-colors line-clamp-2"
+                              className="text-xl lg:text-2xl font-semibold text-gray-900 hover:text-[#7C2C78] transition-colors line-clamp-2"
                             >
                               {item.name}
                             </Link>
 
-                            {/* Quantity Controls */}
-                            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mt-3 sm:mt-4">
-                              <div className="flex items-center gap-1.5 sm:gap-2">
+                            <div className="flex items-center gap-2 mt-3">
+                              <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden bg-gray-50">
                                 <Button
-                                  variant="outline"
+                                  variant="ghost"
                                   size="sm"
-                                  className="h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-lg border-gray-300 hover:border-gray-400"
-                                  onClick={() =>
-                                    updateQuantity(
-                                      item.productId,
-                                      item.quantity - 1,
-                                    )
-                                  }
+                                  className="h-9 w-9 rounded-none hover:bg-gray-100"
+                                  onClick={() => updateQuantity(item.productId, item.quantity - 1)}
                                   aria-label="Decrease quantity"
                                 >
-                                  <Minus className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                                  <Minus className="h-3.5 w-3.5" />
                                 </Button>
-
-                                <span className="w-8 sm:w-10 text-center font-medium text-sm sm:text-base lg:text-lg">
-                                  {item.quantity}
-                                </span>
-
+                                <span className="w-10 text-center font-semibold text-base">{item.quantity}</span>
                                 <Button
-                                  variant="outline"
+                                  variant="ghost"
                                   size="sm"
-                                  className="h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-lg border-gray-300 hover:border-gray-400"
-                                  onClick={() =>
-                                    updateQuantity(
-                                      item.productId,
-                                      item.quantity + 1,
-                                    )
-                                  }
+                                  className="h-9 w-9 rounded-none hover:bg-gray-100"
+                                  onClick={() => updateQuantity(item.productId, item.quantity + 1)}
                                   aria-label="Increase quantity"
                                 >
-                                  <Plus className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                                  <Plus className="h-3.5 w-3.5" />
                                 </Button>
                               </div>
 
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="gap-1.5 sm:gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 w-fit h-8 sm:h-9 px-2 sm:px-3"
+                                className="gap-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 h-9 px-3"
                                 onClick={() => removeItem(item.productId)}
                               >
-                                <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                                <span className="text-xs sm:text-sm">
-                                  Remove
-                                </span>
+                                <Trash2 className="h-3.5 w-3.5" />
+                                Remove
                               </Button>
                             </div>
                           </div>
 
-                          {/* Pricing */}
-                          <div className="text-right min-w-[120px]">
-                            <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
+                          {/* Price block */}
+                          <div className="text-right shrink-0">
+                            <p className="text-2xl lg:text-3xl font-bold text-gray-900">
                               {formatCurrency(itemPrice * item.quantity)}
                             </p>
                             {item.discountedPrice && (
-                              <p className="text-sm sm:text-base text-gray-500 line-through mt-0.5">
+                              <p className="text-base text-gray-400 line-through mt-0.5">
                                 {formatCurrency(item.price * item.quantity)}
                               </p>
                             )}
                             {item.bargainDiscount && (
-                              <p className="text-xs sm:text-sm text-green-600 font-medium mt-1">
+                              <p className="text-sm text-green-600 font-medium mt-1">
                                 Bargain: -{formatCurrency(item.bargainDiscount)}
                               </p>
                             )}
-                            <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                            <p className="text-sm text-gray-400 mt-1">
                               {formatCurrency(itemPrice)} each
                             </p>
                           </div>
                         </div>
 
-                        {/* Bargain Button for eligible products */}
+                        {/* Bargain button */}
                         {isBargainEligible && product && (
-                          <div className="mt-4 sm:mt-5">
+                          <div className="mt-4">
                             <BargainButton
                               product={{
                                 id: item.productId,
                                 name: item.name,
                                 price: item.price,
                                 discountedPrice: item.discountedPrice,
-                                bargainEnabled:
-                                  product?.bargainEnabled || false,
+                                bargainEnabled: product?.bargainEnabled || false,
                                 minBargainPrice: product?.minBargainPrice || 0,
-                                maxBargainRounds:
-                                  product?.maxBargainRounds || 3,
-                                bargainValidityHours:
-                                  product?.bargainValidityHours || 24,
+                                maxBargainRounds: product?.maxBargainRounds || 3,
+                                bargainValidityHours: product?.bargainValidityHours || 24,
                                 images: item.images,
                               }}
-                              // size="sm"
-                              className="text-xs sm:text-sm py-1.5 sm:py-2 h-auto"
+                              className="text-sm py-2 h-auto"
                             />
                           </div>
                         )}
 
-                        {/* Applied Bargain */}
+                        {/* Applied bargain */}
                         {item.bargainCouponId && (
-                          <div className="mt-3 sm:mt-4 p-2.5 sm:p-3 bg-green-50 border border-green-200 rounded-lg sm:rounded-xl">
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
-                              <div className="flex items-center gap-1.5 sm:gap-2 text-green-700">
-                                <Tag className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                                <span className="font-medium text-sm sm:text-base">
-                                  Bargain Applied!
-                                </span>
-                                <span className="text-xs sm:text-sm">
-                                  Save{" "}
-                                  {formatCurrency(item.bargainDiscount || 0)}
-                                </span>
-                              </div>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-7 sm:h-8 text-green-700 hover:text-green-800 hover:bg-green-100 text-xs sm:text-sm"
-                                onClick={() =>
-                                  handleRemoveBargain(item.productId)
-                                }
-                              >
-                                Remove
-                              </Button>
+                          <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-xl flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-2 text-green-700">
+                              <Tag className="h-4 w-4" />
+                              <span className="font-medium text-sm">Bargain Applied!</span>
+                              <span className="text-sm">Save {formatCurrency(item.bargainDiscount || 0)}</span>
                             </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 text-green-700 hover:text-green-800 hover:bg-green-100 text-sm"
+                              onClick={() => handleRemoveBargain(item.productId)}
+                            >
+                              Remove
+                            </Button>
                           </div>
                         )}
                       </div>
@@ -407,25 +527,14 @@ export default function CartPage() {
                     </div>
 
                     <div className="space-y-3 sm:space-y-4">
-                      <Link href="/checkout" className="block">
-                        <Button
-                          size="lg"
-                          className="w-full h-11 sm:h-12 lg:h-14 text-sm sm:text-base lg:text-lg bg-linear-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] text-white gap-2"
-                        >
-                          Proceed to Checkout
-                          <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 rotate-180" />
-                        </Button>
-                      </Link>
-                      {!session?.user && (
-                        <Button
-                          onClick={handleGuestCheckout}
-                          variant="outline"
-                          className="w-full h-11 sm:h-12 lg:h-14 text-sm sm:text-base lg:text-lg border-gray-300 hover:border-gray-400 hover:bg-gray-50 gap-2"
-                        >
-                          Continue as Guest
-                          <ShoppingBag className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
-                        </Button>
-                      )}
+                      <Button
+                        size="lg"
+                        onClick={handleCheckout}
+                        className="w-full h-11 sm:h-12 lg:h-14 text-sm sm:text-base lg:text-lg bg-linear-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] text-white gap-2"
+                      >
+                        Proceed to Checkout
+                        <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 rotate-180" />
+                      </Button>
 
                       <div className="text-xs text-gray-500 text-center mt-3 sm:mt-4">
                         By completing your purchase, you agree to our Terms of

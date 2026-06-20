@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { UserModel } from "@/models/User";
-import { auth } from "@/auth";
+import { requireAdmin } from '@/shared/http';
 import { z } from "zod";
 import { log } from "@/lib/logger";
 import bcrypt from "bcryptjs";
@@ -15,20 +15,10 @@ export async function POST(
   request: NextRequest,
 props: { params: Promise<{ id: string }> }) {
   try {
-    const session = await auth();
-    const params = await props.params;
+        const params = await props.params;
   const id = params.id;
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    
-    const adminUser = await UserModel.findById(session.user.id);
-    if (!adminUser || adminUser.role !== "admin") {
-      return NextResponse.json(
-        { error: "Forbidden: Admin access required" },
-        { status: 403 }
-      );
-    }
+    const admin = await requireAdmin();
+    if (!admin.ok) return admin.response;
     
     await connectToDatabase();
     
@@ -57,7 +47,7 @@ props: { params: Promise<{ id: string }> }) {
     await supportAccount.save();
     
     log.info("Admin reset support account password", {
-      adminId: session.user.id,
+      adminId: admin.user.id,
       supportId: id,
       email: supportAccount.email,
     });

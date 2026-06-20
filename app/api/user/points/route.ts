@@ -1,20 +1,14 @@
 // app/api/user/points/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { requireSession } from '@/shared/http';
 import { connectToDatabase } from '@/lib/mongodb';
 import { UserModel } from '@/models/User';
 import { log } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
-  const session = await auth()
-    
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const session = await requireSession();
+    if (!session.ok) return session.response;
     
     await connectToDatabase();
     const user = await UserModel.findById(session.user.id).select('points').lean();

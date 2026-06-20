@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { UserModel } from '@/models/User';
 import { WalletTransactionModel } from '@/models/WalletTransaction';
-import { auth } from '@/auth';
+import { requireAdmin } from '@/shared/http';
 import { z } from 'zod';
 import { log } from '@/lib/logger';
 
@@ -19,23 +19,8 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    
-    // Check admin authentication
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-    
-    const adminUser = await UserModel.findById(session.user.id);
-    if (!adminUser || adminUser.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 }
-      );
-    }
+    const admin = await requireAdmin();
+    if (!admin.ok) return admin.response;
     
     await connectToDatabase();
     
@@ -123,23 +108,8 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    
-    // Check admin authentication
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-    
-    const adminUser = await UserModel.findById(session.user.id);
-    if (!adminUser || adminUser.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 }
-      );
-    }
+    const admin = await requireAdmin();
+    if (!admin.ok) return admin.response;
     
     await connectToDatabase();
     
@@ -157,7 +127,7 @@ export async function PATCH(
     }
     
     // Prevent admin from removing their own admin role
-    if (validatedData.role && id === session.user.id && validatedData.role !== 'admin') {
+    if (validatedData.role && id === admin.user.id && validatedData.role !== 'admin') {
       return NextResponse.json(
         { error: 'Cannot remove your own admin role' },
         { status: 400 }
@@ -171,7 +141,7 @@ export async function PATCH(
     await user.save();
     
     log.info('Admin updated user', {
-      adminId: session.user.id,
+      adminId: admin.user.id,
       userId: id,
       updates: validatedData,
       previousRole,
@@ -226,30 +196,15 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    
-    // Check admin authentication
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-    
-    const adminUser = await UserModel.findById(session.user.id);
-    if (!adminUser || adminUser.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 }
-      );
-    }
+    const admin = await requireAdmin();
+    if (!admin.ok) return admin.response;
     
     await connectToDatabase();
     
     const { id } = await params;
     
     // Prevent admin from deleting themselves
-    if (id === session.user.id) {
+    if (id === admin.user.id) {
       return NextResponse.json(
         { error: 'Cannot delete your own account' },
         { status: 400 }
@@ -268,7 +223,7 @@ export async function DELETE(
     // Soft delete - add isActive field to schema if not exists
     // For now, we'll just log the deletion intent
     log.info('Admin requested user deletion', {
-      adminId: session.user.id,
+      adminId: admin.user.id,
       userId: id,
       userName: user.name,
       userEmail: user.email,

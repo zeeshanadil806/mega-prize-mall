@@ -4,7 +4,7 @@ import { OrderModel } from '@/models/Order';
 import { UserModel } from '@/models/User';
 import { ProductModel } from '@/models/Product';
 import { WalletTransactionModel } from '@/models/WalletTransaction';
-import { auth } from '@/auth';
+import { requireAdmin } from '@/shared/http';
 import { log } from '@/lib/logger';
 
 // Helper to get date ranges
@@ -26,7 +26,7 @@ function getDateRange(period: string) {
       start.setFullYear(now.getFullYear() - 1);
       break;
     case 'all':
-      start.setFullYear(2020); // Far back date
+      start.setFullYear(2020);
       break;
   }
   
@@ -35,23 +35,8 @@ function getDateRange(period: string) {
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
-
-    // Check admin authentication
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    const adminUser = await UserModel.findById(session.user.id);
-    if (!adminUser || adminUser.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 }
-      );
-    }
+    const admin = await requireAdmin();
+    if (!admin.ok) return admin.response;
 
     await connectToDatabase();
     
@@ -298,7 +283,7 @@ export async function GET(request: NextRequest) {
           revenue: product.totalRevenue
         })),
         recentOrders: formattedRecentOrders,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString() 
       }
     };
     

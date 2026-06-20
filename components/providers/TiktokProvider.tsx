@@ -2,7 +2,6 @@
 
 import { useEffect, Suspense } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { isTestMode } from '@/lib/tiktok/constants';
 import { useTikTokPixel } from '@/lib/tiktok/client/tiktok-pixel';
 
 // Global flag to ensure single initialization
@@ -68,28 +67,5 @@ function TiktokProviderContent({
     return () => clearTimeout(timer);
   }, [pathname, searchParams, enabled, isInitialized, trackPageView]);
 
-  // Debug overlay in test mode
-  if (isTestMode && typeof window !== 'undefined') {
-    return (
-      <>
-        {children}
-        <div style={{
-          position: 'fixed',
-          bottom: '10px',
-          right: '10px',
-          background: isInitialized() ? '#4CAF50' : '#f44336',
-          color: 'white',
-          padding: '5px 10px',
-          borderRadius: '4px',
-          fontSize: '12px',
-          zIndex: 9999,
-          opacity: 0.9,
-        }}>
-          TikTok: {isInitialized() ? 'ACTIVE' : 'INACTIVE'}
-        </div>
-      </>
-    );
-  }
-  
   return <>{children}</>;
 }

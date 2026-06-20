@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { WalletTransactionModel } from '@/models/WalletTransaction';
-import { auth } from '@/auth';
+import { requireSession } from '@/shared/http';
 import { formatCurrency } from '@/shared/format';
 import { log } from '@/lib/logger';
 
@@ -16,13 +16,8 @@ interface WalletExportQuery {
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const session = await requireSession();
+    if (!session.ok) return session.response;
 
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type');

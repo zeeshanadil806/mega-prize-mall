@@ -3,7 +3,7 @@ import { z } from "zod";
 import { connectToDatabase } from "@/lib/mongodb";
 import { ProductModel } from "@/models/Product";
 import { UserModel } from "@/models/User";
-import { auth } from "@/auth";
+import { requireSession } from "@/shared/http";
 import { log } from "@/lib/logger";
 import { formatCurrency } from "@/shared/format";
 import { sendBargainCouponEmail } from "@/lib/email-templates";
@@ -27,10 +27,8 @@ const bargainSchema = z.object({
 // returns an accepted outcome.
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const session = await requireSession();
+    if (!session.ok) return session.response;
     const userId = session.user.id;
 
     await connectToDatabase();
@@ -166,10 +164,8 @@ export async function POST(request: NextRequest) {
 // GET /api/bargain — list the user's recent bargain history.
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const session = await requireSession();
+    if (!session.ok) return session.response;
     const userId = session.user.id;
 
     await connectToDatabase();

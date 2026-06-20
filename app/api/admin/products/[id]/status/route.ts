@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { connectToDatabase } from "@/lib/mongodb"
 import { ProductModel } from "@/models/Product"
-import { auth } from "@/auth"
+import { requireSessionRoles } from "@/shared/http"
 import { log } from "@/lib/logger"
 import { z } from "zod"
 
@@ -18,13 +18,8 @@ export async function PATCH(
 ) {
   try {
     // Check authentication
-    const session = await auth()
-    if (!session?.user || session.user.role !== "admin") {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      )
-    }
+    const session = await requireSessionRoles(["admin"]);
+    if (!session.ok) return session.response;
 
     const { id } = await params
     await connectToDatabase()

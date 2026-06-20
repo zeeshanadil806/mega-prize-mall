@@ -5,7 +5,7 @@ import { BargainRequestModel } from "@/models/BargainRequest";
 import { BargainCouponModel } from "@/models/BargainCoupon";
 import { ProductModel } from "@/models/Product";
 import { UserModel } from "@/models/User";
-import { auth } from "@/auth";
+import { requireSessionRoles } from '@/shared/http';
 import { log } from "@/lib/logger";
 import { escapeRegex } from "@/lib/utils";
 import { formatCurrency } from "@/shared/format";
@@ -14,10 +14,8 @@ import { formatCurrency } from "@/shared/format";
 export async function GET(request: NextRequest) {
   try {
     // Check admin authentication
-    const session = await auth();
-    if (!session?.user || session.user.role !== 'admin') {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const session = await requireSessionRoles(["admin"]);
+    if (!session.ok) return session.response;
 
     await connectToDatabase();
 
@@ -193,10 +191,8 @@ interface BargainRequestQuery {
 // PATCH: Update bargain status
 export async function PATCH(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user || session.user.role !== 'admin') {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const session = await requireSessionRoles(["admin"]);
+    if (!session.ok) return session.response;
 
     await connectToDatabase();
 
@@ -313,10 +309,8 @@ export async function PATCH(request: NextRequest) {
 // DELETE: Delete bargain request (soft delete)
 export async function DELETE(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user || session.user.role !== 'admin') {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const session = await requireSessionRoles(["admin"]);
+    if (!session.ok) return session.response;
 
     await connectToDatabase();
 

@@ -43,6 +43,7 @@ export interface ProductProps {
   bargainValidityHours: number;
 
   images?: ImageProps[];
+  featureImages?: ImageProps[];
   // SEO
   metaTitle: string;
   metaDescription: string;

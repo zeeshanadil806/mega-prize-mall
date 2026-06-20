@@ -209,22 +209,16 @@ describe("validateGlobalCoupon — per-user usage limit", () => {
   });
 });
 
-describe("validateGlobalCoupon — silent-bypass quirk (documents current behavior)", () => {
-  // BUG, intentionally locked in: when userId is provided but doesn't
-  // resolve to a real User (random string, deleted account, valid
-  // ObjectId with no doc), the entire user-restriction block is
-  // silently skipped: firstOrderOnly, userEligibility, per-user usage
-  // limits — all bypassed. The test documents this so that during the
-  // Phase 2 refactor we notice it and decide whether to fix.
-  it("bypasses firstOrderOnly when userId references a non-existent user", async () => {
+describe("validateGlobalCoupon — reject non-existent user", () => {
+  it("rejects when userId references a non-existent user", async () => {
     await createGlobalCoupon({ code: "GHOST", firstOrderOnly: true });
     const result = await validateGlobalCoupon(
       "GHOST",
       1000,
       "507f1f77bcf86cd799439011", // valid ObjectId format but no User exists
     );
-    // Bug: should reject for unknown user; current code accepts.
-    expect(result.valid).toBe(true);
+    expect(result.valid).toBe(false);
+    expect(result.message).toMatch(/user not found/i);
   });
 });
 

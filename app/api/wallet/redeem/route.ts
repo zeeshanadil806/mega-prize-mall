@@ -5,10 +5,10 @@
 // Orchestration in features/wallet/service.ts.
 
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
 import { z } from "zod";
 import { log } from "@/lib/logger";
 import { redeemPointsManually } from "@/features/wallet/service";
+import { badRequest, forbidden, requireSession } from "@/shared/http";
 
 const redeemSchema = z.object({
   points: z.number().int().min(100).max(100000),
@@ -17,32 +17,24 @@ const redeemSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const session = await requireSession();
+    if (!session.ok) return session.response;
 
     const body = await request.json();
     const validation = redeemSchema.safeParse(body);
-
     if (!validation.success) {
-      return NextResponse.json(
-        { error: "Invalid request data", details: validation.error.issues },
-        { status: 400 },
-      );
+      return badRequest("Invalid request data", validation.error.issues);
     }
 
     const { points, userId } = validation.data;
 
     if (session.user.id !== userId) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      return forbidden("Forbidden");
     }
 
     const result = await redeemPointsManually({ userId, points });
 
     if (result.outcome === "user_not_found") {
-      // Preserved as 400 to mirror the original throw-based path that
-      // ended up in the 400 catch-all.
       return NextResponse.json(
         { error: "User not found", code: "REDEEM_FAILED" },
         { status: 400 },
@@ -78,3 +70,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

@@ -1,6 +1,6 @@
 // app/api/admin/coupons/[code]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { requireSessionRoles } from '@/shared/http';
 import { connectToDatabase } from '@/lib/mongodb';
 import { GlobalCouponModel } from '@/models/GlobalCoupon';
 import { CouponUsageModel } from '@/models/CouponUsage';
@@ -28,14 +28,8 @@ export async function GET(
   { params }: { params: Promise<{ code: string }> }
 ) {
   try {
-    const session = await auth();
-    
-if (!session?.user || (session.user.role !== "admin" && session.user.role !== "support")) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const session = await requireSessionRoles(["admin", "support"]);
+    if (!session.ok) return session.response;
     
     const { code } = await params;
     
@@ -116,14 +110,8 @@ export async function PUT(
   { params }: { params: Promise<{ code: string }> }
 ) {
   try {
-    const session = await auth();
-    
-    if (!session?.user || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const session = await requireSessionRoles(["admin"]);
+    if (!session.ok) return session.response;
     
     const { code } = await params;
     const body = await request.json();
@@ -199,14 +187,8 @@ export async function DELETE(
   { params }: { params: Promise<{ code: string }> }
 ) {
   try {
-    const session = await auth();
-    
-    if (!session?.user || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const session = await requireSessionRoles(["admin"]);
+    if (!session.ok) return session.response;
     
     const { code } = await params;
     

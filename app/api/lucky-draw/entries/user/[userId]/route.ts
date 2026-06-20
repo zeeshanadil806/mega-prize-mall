@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserLuckyDrawEntries } from '@/features/lucky-draw/service';
-import { auth } from '@/auth';
+import { requireSession } from '@/shared/http';
 import { log } from '@/lib/logger';
 
 export async function GET(
@@ -8,13 +8,8 @@ export async function GET(
   { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const session = await requireSession();
+    if (!session.ok) return session.response;
 
     const { userId } = await params;
     

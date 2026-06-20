@@ -1,4 +1,5 @@
 import { formatCurrency } from '@/lib/utils';
+import { STORE_CONFIG } from '@/shared/config';
 import { sendEmail } from '@/lib/email';
 import { BRAND_COLORS, baseEmailTemplate } from './_base';
 
@@ -34,7 +35,7 @@ export async function sendPointsEarnedEmail(
 
       <p class="mb-2"><strong>Points Value:</strong></p>
       <p style="color: ${BRAND_COLORS.accent}; font-weight: 600;">
-        ${formatCurrency(points * 0.1)} (10 points = Rs 1)
+        ${formatCurrency(points * STORE_CONFIG.pointsToRupeeRate)} (1 point = Rs ${STORE_CONFIG.pointsToRupeeRate})
       </p>
     </div>
 

@@ -1,30 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { IOrder, OrderModel } from '@/models/Order';
-import { auth } from '@/auth';
+import { requireAdmin } from '@/shared/http';
 import { log } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    // Check if user is admin
-    const UserModel = (await import('@/models/User')).UserModel;
-    await connectToDatabase();
-    const user = await UserModel.findById(session.user.id);
-    
-    if (!user || user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 }
-      );
-    }
+        const admin = await requireAdmin();
+    if (!admin.ok) return admin.response;
 
     const { orderIds, action } = await request.json();
 

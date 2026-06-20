@@ -1,6 +1,6 @@
 // app/api/admin/coupons/stats/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { requireSessionRoles } from '@/shared/http';
 import { connectToDatabase } from '@/lib/mongodb';
 import { GlobalCouponModel } from '@/models/GlobalCoupon';
 import { CouponUsageModel } from '@/models/CouponUsage';
@@ -8,14 +8,8 @@ import { log } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
-    
-if (!session?.user || (session.user.role !== "admin" && session.user.role !== "support")) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const session = await requireSessionRoles(["admin", "support"]);
+    if (!session.ok) return session.response;
     
     const { searchParams } = new URL(request.url);
     const period = searchParams.get('period') || 'month'; // day, week, month, year

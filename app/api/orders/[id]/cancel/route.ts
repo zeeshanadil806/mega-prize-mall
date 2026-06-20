@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { OrderModel } from '@/models/Order';
 import { WalletTransactionModel } from '@/models/WalletTransaction';
-import { auth } from '@/auth';
+import { requireSession } from '@/shared/http';
 import mongoose from 'mongoose';
 import { log } from '@/lib/logger';
 
@@ -11,13 +11,8 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const session = await requireSession();
+    if (!session.ok) return session.response;
 
     const { id } = await params;
     await connectToDatabase();

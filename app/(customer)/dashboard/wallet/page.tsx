@@ -2,6 +2,7 @@ import { WalletDashboardClient } from "@/components/wallet/WalletDashboardClient
 import { WalletTransactionModel } from "@/models/WalletTransaction";
 import { UserModel } from "@/models/User";
 import { connectToDatabase } from "@/lib/mongodb";
+import { STORE_CONFIG } from "@/shared/config";
 import { Metadata } from "next";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
@@ -193,7 +194,7 @@ export default async function WalletPage({
 
   const stats = {
     currentPoints: user.points,
-    monetaryValue: user.points * 0.1, // 1 point = Rs 0.10
+    monetaryValue: user.points * STORE_CONFIG.pointsToRupeeRate, // 1 point = Rs 0.10
     currentMonthEarned: currentMonthEarned[0]?.total || 0,
     lastMonthEarned: lastMonthEarned[0]?.total || 0,
     pointsExpiringSoon: pointsExpiringSoon[0]?.total || 0,

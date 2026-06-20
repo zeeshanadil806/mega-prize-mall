@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { UserModel } from "@/models/User";
-import { auth } from "@/auth";
+import { requireAdmin } from '@/shared/http';
 import { z } from "zod";
 import { log } from "@/lib/logger";
 import { escapeRegex } from "@/lib/utils";
@@ -27,20 +27,8 @@ const createSupportSchema = z.object({
 // GET all support accounts
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
-    
-    // Check admin authentication
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    
-    const adminUser = await UserModel.findById(session.user.id);
-    if (!adminUser || adminUser.role !== "admin") {
-      return NextResponse.json(
-        { error: "Forbidden: Admin access required" },
-        { status: 403 }
-      );
-    }
+    const admin = await requireAdmin();
+    if (!admin.ok) return admin.response;
     
     await connectToDatabase();
     
@@ -125,20 +113,8 @@ export async function GET(request: NextRequest) {
 // POST - Create new support account
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    
-    // Check admin authentication
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    
-    const adminUser = await UserModel.findById(session.user.id);
-    if (!adminUser || adminUser.role !== "admin") {
-      return NextResponse.json(
-        { error: "Forbidden: Admin access required" },
-        { status: 403 }
-      );
-    }
+    const admin = await requireAdmin();
+    if (!admin.ok) return admin.response;
     
     await connectToDatabase();
     
@@ -185,7 +161,7 @@ export async function POST(request: NextRequest) {
     };
     
     log.info("Admin created support account", {
-      adminId: session.user.id,
+      adminId: admin.user.id,
       supportId: supportAccount._id.toString(),
       email: supportAccount.email,
     });

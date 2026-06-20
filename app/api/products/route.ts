@@ -5,6 +5,8 @@ import { ProductModel } from "@/models/Product";
 import { Types } from "mongoose";
 import { rateLimit } from "@/lib/rate-limit";
 import { log } from "@/lib/logger";
+import { applyRateLimit, ipFromRequest } from "@/shared/http";
+import { resolveCategoryQuery } from "@/features/product/domain";
 
 const PRODUCTS_RATE_LIMIT = 120; // requests per minute per IP
 const limiter = rateLimit({
@@ -17,7 +19,7 @@ interface ProductQuery {
   isFeatured?: boolean;
   isBestSeller?: boolean;
   isNewArrival?: boolean;
-  category?: string;
+  category?: string | { $in: string[] };
 }
 interface ProductDocument {
   _id: Types.ObjectId;
@@ -85,28 +87,12 @@ interface TransformedProduct {
 
 export async function GET(request: Request) {
   try {
-    const ip =
-      request.headers.get("x-forwarded-for") ||
-      request.headers.get("x-real-ip") ||
-      "unknown";
-    const rateLimitResult = await limiter.check(PRODUCTS_RATE_LIMIT, ip);
-    if (rateLimitResult.isRateLimited) {
-      const retryAfter = Math.ceil(
-        (rateLimitResult.resetTime - Date.now()) / 1000
-      );
-      return NextResponse.json(
-        { error: "Too many requests", retryAfter },
-        {
-          status: 429,
-          headers: {
-            "Retry-After": retryAfter.toString(),
-            "X-RateLimit-Limit": String(PRODUCTS_RATE_LIMIT),
-            "X-RateLimit-Remaining": "0",
-            "X-RateLimit-Reset": rateLimitResult.resetTime.toString(),
-          },
-        }
-      );
-    }
+    const rl = await applyRateLimit(
+      limiter,
+      PRODUCTS_RATE_LIMIT,
+      ipFromRequest(request),
+    );
+    if (!rl.ok) return rl.response;
 
     await connectToDatabase();
 
@@ -134,7 +120,7 @@ export async function GET(request: Request) {
     }
 
     if (category) {
-      query.category = category;
+      query.category = resolveCategoryQuery(category);
     }
 
     // Build sort object

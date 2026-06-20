@@ -1,19 +1,13 @@
 // app/api/admin/coupons/generate-code/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { requireSessionRoles } from '@/shared/http';
 import { CouponServices } from '@/models/GlobalCoupon';
 import { log } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
-    
-if (!session?.user || (session.user.role !== "admin" && session.user.role !== "support")) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const session = await requireSessionRoles(["admin", "support"]);
+    if (!session.ok) return session.response;
 
     const code = await CouponServices.generateUniqueCode(10);
     

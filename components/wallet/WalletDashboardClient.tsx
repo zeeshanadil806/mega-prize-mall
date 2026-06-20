@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { getPointsValue, STORE_CONFIG } from '@/shared/config';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -191,7 +192,7 @@ export function WalletDashboardClient({
   // };
 
   const maxRedeemable = Math.floor(stats.currentPoints);
-  const redeemValue = parseInt(redeemAmount) * 0.1 || 0;
+  const redeemValue = getPointsValue(parseInt(redeemAmount) || 0);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -279,7 +280,7 @@ export function WalletDashboardClient({
                   {stats.totalEarned.toLocaleString()}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  Worth {formatCurrency(stats.totalEarned * 0.1)}
+                  Worth {formatCurrency(getPointsValue(stats.totalEarned))}
                 </p>
               </div>
               <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
@@ -410,7 +411,7 @@ export function WalletDashboardClient({
             <Alert>
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                Redeem points for discounts on your next order. 1 point = Rs 0.10
+                Redeem points for discounts on your next order. 1 point = Rs {STORE_CONFIG.pointsToRupeeRate.toFixed(2)}
               </AlertDescription>
             </Alert>
             

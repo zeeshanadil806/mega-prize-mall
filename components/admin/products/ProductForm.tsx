@@ -125,6 +125,9 @@ export default function ProductForm({
   })
 
   const [images, setImages] = useState<ImageProps[]>(initialData?.images || [])
+  const [featureImages, setFeatureImages] = useState<ImageProps[]>(
+    initialData?.featureImages || []
+  )
   const [currentFeature, setCurrentFeature] = useState("")
   const [specKey, setSpecKey] = useState("")
   const [specValue, setSpecValue] = useState("")
@@ -246,6 +249,7 @@ export default function ProductForm({
       const payload = {
         ...formData,
         images,
+        featureImages,
       }
       const url = isEditing 
         ? `/api/admin/products/${initialData?._id}`
@@ -322,7 +326,7 @@ export default function ProductForm({
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid grid-cols-5 w-full">
+        <TabsList className="grid grid-cols-6 w-full">
           <TabsTrigger value="basic" className="flex items-center space-x-2">
             <Package className="h-4 w-4" />
             <span className="hidden sm:inline">Basic</span>
@@ -330,6 +334,10 @@ export default function ProductForm({
           <TabsTrigger value="images" className="flex items-center space-x-2">
             <ImageIcon className="h-4 w-4" />
             <span className="hidden sm:inline">Images</span>
+          </TabsTrigger>
+          <TabsTrigger value="visuals" className="flex items-center space-x-2">
+            <ImageIcon className="h-4 w-4" />
+            <span className="hidden sm:inline">Visuals</span>
           </TabsTrigger>
           <TabsTrigger value="pricing" className="flex items-center space-x-2">
             <DollarSign className="h-4 w-4" />
@@ -606,6 +614,36 @@ export default function ProductForm({
                 value={images}
                 onChange={setImages}
                 maxImages={20}
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Feature Visuals Tab */}
+        <TabsContent value="visuals">
+          <Card>
+            <CardHeader>
+              <CardTitle>Feature Visual Images</CardTitle>
+              <CardDescription>
+                Upload separate marketing/specification visuals for the premium product detail section. These do not affect the main product gallery.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ImageUpload
+                value={featureImages}
+                onChange={setFeatureImages}
+                maxImages={30}
+                title="Upload feature visual images"
+                description="Add banners, specification graphics, and lifestyle visuals"
+                countLabel="Feature Visuals"
+                showPrimaryBadge={false}
+                guidelines={[
+                  "These images are separate from product gallery images",
+                  "Use polished marketing or specification visuals",
+                  "Desktop displays these in a responsive premium grid",
+                  "Mobile displays them as a single-column story",
+                  "Recommended width: 1200px or larger",
+                ]}
               />
             </CardContent>
           </Card>

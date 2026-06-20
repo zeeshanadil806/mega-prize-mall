@@ -2,7 +2,7 @@
 "use client"
 
 import { useState } from "react"
-import { motion } from "framer-motion"
+import { motion, Variants } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Tag, Lock } from "lucide-react"
 import BargainModal from "./BargainModal"
@@ -67,25 +67,54 @@ export default function BargainButton({ product, className }: BargainButtonProps
     toast.success("Bargain applied to cart item!")
   }
 
+  const bargainWrapperVariants: Variants = {
+    hover: { scale: 1.015 },
+    tap: { scale: 0.97 },
+  };
+
+  const bargainIconVariants: Variants = {
+    initial: { scale: 1, rotate: 0 },
+    hover: {
+      scale: 1.15,
+      rotate: [-10, 10, -10, 10, 0],
+      transition: { duration: 0.4, ease: "easeInOut" },
+    },
+  };
+
   return (
     <>
       <motion.div
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
+        variants={bargainWrapperVariants}
+        whileHover="hover"
+        whileTap="tap"
         className={className}
       >
         <Button
           onClick={handleBargainClick}
-          className="w-full bg-gradient-to-r from-[#EAB75F] to-[#A43875] hover:from-[#D9A64E] hover:to-[#8D2F6A] text-white shadow-lg hover:shadow-xl transition-all"
+          className="relative overflow-hidden w-full bg-gradient-to-r from-[#EAB75F] to-[#A43875] hover:from-[#D9A64E] hover:to-[#8D2F6A] text-white shadow-[0_8px_30px_rgba(234,183,95,0.25)] hover:shadow-[0_12px_45px_rgba(164,56,117,0.45)] transition-all duration-500 border-0"
           size="lg"
         >
-          <Tag className="h-5 w-5 mr-2" />
-          Make an Offer
-          {session?.user && (
-            <span className="ml-2 text-xs bg-white/20 px-2 py-0.5 rounded-full">
-              Save up to {minDiscountPercentage}%
-            </span>
-          )}
+          {/* Light Sweep Shine Effect */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none"
+            initial={{ x: "-100%" }}
+            whileHover={{
+              x: "100%",
+              transition: { duration: 0.8, ease: "easeOut" },
+            }}
+          />
+
+          <span className="relative z-10 flex items-center justify-center gap-2">
+            <motion.span variants={bargainIconVariants} className="flex items-center">
+              <Tag className="h-5 w-5 mr-1" />
+            </motion.span>
+            Make an Offer
+            {session?.user && (
+              <span className="ml-1 text-xs bg-white/20 px-2 py-0.5 rounded-full">
+                Save up to {minDiscountPercentage}%
+              </span>
+            )}
+          </span>
         </Button>
         
         {!session?.user && (

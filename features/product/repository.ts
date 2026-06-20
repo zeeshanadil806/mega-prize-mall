@@ -6,6 +6,7 @@
 
 import { ProductModel } from "@/models/Product";
 import { escapeRegex } from "@/lib/utils";
+import { resolveCategoryQuery } from "./domain";
 import type {
   RawProduct,
   ProductListingFilters,
@@ -81,7 +82,9 @@ export async function findProductsForListing(
 ): Promise<{ products: ListingProductForSchema[]; totalCount: number }> {
   const query: Record<string, unknown> = { isActive: true };
 
-  if (filters.category) query.category = filters.category;
+  if (filters.category) {
+    query.category = resolveCategoryQuery(filters.category);
+  }
   if (filters.bargain === "true") query.bargainEnabled = true;
   if (filters.minPrice || filters.maxPrice) {
     const price: { $gte?: number; $lte?: number } = {};

@@ -1,6 +1,6 @@
 // app/api/admin/coupons/bulk/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { requireSessionRoles } from '@/shared/http';
 import { connectToDatabase } from '@/lib/mongodb';
 import { CouponServices, GlobalCouponModel } from '@/models/GlobalCoupon';
 import { log } from '@/lib/logger';
@@ -38,14 +38,8 @@ const BulkGenerateSchema = z.object({
 // POST - Bulk generate coupons
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    
-if (!session?.user || (session.user.role !== "admin" && session.user.role !== "support")) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const session = await requireSessionRoles(["admin", "support"]);
+    if (!session.ok) return session.response;
     
     const body = await request.json();
     const validatedData = BulkGenerateSchema.parse(body);
@@ -130,14 +124,8 @@ if (!session?.user || (session.user.role !== "admin" && session.user.role !== "s
 // GET - Export bulk generated coupons (CSV)
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
-    
-if (!session?.user || (session.user.role !== "admin" && session.user.role !== "support")) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const session = await requireSessionRoles(["admin", "support"]);
+    if (!session.ok) return session.response;
     
     const { searchParams } = new URL(request.url);
     const batchId = searchParams.get('batchId');

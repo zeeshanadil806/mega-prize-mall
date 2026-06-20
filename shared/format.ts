@@ -11,16 +11,17 @@
 //
 // Moved from lib/bargain-utils.ts as part of Phase 2 (these aren't
 // bargain-domain — they're cross-cutting display utilities).
+import { STORE_CONFIG } from "./config";
 
-export function formatCurrency(amount: number): string {
+export function formatCurrency(amount: number, currency = "PKR"): string {
   return new Intl.NumberFormat("en-PK", {
     style: "currency",
-    currency: "PKR",
+    currency,
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount);
 }
 
 export function formatPoints(points: number): string {
-  return `${points.toLocaleString()} points (Rs ${(points * 0.1).toFixed(1)})`;
+  return `${points.toLocaleString()} points (Rs ${(points * STORE_CONFIG.pointsToRupeeRate).toFixed(1)})`;
 }

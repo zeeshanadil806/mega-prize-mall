@@ -17,6 +17,8 @@ import * as Sentry from "@sentry/nextjs";
 export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs") {
     await import("./lib/env");
+    const { initLogger } = await import("./lib/logger");
+    await initLogger();
     await import("./sentry.server.config");
   }
 

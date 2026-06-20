@@ -202,3 +202,91 @@ export interface CategoryStat {
   category: string;
   count: number;
 }
+
+export const CATEGORY_MAPPING: Record<string, string[]> = {
+  "Mobile Accessories": [
+    "Mobile Accessories",
+    "Mobile Holders",
+    "Mobile Cases",
+    "Screen Protectors"
+  ],
+  "Audio and Multimedia": [
+    "Audio and Multimedia",
+    "Earphones and Headphones"
+  ],
+  "Gaming Accessories": [
+    "Gaming Accessories"
+  ],
+  "PC and Laptop Accessories": [
+    "PC and Laptop Accessories",
+    "PC and Laptop"
+  ],
+  "PC and Laptop": [
+    "PC and Laptop Accessories",
+    "PC and Laptop"
+  ],
+  "Power and Charging": [
+    "Power Charging",
+    "Power Banks",
+    "Chargers and Cables",
+    "Chargers & Cables",
+    "Power and Charging"
+  ],
+  "Power Charging": [
+    "Power Charging",
+    "Power Banks",
+    "Chargers and Cables",
+    "Chargers & Cables",
+    "Power and Charging"
+  ],
+  "Smart Wearables": [
+    "Smart Wearables",
+    "Smart Watches"
+  ],
+  "Other Accessories": [
+    "Other Accessories",
+    "Content Creation and Vlogging",
+    "TV Accessories"
+  ]
+};
+
+export function resolveCategoryQuery(category: string) {
+  const matchedKey = Object.keys(CATEGORY_MAPPING).find(
+    (key) => key.toLowerCase() === category.toLowerCase()
+  );
+  if (matchedKey) {
+    return { $in: CATEGORY_MAPPING[matchedKey] };
+  }
+  return category;
+}
+
+export function getGroupedCategoryStats(stats: CategoryStat[]): CategoryStat[] {
+  const groupedMap: Record<string, number> = {};
+
+  Object.keys(CATEGORY_MAPPING).forEach((parentKey) => {
+    if (parentKey === "PC and Laptop" || parentKey === "Power Charging") return;
+    groupedMap[parentKey] = 0;
+  });
+
+  (stats || []).forEach((stat) => {
+    const dbName = stat.category;
+    const foundParent = Object.entries(CATEGORY_MAPPING).find(([parent, subList]) =>
+      subList.some((sub) => sub.toLowerCase() === dbName.toLowerCase())
+    );
+
+    if (foundParent) {
+      let parentKey = foundParent[0];
+      if (parentKey === "PC and Laptop") parentKey = "PC and Laptop Accessories";
+      if (parentKey === "Power Charging") parentKey = "Power and Charging";
+
+      groupedMap[parentKey] = (groupedMap[parentKey] || 0) + stat.count;
+    } else {
+      groupedMap["Other Accessories"] = (groupedMap["Other Accessories"] || 0) + stat.count;
+    }
+  });
+
+  return Object.entries(groupedMap)
+    .map(([category, count]) => ({ category, count }))
+    .filter((c) => c.count > 0)
+    .sort((a, b) => b.count - a.count);
+}

@@ -30,7 +30,7 @@ const navItems = [
   { name: "Customers", href: "/admin/users", icon: Users },
   { name: "Bargain Requests", href: "/admin/bargain", icon: Ticket },
   { name: "Lucky Draw", href: "/admin/lucky-draw", icon: Gift },
-  { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
+  { name: "Analytics", href: "/admin/analytics/sales", icon: BarChart3 },
   // { name: "Support", href: "/admin/support", icon: MessageSquare },
   // { name: "Settings", href: "/admin/settings", icon: Settings },
   // In your navItems array in AdminSidebar.tsx

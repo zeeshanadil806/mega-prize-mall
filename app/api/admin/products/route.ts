@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { ProductModel, ProductSchema } from "@/models/Product";
-import { auth } from "@/auth";
+import { requireSessionRoles } from '@/shared/http';
 import { log } from "@/lib/logger";
 import { escapeRegex } from "@/lib/utils";
 import { z } from "zod";
@@ -22,10 +22,8 @@ type MongoQuery = {
 export async function GET(request: NextRequest) {
   try {
     // Check authentication
-    const session = await auth();
-    if (!session?.user || session.user.role !== "admin") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const session = await requireSessionRoles(["admin"]);
+    if (!session.ok) return session.response;
 
     await connectToDatabase();
 
@@ -106,10 +104,8 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // Check authentication
-    const session = await auth();
-    if (!session?.user || session.user.role !== "admin") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const session = await requireSessionRoles(["admin"]);
+    if (!session.ok) return session.response;
 
     await connectToDatabase();
 

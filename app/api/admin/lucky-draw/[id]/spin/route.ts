@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDrawEntriesForSpin, selectDrawWinner } from '@/features/lucky-draw/service';
-import { auth } from '@/auth';
+import { requireAdmin } from '@/shared/http';
 import { log } from '@/lib/logger';
 // import { UserModel } from '@/models/User';
 
@@ -9,24 +9,8 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    // Check if user is admin
-    const UserModel = (await import('@/models/User')).UserModel;
-    const user = await UserModel.findById(session.user.id);
-    
-    if (!user || user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 }
-      );
-    }
+    const admin = await requireAdmin();
+    if (!admin.ok) return admin.response;
 
     const { id } = await params;
     const entries = await getDrawEntriesForSpin(id);
@@ -59,27 +43,11 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    // Check if user is admin
-    const UserModel = (await import('@/models/User')).UserModel;
-    const user = await UserModel.findById(session.user.id);
-    
-    if (!user || user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 }
-      );
-    }
+    const admin = await requireAdmin();
+    if (!admin.ok) return admin.response;
 
     const { id } = await params;
-    const result = await selectDrawWinner(id, session.user.id);
+    const result = await selectDrawWinner(id, admin.user.id);
     
     // Send winner announcement emails (non-blocking)
 setTimeout(async () => {

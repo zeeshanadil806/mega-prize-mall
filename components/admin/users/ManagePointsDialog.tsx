@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { getPointsValue } from '@/shared/config';
 import {
   Dialog,
   DialogContent,
@@ -232,7 +233,7 @@ export default function ManagePointsDialog({
                   <Gift className="h-4 w-4 mr-2 text-[#EAB75F]" />
                   <span className="text-lg font-bold text-gray-900">{user.points}</span>
                   <span className="text-sm text-gray-500 ml-1">
-                    (Rs {(user.points * 0.1).toFixed(2)})
+                    (Rs {getPointsValue(user.points).toFixed(2)})
                   </span>
                 </div>
               </div>
@@ -303,7 +304,7 @@ export default function ManagePointsDialog({
                 />
               </div>
               <div className="text-sm text-gray-500 whitespace-nowrap">
-                = Rs {((parseInt(formData.points) || 0) * 0.1).toFixed(2)}
+                = Rs {getPointsValue(parseInt(formData.points) || 0).toFixed(2)}
               </div>
             </div>
           </div>
@@ -347,7 +348,7 @@ export default function ManagePointsDialog({
                       {preview.newBalance} points
                     </span>
                     <span className="text-sm text-gray-500 ml-2">
-                      (Rs {(preview.newBalance * 0.1).toFixed(2)})
+                      (Rs {getPointsValue(preview.newBalance).toFixed(2)})
                     </span>
                   </div>
                 </div>

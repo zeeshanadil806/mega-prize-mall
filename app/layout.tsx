@@ -13,6 +13,7 @@ import TiktokProvider from "@/components/providers/TiktokProvider";
 import CookieConsent from "@/components/cookie/CookieConsent";
 import TiktokScript from "@/components/providers/TiktokScript";
 import MetaProvider from "@/components/providers/MetaProvider";
+import { STORE_CONFIG } from "@/shared/config";
 
 // Single Inter load that drives `font-sans` and the body's default
 // font-family across every page. Display=swap avoids FOIT on slow networks.
@@ -109,7 +110,7 @@ export default async function RootLayout({
           <Analytics />
           <ServiceWorkerRegistration />
           <WhatsAppFloatingButton
-            phoneNumber="923254007037"
+            phoneNumber={STORE_CONFIG.supportPhone}
             message="Hello Mega Prize Mall! I have a question about your mobile accessories."
             position="bottom-right"
             showOnMobile={true}

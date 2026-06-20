@@ -95,7 +95,7 @@ const CATEGORY_CONFIG = {
 type CategorySlug = keyof typeof CATEGORY_CONFIG;
 
 interface CategoryData {
-  id: CategorySlug;
+  id: string;
   name: string;
   description: string;
   icon: React.ElementType;
@@ -125,24 +125,34 @@ const CategoriesSection = ({ categoryStats }: CategoriesSectionProps) => {
     }
   }, [controls, inView]);
 
-  // Build the category list from the static config + counts passed in
-  const categories: CategoryData[] = Object.entries(CATEGORY_CONFIG)
-    .map(([slug, config]) => {
-      const stats = categoryStats.find(
-        (stat) =>
-          stat.category.toLowerCase() === slug.toLowerCase() ||
-          stat.category.toLowerCase() === config.name.toLowerCase(),
+  // Build the category list from the database stats (categoryStats)
+  const categories: CategoryData[] = (categoryStats || [])
+    .map((stat) => {
+      const dbCategory = stat.category;
+
+      // Check if we have pre-defined config for this category (case-insensitively)
+      const matchedEntry = Object.entries(CATEGORY_CONFIG).find(
+        ([slug, config]) =>
+          slug.toLowerCase() === dbCategory.toLowerCase() ||
+          config.name.toLowerCase() === dbCategory.toLowerCase()
       );
 
+      const config = matchedEntry ? matchedEntry[1] : null;
+      const slug = matchedEntry ? matchedEntry[0] : dbCategory;
+
+      const name = config ? config.name : dbCategory;
+      const Icon = config ? config.icon : Package;
+      const color = config ? config.color : "from-[#7C2C78] to-[#2E297D]"; // Brand fallback gradient
+
       return {
-        id: slug as CategorySlug,
-        name: config.name,
-        description: getCategoryDescription(config.name),
-        icon: config.icon,
-        color: config.color,
-        productCount: stats?.count || 0,
-        link: `/products?category=${slug}`,
-        isActive: (stats?.count || 0) > 0,
+        id: slug,
+        name: name,
+        description: getCategoryDescription(name),
+        icon: Icon,
+        color: color,
+        productCount: stat.count,
+        link: `/products?category=${encodeURIComponent(slug)}`,
+        isActive: stat.count > 0,
       };
     })
     .filter((category) => category.isActive)
@@ -291,12 +301,15 @@ const CategoriesSection = ({ categoryStats }: CategoriesSectionProps) => {
                   </Link>
                 </motion.div>
 
-                {/* Category Name - Below the circle */}
+                {/* Category Name & Count - Below the circle */}
                 <div className="mt-2 text-center">
-                  <Link href={category.link}>
-                    <h3 className="text-xs xs:text-xs sm:text-sm md:text-base font-medium text-gray-900 hover:text-[#7C2C78] transition-colors line-clamp-1 xs:hidden sm:block">
+                  <Link href={category.link} className="group/text">
+                    <h3 className="text-xs sm:text-sm font-semibold text-gray-900 group-hover/text:text-[#7C2C78] transition-colors line-clamp-1">
                       {category.name}
                     </h3>
+                    <p className="text-[10px] sm:text-xs text-gray-500 mt-0.5 font-medium whitespace-nowrap">
+                      {category.productCount} {category.productCount === 1 ? 'Product' : 'Products'}
+                    </p>
                   </Link>
                 </div>
               </motion.div>

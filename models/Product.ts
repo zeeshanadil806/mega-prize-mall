@@ -17,6 +17,7 @@ export const ProductSchema = z.object({
   
   // Images (Updated)
   images: z.array(ImageSchema).min(1).max(20),
+  featureImages: z.array(ImageSchema).max(30).default([]),
   
   // Categorization
   category: z.string().min(1),
@@ -80,6 +81,18 @@ const ProductSchemaMongoose = new Schema<IProduct>({
   
   // Images
   images: [{
+    id: String,
+    url: String,
+    alt: String,
+    order: Number,
+    metadata: {
+      width: Number,
+      height: Number,
+      size: Number,
+      format: String,
+    },
+  }],
+  featureImages: [{
     id: String,
     url: String,
     alt: String,

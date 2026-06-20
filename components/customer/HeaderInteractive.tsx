@@ -30,9 +30,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
-import { headerCategories } from "./header-categories";
+import { headerCategories, getCategoryIcon } from "./header-categories";
+import type { CategoryStat } from "@/features/product/domain";
 
-const HeaderInteractive = () => {
+interface HeaderInteractiveProps {
+  categoryStats?: CategoryStat[];
+}
+
+const HeaderInteractive = ({ categoryStats = [] }: HeaderInteractiveProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -40,14 +45,34 @@ const HeaderInteractive = () => {
   const pathname = usePathname();
   const router = useRouter();
 
-  const cartCount = useCartStore((state) =>
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const rawCartCount = useCartStore((state) =>
     state.items.reduce((total, item) => total + item.quantity, 0),
   );
+  const cartCount = mounted ? rawCartCount : 0;
 
   const { data: session, status } = useSession();
   const isLoading = status === "loading";
 
-  const categories = headerCategories;
+  const categories = categoryStats.length > 0
+    ? categoryStats.map((c) => {
+        let displayName = c.category;
+        if (c.category === "PC and Laptop Accessories") {
+          displayName = "PC and Laptop";
+        } else if (c.category === "Power Charging") {
+          displayName = "Power and Charging";
+        }
+        return {
+          name: displayName,
+          href: `/products?category=${encodeURIComponent(c.category)}`,
+          icon: getCategoryIcon(c.category, "h-4 w-4"),
+        };
+      })
+    : headerCategories;
 
   const navLinks = [
     { name: "Home", href: "/", icon: <Home className="h-4 w-4" />, show: true },
@@ -71,7 +96,7 @@ const HeaderInteractive = () => {
     },
     {
       name: "Lucky Draw",
-      href: "/lucky-draw",
+      href: "/dashboard/lucky-draw",
       icon: <Gift className="h-4 w-4" />,
       show: true,
     },
@@ -226,29 +251,31 @@ const HeaderInteractive = () => {
                   <ChevronDown className="h-4 w-4" />
                 </button>
 
-                <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  <div className="p-2">
-                    {categories.map((category, index) => (
-                      <Link
-                        key={index}
-                        href={category.href}
-                        className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition-colors group/item"
-                      >
-                        <div className="h-8 w-8 rounded-lg bg-linear-to-r from-[#7C2C78]/10 to-[#A43875]/10 flex items-center justify-center">
-                          <div className="text-[#7C2C78]">{category.icon}</div>
-                        </div>
-                        <div>
-                          <div className="font-medium text-gray-900">
-                            {category.name}
+                <div className="absolute top-full left-0 mt-2 w-[540px] bg-white rounded-2xl shadow-2xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div className="p-4">
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                      {categories.map((category, index) => (
+                        <Link
+                          key={index}
+                          href={category.href}
+                          className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-all duration-200 group/item animate-in fade-in slide-in-from-top-1 duration-150"
+                        >
+                          <div className="h-9 w-9 rounded-xl bg-linear-to-r from-[#7C2C78]/10 to-[#A43875]/10 flex items-center justify-center shrink-0 group-hover/item:scale-105 transition-transform duration-200">
+                            <div className="text-[#7C2C78]">{category.icon}</div>
                           </div>
-                        </div>
-                      </Link>
-                    ))}
+                          <div className="min-w-0">
+                            <div className="font-semibold text-gray-900 text-sm truncate group-hover/item:text-[#7C2C78] transition-colors">
+                              {category.name}
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
 
-                    <div className="mt-2 pt-2 border-t border-gray-100">
+                    <div className="mt-3 pt-3 border-t border-gray-100">
                       <Link
                         href="/categories"
-                        className="flex items-center justify-center gap-2 px-4 py-2 text-[#7C2C78] hover:bg-[#7C2C78]/10 rounded-lg transition-colors"
+                        className="flex items-center justify-center gap-2 py-2 text-sm font-semibold text-[#7C2C78] hover:bg-[#7C2C78]/5 rounded-xl transition-colors"
                       >
                         <span className="font-medium">
                           View All Categories

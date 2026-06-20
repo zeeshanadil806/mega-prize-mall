@@ -4,6 +4,7 @@ import { tiktokConversionAPI } from '@/lib/tiktok/server/conversion-api';
 import { deduplicationService } from '@/lib/tiktok/server/deduplication';
 import { rateLimit } from '@/lib/rate-limit';
 import { log } from '@/lib/logger';
+import { applyRateLimit, ipFromRequest } from '@/shared/http';
 
 const limiter = rateLimit({
   interval: 60 * 1000, // 1 minute
@@ -12,33 +13,9 @@ const limiter = rateLimit({
 
 export async function POST(request: NextRequest) {
   try {
-    const ip = request.headers.get('x-forwarded-for') || 
-               request.headers.get('x-real-ip') || 
-               'unknown';
-    
     // Apply rate limit (10 requests/minute per IP)
-    const rateLimitResult = await limiter.check(10, ip);
-    if (rateLimitResult.isRateLimited) {
-      const retryAfter = Math.ceil(
-        (rateLimitResult.resetTime - Date.now()) / 1000
-      );
-      
-      return NextResponse.json(
-        { 
-          error: 'Too many requests',
-          retryAfter
-        },
-        { 
-          status: 429,
-          headers: {
-            'Retry-After': retryAfter.toString(),
-            'X-RateLimit-Limit': '10',
-            'X-RateLimit-Remaining': '0',
-            'X-RateLimit-Reset': rateLimitResult.resetTime.toString(),
-          }
-        }
-      );
-    }
+    const rl = await applyRateLimit(limiter, 10, ipFromRequest(request));
+    if (!rl.ok) return rl.response;
 
 
     // Connect to MongoDB

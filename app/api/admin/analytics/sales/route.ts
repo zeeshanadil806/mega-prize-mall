@@ -3,7 +3,7 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { OrderModel } from '@/models/Order';
 // import { ProductModel } from '@/models/Product';
 import { UserModel } from '@/models/User';
-import { auth } from '@/auth';
+import { requireAdmin } from '@/shared/http';
 import { log } from '@/lib/logger';
 
 // Helper to get date ranges
@@ -50,23 +50,8 @@ function getDateRange(period: string) {
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
-
-    // Check admin authentication
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    const adminUser = await UserModel.findById(session.user.id);
-    if (!adminUser || adminUser.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 }
-      );
-    }
+    const admin = await requireAdmin();
+    if (!admin.ok) return admin.response;
 
     await connectToDatabase();
     

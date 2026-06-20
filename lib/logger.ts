@@ -66,37 +66,64 @@ const initializeServerLogger = async () => {
   }
 }
 
-// Create logger instance
-let loggerInstance: Logger | null = null
-
-export const getLogger = async () => {
-  if (!loggerInstance) {
-    loggerInstance = await initializeServerLogger()
+// Pre-initialize server logger if possible
+export const initLogger = async () => {
+  if (typeof window === 'undefined' && !serverLogger) {
+    await initializeServerLogger()
   }
-  return loggerInstance
 }
 
-// Helper function that works everywhere
+// Helper function that works everywhere - synchronous APIs
 export const log = {
-  info: async (message: string, meta?: LogMeta) => {
-    const logger = await getLogger()
-    logger.info(message, meta)
+  info: (message: string, meta?: LogMeta) => {
+    if (typeof window === 'undefined') {
+      if (serverLogger) {
+        serverLogger.info(message, meta)
+      } else {
+        console.log(`ℹ️ [server-fallback] ${message}`, meta || '')
+      }
+    } else {
+      clientLogger.info(message, meta)
+    }
   },
   
-  warn: async (message: string, meta?: LogMeta) => {
-    const logger = await getLogger()
-    logger.warn(message, meta)
+  warn: (message: string, meta?: LogMeta) => {
+    if (typeof window === 'undefined') {
+      if (serverLogger) {
+        serverLogger.warn(message, meta)
+      } else {
+        console.warn(`⚠️ [server-fallback] ${message}`, meta || '')
+      }
+    } else {
+      clientLogger.warn(message, meta)
+    }
   },
   
-  error: async (message: string, meta?: LogMeta) => {
-    const logger = await getLogger()
-    logger.error(message, meta)
+  error: (message: string, meta?: LogMeta) => {
+    if (typeof window === 'undefined') {
+      if (serverLogger) {
+        serverLogger.error(message, meta)
+      } else {
+        console.error(`❌ [server-fallback] ${message}`, meta || '')
+      }
+    } else {
+      clientLogger.error(message, meta)
+    }
   },
   
-  debug: async (message: string, meta?: LogMeta) => {
-    const logger = await getLogger()
-    if (process.env.NODE_ENV === 'development') {
-      logger.debug(message, meta)
+  debug: (message: string, meta?: LogMeta) => {
+    if (typeof window === 'undefined') {
+      if (serverLogger) {
+        if (process.env.NODE_ENV === 'development') {
+          serverLogger.debug(message, meta)
+        }
+      } else {
+        if (process.env.NODE_ENV === 'development') {
+          console.debug(`🔍 [server-fallback] ${message}`, meta || '')
+        }
+      }
+    } else {
+      clientLogger.debug(message, meta)
     }
   },
 }

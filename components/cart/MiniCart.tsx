@@ -1,15 +1,15 @@
 // components/cart/MiniCart.tsx
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { 
-  Sheet, 
-  SheetContent, 
-  SheetHeader, 
-  SheetTitle, 
-  SheetTrigger 
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger
 } from "@/components/ui/sheet"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { ShoppingCart, Trash2, Plus, Minus, ArrowRight } from "lucide-react"
@@ -19,37 +19,45 @@ import { Separator } from "@/components/ui/separator"
 
 export function MiniCart() {
   const [open, setOpen] = useState(false)
-  const { 
-    items, 
-    removeItem, 
+  const [mounted, setMounted] = useState(false)
+
+  const {
+    items,
+    removeItem,
     updateQuantity,
     getTotalItems,
     getSubtotal,
     getDiscountTotal,
-    getGrandTotal 
+    getGrandTotal
   } = useCartStore()
-  
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const totalItems = mounted ? getTotalItems() : 0
+
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           <ShoppingCart className="h-5 w-5" />
-          {getTotalItems() > 0 && (
+          {totalItems > 0 && (
             <span className="absolute -top-1 -right-1 bg-linear-to-r from-[#EAB75F] to-[#A43875] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-              {getTotalItems()}
+              {totalItems}
             </span>
           )}
         </Button>
       </SheetTrigger>
-      
+
       <SheetContent className="flex flex-col p-0 sm:max-w-md">
         <SheetHeader className="p-6 pb-4 border-b">
           <SheetTitle className="flex items-center gap-2">
             <ShoppingCart className="h-5 w-5" />
-            Your Cart ({getTotalItems()} items)
+            Your Cart ({totalItems} items)
           </SheetTitle>
         </SheetHeader>
-        
+
         {items.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
             <ShoppingCart className="h-16 w-16 text-muted-foreground mb-4" />
@@ -57,7 +65,7 @@ export function MiniCart() {
             <p className="text-muted-foreground mb-6">
               Add some products to get started
             </p>
-            <Button 
+            <Button
               onClick={() => setOpen(false)}
               className="bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white"
             >
@@ -71,13 +79,13 @@ export function MiniCart() {
                 {items.map((item) => {
                   const currentPrice = item.discountedPrice || item.price
                   const itemTotal = currentPrice * item.quantity
-                  
+
                   return (
                     <div key={item.productId} className="flex gap-4 p-3 border rounded-lg">
                       <div className="h-20 w-20 shrink-0 bg-muted rounded-md overflow-hidden">
                         {item.images?.[0]?.url ? (
-                          <img 
-                            src={item.images[0].url} 
+                          <img
+                            src={item.images[0].url}
                             alt={item.images[0].alt || item.name}
                             className="h-full w-full object-cover"
                           />
@@ -87,10 +95,10 @@ export function MiniCart() {
                           </div>
                         )}
                       </div>
-                      
+
                       <div className="flex-1">
                         <div className="flex justify-between">
-                          <Link 
+                          <Link
                             href={`/products/${item.productId}`}
                             className="font-medium hover:underline line-clamp-1"
                             onClick={() => setOpen(false)}
@@ -106,7 +114,7 @@ export function MiniCart() {
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
-                        
+
                         <div className="mt-2 flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <Button
@@ -117,11 +125,11 @@ export function MiniCart() {
                             >
                               <Minus className="h-3 w-3" />
                             </Button>
-                            
+
                             <span className="w-8 text-center font-medium">
                               {item.quantity}
                             </span>
-                            
+
                             <Button
                               variant="outline"
                               size="icon"
@@ -131,7 +139,7 @@ export function MiniCart() {
                               <Plus className="h-3 w-3" />
                             </Button>
                           </div>
-                          
+
                           <div className="text-right">
                             <p className="font-semibold">
                               {formatCurrency(itemTotal)}
@@ -154,7 +162,7 @@ export function MiniCart() {
                 })}
               </div>
             </ScrollArea>
-            
+
             <div className="border-t p-6 space-y-4">
               <div className="space-y-2">
                 <div className="flex justify-between">
@@ -173,10 +181,10 @@ export function MiniCart() {
                   <span>{formatCurrency(getGrandTotal())}</span>
                 </div>
               </div>
-              
+
               <div className="flex gap-3">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="flex-1"
                   onClick={() => setOpen(false)}
                 >

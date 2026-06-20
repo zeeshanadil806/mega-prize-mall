@@ -197,7 +197,7 @@ async function applyPointsLegs(
         userId: input.userId,
         type: "earn",
         points: totals.pointsEarned,
-        balanceAfter: refetched?.points || 0 + totals.pointsEarned,
+        balanceAfter: (refetched?.points || 0) + totals.pointsEarned,
         description: `Earned from order #${orderId}`,
         orderId,
         status: "pending",

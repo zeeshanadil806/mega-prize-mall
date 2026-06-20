@@ -1,6 +1,6 @@
 // app/api/admin/coupons/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { requireSessionRoles } from '@/shared/http';
 import { connectToDatabase } from '@/lib/mongodb';
 import { CouponServices, GlobalCouponModel, GlobalCouponSchema } from '@/models/GlobalCoupon';
 import { log } from '@/lib/logger';
@@ -41,15 +41,8 @@ const CreateCouponSchema = GlobalCouponSchema.pick({
 // GET - List all coupons with pagination and filtering
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
-    
-    // Check admin authentication
-if (!session?.user || (session.user.role !== "admin" && session.user.role !== "support")) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const session = await requireSessionRoles(["admin", "support"]);
+    if (!session.ok) return session.response;
     
     await connectToDatabase();
     
@@ -150,15 +143,8 @@ if (!session?.user || (session.user.role !== "admin" && session.user.role !== "s
 // POST - Create new coupon
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    
-    // Check admin authentication
-    if (!session?.user || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const session = await requireSessionRoles(["admin"]);
+    if (!session.ok) return session.response;
     
     const body = await request.json();
     

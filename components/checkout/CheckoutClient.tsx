@@ -16,6 +16,9 @@ import {
   Check,
   User,
   MapPin,
+  ChevronDown,
+  Package,
+  Phone,
 } from "lucide-react";
 import { Address, CheckoutState, CheckoutUser } from "@/types";
 import { Button } from "../ui/button";
@@ -70,6 +73,7 @@ export default function CheckoutClient({
   const { data: session, status } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAddressForm, setShowAddressForm] = useState(false);
+  const [mobileSummaryOpen, setMobileSummaryOpen] = useState(false);
 
   // Initialize newAddress with guest address if exists
   const guestAddress = getGuestAddress();
@@ -289,9 +293,33 @@ export default function CheckoutClient({
   };
 
   const handlePlaceOrder = async () => {
-    if (!checkoutData.shippingAddress) {
-      toast.error("Please select or add a shipping address");
-      return;
+    let resolvedAddress = checkoutData.shippingAddress;
+
+    // If no address selected yet, validate and build from inline form
+    if (!resolvedAddress) {
+      const required = ["fullName", "phone", "addressLine1", "city", "state", "postalCode"] as const;
+      const missing = required.filter((f) => !newAddress[f]?.toString().trim());
+      if (missing.length > 0) {
+        toast.error(`Please fill in: ${missing.map((f) => f.replace(/([A-Z])/g, " $1").toLowerCase()).join(", ")}`);
+        return;
+      }
+      const formattedPhone = formatPhone(newAddress.phone);
+      resolvedAddress = {
+        _id: `inline-${Date.now()}`,
+        fullName: newAddress.fullName.trim(),
+        phone: formattedPhone,
+        addressLine1: newAddress.addressLine1.trim(),
+        addressLine2: newAddress.addressLine2?.trim() || "",
+        city: newAddress.city.trim(),
+        state: newAddress.state.trim(),
+        postalCode: newAddress.postalCode.trim(),
+        country: "Pakistan",
+        isDefault: false,
+        label: "home",
+      };
+      // Update state so the rest of handlePlaceOrder uses it
+      setCheckoutData((prev: CheckoutState) => ({ ...prev, shippingAddress: resolvedAddress }));
+      if (session?.user?.isGuest) saveGuestAddress(resolvedAddress);
     }
     // For guests, require email
     if (session?.user?.isGuest && !checkoutData.guestEmail) {
@@ -316,7 +344,7 @@ export default function CheckoutClient({
         guestEmail: session?.user?.isGuest
           ? checkoutData.guestEmail
           : undefined,
-        guestPhone: checkoutData.shippingAddress?.phone,
+        guestPhone: resolvedAddress?.phone,
         items: items.map((item) => ({
           productId: item.productId,
           name: item.name,
@@ -327,13 +355,13 @@ export default function CheckoutClient({
           bargainDiscount: item.bargainDiscount,
         })),
         shippingAddress: {
-          ...checkoutData.shippingAddress,
-          phone: formatPhone(checkoutData.shippingAddress.phone),
+          ...resolvedAddress,
+          phone: formatPhone(resolvedAddress!.phone),
         },
         billingAddress: checkoutData.useSameAddress
           ? {
-              ...checkoutData.shippingAddress,
-              phone: formatPhone(checkoutData.shippingAddress.phone),
+              ...resolvedAddress,
+              phone: formatPhone(resolvedAddress!.phone),
             }
           : checkoutData.billingAddress,
         shippingMethod: checkoutData.shippingMethod,
@@ -384,536 +412,459 @@ export default function CheckoutClient({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-6 sm:py-8">
-      <div className="container mx-auto px-3 sm:px-4 lg:px-8">
-        {/* Header with Guest Badge */}
-        <div className="mb-6 sm:mb-8 text-center">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-1.5 sm:mb-2">
-            Complete Your Order
-          </h1>
-          <p className="text-sm sm:text-base text-gray-600">
-            Review your items and enter shipping details
-            {session?.user?.isGuest && (
-              <span className="ml-2 px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">
-                Guest Checkout
-              </span>
-            )}
-          </p>
-          {session?.user?.isGuest && (
-            <div className="mt-2 text-xs text-gray-500">
-              <User className="inline h-3 w-3 mr-1" />
-              You&apos;re checking out as a guest.
-              <Link
-                href="/login"
-                className="text-[#7C2C78] hover:underline ml-1"
-              >
-                Login to earn points!
-              </Link>
+    <div className="min-h-screen bg-white">
+
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+          MINIMAL HEADER (Shopify-style)
+      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      <header className="border-b border-gray-200">
+        {/* Mobile: Logo + collapsible order total */}
+        <div className="lg:hidden">
+          <button
+            onClick={() => setMobileSummaryOpen((v) => !v)}
+            className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200"
+          >
+            <div className="flex items-center gap-2 text-[#7C2C78] font-semibold text-sm">
+              <Package className="h-4 w-4" />
+              <span>Order summary</span>
+              <ChevronDown
+                className={`h-4 w-4 transition-transform duration-200 ${
+                  mobileSummaryOpen ? "rotate-180" : ""
+                }`}
+              />
+            </div>
+            <span className="font-bold text-gray-900 text-sm">
+              {/* Grand total shown inline */}
+              {typeof window !== "undefined" &&
+                items.reduce((sum, item) => {
+                  const price = item.discountedPrice || item.price;
+                  return sum + price * item.quantity;
+                }, 0) > 0
+                ? `Rs ${items
+                    .reduce((sum, item) => {
+                      const price = item.discountedPrice || item.price;
+                      return sum + price * item.quantity;
+                    }, 0)
+                    .toLocaleString("en-PK")}`
+                : ""}
+            </span>
+          </button>
+
+          {/* Collapsible mobile order summary */}
+          {mobileSummaryOpen && (
+            <div className="bg-gray-50 border-b border-gray-200 px-4 py-4">
+              <CheckoutSummary
+                checkoutData={checkoutData}
+                setCheckoutData={setCheckoutData}
+                userId={userId}
+              />
             </div>
           )}
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 lg:gap-10">
-          {/* Right Column - Order Summary */}
-          <div className="lg:w-1/3">
-            <CheckoutSummary
-              checkoutData={checkoutData}
-              setCheckoutData={setCheckoutData}
-              userId={userId}
-            />
-          </div>
+        {/* Desktop header: just logo centered */}
+        <div className="hidden lg:flex items-center justify-center py-5">
+          <Link href="/" className="flex items-center gap-2">
+            <span className="text-2xl font-black bg-gradient-to-r from-[#2E297D] to-[#7C2C78] bg-clip-text text-transparent tracking-tight">
+              Mega Prize Mall
+            </span>
+          </Link>
+        </div>
+      </header>
 
-          {/* Left Column - Checkout Form */}
-          <div className="lg:w-2/3">
-            {/* Security Badge */}
-            <div className="mb-5 sm:mb-6 p-3 sm:p-4 bg-green-50 border border-green-200 rounded-lg sm:rounded-xl flex items-start sm:items-center gap-2.5 sm:gap-3">
-              <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 shrink-0 mt-0.5 sm:mt-0" />
-              <div>
-                <p className="font-medium text-green-800 text-sm sm:text-base">
-                  Secure Checkout
-                </p>
-                <p className="text-xs sm:text-sm text-green-700">
-                  Your payment information is encrypted and secure
-                </p>
-              </div>
-            </div>
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+          MAIN CONTENT
+      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-14 max-w-6xl mx-auto">
 
-            {/* Address Section */}
-            <div className="bg-white rounded-xl sm:rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
-              <div className="p-4 sm:p-5 lg:p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                    <Home className="h-5 w-5 text-[#7C2C78]" />
-                    Shipping Address
-                  </h2>
-                  {session?.user?.isGuest && checkoutData.shippingAddress && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleClearAddress}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                    >
-                      Clear Address
-                    </Button>
-                  )}
-                </div>
+          {/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              LEFT COLUMN â€” Form
+          â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+          <div className="flex-1 min-w-0">
 
-                {/* Guest Notice */}
-                {session?.user?.isGuest && (
-                  <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-sm text-blue-700">
-                      <strong>Guest Checkout:</strong> Enter your shipping
-                      address below. Your address will be saved temporarily for
-                      this session.
-                    </p>
+            {/* Breadcrumb steps */}
+            <nav className="flex items-center gap-2 text-xs text-gray-400 mb-8">
+              <span className="text-gray-900 font-medium">Information</span>
+              <span>â€º</span>
+              <span>Shipping</span>
+              <span>â€º</span>
+              <span>Payment</span>
+            </nav>
+
+            {/* â”€â”€ CONTACT SECTION â”€â”€ */}
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-gray-900">Contact</h2>
+                {!session?.user || session?.user?.isGuest ? (
+                  <Link href="/login" className="text-sm text-[#7C2C78] hover:underline">
+                    Sign in
+                  </Link>
+                ) : (
+                  <div className="flex items-center gap-1.5 text-sm text-gray-600">
+                    <User className="h-3.5 w-3.5" />
+                    <span className="font-medium text-gray-800">{user?.name || user?.email}</span>
+                    {session?.user?.isGuest && (
+                      <span className="ml-1 px-2 py-0.5 bg-amber-100 text-amber-700 text-xs rounded-full font-medium">Guest</span>
+                    )}
                   </div>
                 )}
-                {session?.user?.isGuest && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Email Address *
+              </div>
+
+              {/* Guest email field */}
+              {session?.user?.isGuest && (
+                <div>
+                  <input
+                    type="email"
+                    id="guestEmail"
+                    value={checkoutData.guestEmail || ""}
+                    onChange={(e) =>
+                      setCheckoutData((prev: CheckoutState) => ({
+                        ...prev,
+                        guestEmail: e.target.value,
+                      }))
+                    }
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors"
+                    placeholder="Email or mobile phone number"
+                    required
+                  />
+                  <p className="mt-1.5 text-xs text-gray-400">For order confirmation and tracking</p>
+                </div>
+              )}
+
+              {/* Logged-in user email display */}
+              {session?.user && !session?.user?.isGuest && (
+                <div className="w-full border border-gray-200 rounded-xl px-4 py-3.5 bg-gray-50 text-sm text-gray-600">
+                  {user?.email}
+                </div>
+              )}
+            </div>
+
+            {/* â”€â”€ SHIPPING ADDRESS â”€â”€ */}
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-gray-900">Shipping address</h2>
+                {session?.user?.isGuest && checkoutData.shippingAddress && (
+                  <button
+                    onClick={handleClearAddress}
+                    className="text-xs text-red-500 hover:text-red-700 hover:underline"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+
+              {/* Saved addresses for logged-in users */}
+              {!session?.user?.isGuest && savedAddresses.length > 0 && !showAddressForm && (
+                <div className="space-y-3 mb-4">
+                  {savedAddresses.map((address, index) => (
+                    <label key={index} className="block cursor-pointer">
+                      <input
+                        type="radio"
+                        name="shippingAddress"
+                        checked={checkoutData.shippingAddress?._id === address._id}
+                        onChange={() => handleSelectAddress(address)}
+                        className="sr-only"
+                      />
+                      <div
+                        className={`p-4 border-2 rounded-xl transition-all ${
+                          checkoutData.shippingAddress?._id === address._id
+                            ? "border-[#7C2C78] bg-[#7C2C78]/5"
+                            : "border-gray-200 hover:border-gray-300"
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div
+                            className={`mt-0.5 h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                              checkoutData.shippingAddress?._id === address._id
+                                ? "border-[#7C2C78] bg-[#7C2C78]"
+                                : "border-gray-300"
+                            }`}
+                          >
+                            {checkoutData.shippingAddress?._id === address._id && (
+                              <Check className="h-3 w-3 text-white" />
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between gap-2">
+                              <p className="font-medium text-gray-900 text-sm">{address.fullName}</p>
+                              {address.isDefault && (
+                                <span className="text-[10px] px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full">Default</span>
+                              )}
+                            </div>
+                            <p className="text-xs text-gray-500 mt-0.5">
+                              {address.addressLine1}{address.addressLine2 && `, ${address.addressLine2}`}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {address.city}, {address.state} {address.postalCode}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-0.5 flex items-center gap-1">
+                              <Phone className="h-3 w-3" /> {address.phone}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                     </label>
+                  ))}
+
+                  {/* Add new address toggle */}
+                  <button
+                    onClick={() => setShowAddressForm(true)}
+                    className="w-full flex items-center gap-2 p-3 text-sm text-[#7C2C78] hover:bg-[#7C2C78]/5 rounded-xl border border-dashed border-[#7C2C78]/40 hover:border-[#7C2C78] transition-all"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Use a different address
+                  </button>
+                </div>
+              )}
+
+              {/* Country/Region â€” always shown */}
+              {(session?.user?.isGuest || savedAddresses.length === 0 || showAddressForm) && (
+                <div className="space-y-3">
+                  {/* Country - static */}
+                  <div className="w-full border border-gray-300 rounded-xl px-4 py-3.5 bg-gray-50 flex items-center justify-between">
+                    <div>
+                      <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Country/Region</p>
+                      <p className="text-sm text-gray-900 font-medium">Pakistan</p>
+                    </div>
+                    <ChevronDown className="h-4 w-4 text-gray-400" />
+                  </div>
+
+                  {/* Name row */}
+                  <div className="grid grid-cols-2 gap-3">
                     <input
-                      type="email"
-                      value={checkoutData.guestEmail || ""}
-                      onChange={(e) =>
-                        setCheckoutData((prev: CheckoutState) => ({
-                          ...prev,
-                          guestEmail: e.target.value,
-                        }))
-                      }
-                      className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
-                      placeholder="your@email.com"
+                      type="text"
+                      value={newAddress.fullName.split(" ")[0] || ""}
+                      onChange={(e) => {
+                        const last = newAddress.fullName.split(" ").slice(1).join(" ");
+                        setNewAddress((prev) => ({ ...prev, fullName: `${e.target.value} ${last}`.trim() }));
+                      }}
+                      className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors"
+                      placeholder="First name"
+                    />
+                    <input
+                      type="text"
+                      value={newAddress.fullName.split(" ").slice(1).join(" ") || ""}
+                      onChange={(e) => {
+                        const first = newAddress.fullName.split(" ")[0] || "";
+                        setNewAddress((prev) => ({ ...prev, fullName: `${first} ${e.target.value}`.trim() }));
+                      }}
+                      className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors"
+                      placeholder="Last name"
+                    />
+                  </div>
+
+                  {/* Address */}
+                  <input
+                    type="text"
+                    value={newAddress.addressLine1}
+                    onChange={(e) => setNewAddress((prev) => ({ ...prev, addressLine1: e.target.value }))}
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors"
+                    placeholder="Address"
+                    required
+                  />
+
+                  {/* Address line 2 */}
+                  <input
+                    type="text"
+                    value={newAddress.addressLine2}
+                    onChange={(e) => setNewAddress((prev) => ({ ...prev, addressLine2: e.target.value }))}
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors"
+                    placeholder="Apartment, suite, etc. (optional)"
+                  />
+
+                  {/* City + Postal */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <input
+                      type="text"
+                      value={newAddress.city}
+                      onChange={(e) => setNewAddress((prev) => ({ ...prev, city: e.target.value }))}
+                      className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors"
+                      placeholder="City"
                       required
                     />
-                    <p className="text-xs text-gray-500 mt-1">
-                      For order confirmation and tracking
-                    </p>
+                    <input
+                      type="text"
+                      value={newAddress.postalCode}
+                      onChange={(e) => setNewAddress((prev) => ({ ...prev, postalCode: e.target.value }))}
+                      className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors"
+                      placeholder="Postal code (optional)"
+                    />
                   </div>
-                )}
 
-                {/* Saved Addresses (only for logged-in users) */}
-                {!session?.user?.isGuest && savedAddresses.length > 0 && (
-                  <div className="mb-6">
-                    <h3 className="font-medium text-gray-900 mb-4">
-                      Select a saved address
-                    </h3>
-                    <div className="grid gap-3">
-                      {savedAddresses.map((address: Address, index: number) => (
-                        <motion.div
-                          key={index}
-                          whileHover={{ scale: 1.01 }}
-                          whileTap={{ scale: 0.99 }}
-                        >
-                          <label className="block cursor-pointer">
-                            <input
-                              type="radio"
-                              name="shippingAddress"
-                              checked={
-                                checkoutData.shippingAddress?._id ===
-                                address._id
-                              }
-                              onChange={() => handleSelectAddress(address)}
-                              className="sr-only"
-                            />
-                            <div
-                              className={`
-                              p-4 border-2 rounded-xl transition-all
-                              ${
-                                checkoutData.shippingAddress?._id ===
-                                address._id
-                                  ? "border-[#7C2C78] bg-[#7C2C78]/5"
-                                  : "border-gray-200 hover:border-gray-300"
-                              }
-                            `}
-                            >
-                              <div className="flex items-start gap-3">
-                                <div
-                                  className={`
-                                  h-5 w-5 rounded-full border-2 flex items-center justify-center mt-0.5
-                                  ${
-                                    checkoutData.shippingAddress?._id ===
-                                    address._id
-                                      ? "border-[#7C2C78] bg-[#7C2C78]"
-                                      : "border-gray-300"
-                                  }
-                                `}
-                                >
-                                  {checkoutData.shippingAddress?._id ===
-                                    address._id && (
-                                    <Check className="h-3 w-3 text-white" />
-                                  )}
-                                </div>
-                                <div className="flex-1">
-                                  <div className="flex justify-between">
-                                    <div>
-                                      <p className="font-medium text-gray-900">
-                                        {address.fullName}
-                                      </p>
-                                      <p className="text-sm text-gray-600 mt-1">
-                                        {address.addressLine1}
-                                        {address.addressLine2 &&
-                                          `, ${address.addressLine2}`}
-                                      </p>
-                                      <p className="text-sm text-gray-600">
-                                        {address.city}, {address.state}{" "}
-                                        {address.postalCode}
-                                      </p>
-                                      <p className="text-sm text-gray-600 mt-2">
-                                        📞 {address.phone}
-                                      </p>
-                                    </div>
-                                    {address.isDefault && (
-                                      <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
-                                        Default
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </label>
-                        </motion.div>
-                      ))}
-                    </div>
+                  {/* State + Phone */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <input
+                      type="text"
+                      value={newAddress.state}
+                      onChange={(e) => setNewAddress((prev) => ({ ...prev, state: e.target.value }))}
+                      className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors"
+                      placeholder="Province / State"
+                      required
+                    />
+                    <input
+                      type="tel"
+                      value={newAddress.phone}
+                      onChange={(e) => setNewAddress((prev) => ({ ...prev, phone: e.target.value }))}
+                      className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors"
+                      placeholder="Phone"
+                      required
+                    />
                   </div>
-                )}
 
-                {/* Current Selected Address Display */}
-                {checkoutData.shippingAddress && !showAddressForm && (
-                  <div className="mb-6 p-4 border border-green-200 bg-green-50 rounded-xl">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start gap-3">
-                        <MapPin className="h-5 w-5 text-green-600 mt-0.5" />
-                        <div>
-                          <p className="font-medium text-gray-900">
-                            {checkoutData.shippingAddress.fullName}
-                          </p>
-                          <p className="text-sm text-gray-600 mt-1">
-                            {checkoutData.shippingAddress.addressLine1}
-                            {checkoutData.shippingAddress.addressLine2 &&
-                              `, ${checkoutData.shippingAddress.addressLine2}`}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            {checkoutData.shippingAddress.city},{" "}
-                            {checkoutData.shippingAddress.state}{" "}
-                            {checkoutData.shippingAddress.postalCode}
-                          </p>
-                          <p className="text-sm text-gray-600 mt-2">
-                            📞 {formatPhone(checkoutData.shippingAddress.phone)}
-                          </p>
-                        </div>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setShowAddressForm(true)}
-                        className="text-[#7C2C78] hover:text-[#6A2566]"
-                      >
-                        Edit
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Address Form */}
-                {showAddressForm ? (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    className="border border-gray-200 rounded-xl p-5"
-                  >
-                    <h3 className="font-medium text-gray-900 mb-4">
-                      {checkoutData.shippingAddress
-                        ? "Edit Shipping Address"
-                        : "Add Shipping Address"}
-                    </h3>
-
-                    <div className="grid gap-4">
-                      <div className="grid sm:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Full Name *
-                          </label>
-                          <input
-                            type="text"
-                            value={newAddress.fullName}
-                            onChange={(e) =>
-                              setNewAddress((prev) => ({
-                                ...prev,
-                                fullName: e.target.value,
-                              }))
-                            }
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
-                            placeholder="John Doe"
-                            required
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Phone Number *
-                          </label>
-                          <input
-                            type="tel"
-                            value={newAddress.phone}
-                            onChange={(e) =>
-                              setNewAddress((prev) => ({
-                                ...prev,
-                                phone: e.target.value,
-                              }))
-                            }
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
-                            placeholder="03XX XXXXXXX or +92XXXXXXXXXX"
-                            required
-                          />
-                          <p className="text-xs text-gray-500 mt-1">
-                            Pakistani format: 03XX XXXXXXX or +92XXXXXXXXXX
-                          </p>
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Address Line 1 *
-                        </label>
-                        <input
-                          type="text"
-                          value={newAddress.addressLine1}
-                          onChange={(e) =>
-                            setNewAddress((prev) => ({
-                              ...prev,
-                              addressLine1: e.target.value,
-                            }))
-                          }
-                          className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
-                          placeholder="House #123, Street #45"
-                          required
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Address Line 2 (Optional)
-                        </label>
-                        <input
-                          type="text"
-                          value={newAddress.addressLine2}
-                          onChange={(e) =>
-                            setNewAddress((prev) => ({
-                              ...prev,
-                              addressLine2: e.target.value,
-                            }))
-                          }
-                          className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
-                          placeholder="Apartment, Suite, etc."
-                        />
-                      </div>
-
-                      <div className="grid sm:grid-cols-3 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            City *
-                          </label>
-                          <input
-                            type="text"
-                            value={newAddress.city}
-                            onChange={(e) =>
-                              setNewAddress((prev) => ({
-                                ...prev,
-                                city: e.target.value,
-                              }))
-                            }
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
-                            placeholder="Karachi"
-                            required
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            State *
-                          </label>
-                          <input
-                            type="text"
-                            value={newAddress.state}
-                            onChange={(e) =>
-                              setNewAddress((prev) => ({
-                                ...prev,
-                                state: e.target.value,
-                              }))
-                            }
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
-                            placeholder="Sindh"
-                            required
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Postal Code *
-                          </label>
-                          <input
-                            type="text"
-                            value={newAddress.postalCode}
-                            onChange={(e) =>
-                              setNewAddress((prev) => ({
-                                ...prev,
-                                postalCode: e.target.value,
-                              }))
-                            }
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
-                            placeholder="75500"
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      {/* Only show "Set as default" for logged-in users */}
-                      {!session?.user?.isGuest && (
-                        <div className="flex items-center gap-2 pt-2">
-                          <input
-                            type="checkbox"
-                            id="setDefault"
-                            checked={newAddress.isDefault}
-                            onChange={(e) =>
-                              setNewAddress((prev) => ({
-                                ...prev,
-                                isDefault: e.target.checked,
-                              }))
-                            }
-                            className="h-4 w-4 text-[#7C2C78] focus:ring-[#7C2C78] border-gray-300 rounded"
-                          />
-                          <label
-                            htmlFor="setDefault"
-                            className="text-sm text-gray-700"
-                          >
-                            Set as default shipping address
-                          </label>
-                        </div>
-                      )}
-
-                      <div className="flex gap-3 pt-4">
-                        <button
-                          onClick={() => setShowAddressForm(false)}
-                          className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          onClick={handleSaveAddress}
-                          className="flex-1 px-6 py-2.5 bg-gradient-to-r from-[#7C2C78] to-[#A43875] text-white rounded-lg hover:from-[#6A2566] hover:to-[#8D2F6A] transition-all"
-                        >
-                          {checkoutData.shippingAddress
-                            ? "Update Address"
-                            : "Save Address"}
-                        </button>
-                      </div>
-                    </div>
-                  </motion.div>
-                ) : !checkoutData.shippingAddress ? (
-                  <motion.button
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    onClick={() => setShowAddressForm(true)}
-                    className="w-full p-4 border-2 border-dashed border-gray-300 rounded-xl hover:border-[#7C2C78] hover:bg-[#7C2C78]/5 transition-all group"
-                  >
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-[#7C2C78]/10">
-                        <Plus className="h-4 w-4 text-gray-600 group-hover:text-[#7C2C78]" />
-                      </div>
-                      <span className="font-medium text-gray-900">
-                        Add Shipping Address
-                      </span>
-                    </div>
-                  </motion.button>
-                ) : null}
-
-                {/* Same as Billing Address */}
-                {checkoutData.shippingAddress && (
-                  <div className="mt-6 pt-6 border-t border-gray-200">
-                    <div className="flex items-center gap-3">
+                  {/* Save info checkbox for guests */}
+                  {session?.user?.isGuest && (
+                    <label className="flex items-center gap-2.5 cursor-pointer select-none">
                       <input
                         type="checkbox"
-                        id="sameAsBilling"
-                        checked={checkoutData.useSameAddress}
-                        onChange={(e) =>
-                          setCheckoutData((prev: CheckoutState) => ({
-                            ...prev,
-                            useSameAddress: e.target.checked,
-                          }))
-                        }
-                        className="h-5 w-5 text-[#7C2C78] focus:ring-[#7C2C78] border-gray-300 rounded"
+                        className="h-4 w-4 rounded border-gray-300 text-[#7C2C78] focus:ring-[#7C2C78]"
                       />
-                      <label htmlFor="sameAsBilling" className="text-gray-700">
-                        Use same address for billing
-                      </label>
-                    </div>
-                  </div>
-                )}
-
-                {/* Payment Method (COD Only) */}
-                <div className="mt-8 pt-6 border-t border-gray-200">
-                  <h3 className="font-medium text-gray-900 mb-4">
-                    Payment Method
-                  </h3>
-                  <div className="p-4 border-2 border-[#7C2C78] rounded-xl">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                        <Shield className="h-5 w-5 text-gray-600" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="font-medium text-gray-900">
-                          Cash on Delivery
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          Pay when you receive your order
-                        </div>
-                      </div>
-                      <div className="h-6 w-6 rounded-full border-2 border-[#7C2C78] flex items-center justify-center">
-                        <Check className="h-3 w-3 text-[#7C2C78]" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Place Order Button */}
-                <div className="mt-8 pt-6 border-t border-gray-200">
-                  <Button
-                    onClick={handlePlaceOrder}
-                    disabled={isSubmitting || !checkoutData.shippingAddress}
-                    className="w-full h-12 text-base bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Processing...
-                      </>
-                    ) : (
-                      <>
-                        <Lock className="h-4 w-4 mr-2" />
-                        Place Order
-                      </>
-                    )}
-                  </Button>
-
-                  {!checkoutData.shippingAddress && (
-                    <p className="text-sm text-red-600 mt-2 text-center">
-                      Please add a shipping address
-                    </p>
+                      <span className="text-sm text-gray-700">Save this information for next time</span>
+                    </label>
                   )}
+
+                  {/* Set as default for logged-in */}
+                  {!session?.user?.isGuest && (
+                    <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={newAddress.isDefault}
+                        onChange={(e) => setNewAddress((prev) => ({ ...prev, isDefault: e.target.checked }))}
+                        className="h-4 w-4 rounded border-gray-300 text-[#7C2C78] focus:ring-[#7C2C78]"
+                      />
+                      <span className="text-sm text-gray-700">Set as default shipping address</span>
+                    </label>
+                  )}
+
+                  {/* Cancel button when editing (logged-in only) */}
+                  {showAddressForm && checkoutData.shippingAddress && (
+                    <button
+                      onClick={() => setShowAddressForm(false)}
+                      className="text-sm text-gray-500 hover:text-gray-700 hover:underline"
+                    >
+                      â† Cancel and use saved address
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Selected address confirmation (logged-in, no form) */}
+              {!session?.user?.isGuest && checkoutData.shippingAddress && !showAddressForm && savedAddresses.length > 0 && (
+                <div className="mt-3 p-3 border border-green-200 bg-green-50 rounded-xl flex items-start gap-2.5">
+                  <MapPin className="h-4 w-4 text-green-600 mt-0.5 shrink-0" />
+                  <div className="text-xs text-green-800">
+                    <p className="font-semibold">{checkoutData.shippingAddress.fullName}</p>
+                    <p>{checkoutData.shippingAddress.addressLine1}{checkoutData.shippingAddress.addressLine2 && `, ${checkoutData.shippingAddress.addressLine2}`}</p>
+                    <p>{checkoutData.shippingAddress.city}, {checkoutData.shippingAddress.state} {checkoutData.shippingAddress.postalCode}</p>
+                  </div>
+                  <button
+                    onClick={() => setShowAddressForm(true)}
+                    className="ml-auto text-xs text-[#7C2C78] hover:underline shrink-0"
+                  >
+                    Edit
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* â”€â”€ PAYMENT METHOD â”€â”€ */}
+            <div className="mb-8">
+              <h2 className="text-lg font-bold text-gray-900 mb-4">Payment</h2>
+              <div className="border-2 border-[#7C2C78] rounded-xl p-4 bg-[#7C2C78]/5">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-white shadow-sm border border-gray-200 flex items-center justify-center shrink-0">
+                    <Shield className="h-5 w-5 text-[#7C2C78]" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-gray-900 text-sm">Cash on Delivery</p>
+                    <p className="text-xs text-gray-500">Pay when you receive your order</p>
+                  </div>
+                  <div className="h-5 w-5 rounded-full bg-[#7C2C78] flex items-center justify-center shrink-0">
+                    <Check className="h-3 w-3 text-white" />
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Back to Cart Link */}
-            <div className="text-center">
+            {/* â”€â”€ NOTES (optional) â”€â”€ */}
+            <div className="mb-8">
+              <textarea
+                value={checkoutData.notes}
+                onChange={(e) =>
+                  setCheckoutData((prev: CheckoutState) => ({ ...prev, notes: e.target.value }))
+                }
+                rows={2}
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors resize-none"
+                placeholder="Order notes (optional) â€” special instructions, landmarks, etc."
+              />
+            </div>
+
+            {/* â”€â”€ PLACE ORDER BUTTON â”€â”€ */}
+            <button
+              onClick={handleSaveAddress}
+              disabled={false}
+              className="hidden"
+              aria-hidden
+            />
+            <button
+              onClick={handlePlaceOrder}
+              disabled={
+                isSubmitting ||
+                (!checkoutData.shippingAddress &&
+                  !(newAddress.addressLine1 && newAddress.city && newAddress.phone && newAddress.fullName))
+              }
+              className="w-full h-14 rounded-xl flex items-center justify-center gap-2 bg-gradient-to-r from-[#2E297D] to-[#7C2C78] hover:from-[#211E63] hover:to-[#6A2566] text-white font-semibold text-base shadow-[0_8px_30px_rgba(46,41,125,0.3)] hover:shadow-[0_12px_40px_rgba(124,44,120,0.4)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+            >
+              {isSubmitting ? (
+                <><Loader2 className="h-5 w-5 animate-spin" /> Processing...</>
+              ) : (
+                <><Lock className="h-4 w-4" /> Place Order</>
+              )}
+            </button>
+
+            {(!checkoutData.shippingAddress &&
+              !(newAddress.addressLine1 && newAddress.city && newAddress.phone)) && (
+              <p className="text-xs text-center text-red-500 mt-2">Please complete your shipping address</p>
+            )}
+
+            {/* Security note */}
+            <div className="flex items-center justify-center gap-1.5 mt-4 text-xs text-gray-400">
+              <Shield className="h-3.5 w-3.5" />
+              <span>All transactions are secure and encrypted</span>
+            </div>
+
+            {/* Back to cart */}
+            <div className="text-center mt-6">
               <Link
                 href="/cart"
-                className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+                className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition-colors"
               >
-                <ArrowLeft className="h-4 w-4" />
-                Back to Cart
+                <ArrowLeft className="h-3.5 w-3.5" />
+                Return to cart
               </Link>
             </div>
+
+            {/* Footer policy links */}
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 mt-8 pt-6 border-t border-gray-100">
+              <Link href="/returns-refunds-policy" className="text-xs text-gray-400 hover:text-gray-600">Refund policy</Link>
+              <Link href="/privacy-policy" className="text-xs text-gray-400 hover:text-gray-600">Privacy policy</Link>
+              <Link href="/terms-and-conditions" className="text-xs text-gray-400 hover:text-gray-600">Terms of service</Link>
+            </div>
           </div>
+
+          {/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              RIGHT COLUMN â€” Sticky Order Summary (desktop only)
+          â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+          <div className="hidden lg:block lg:w-[380px] shrink-0">
+            <div className="sticky top-8">
+              <CheckoutSummary
+                checkoutData={checkoutData}
+                setCheckoutData={setCheckoutData}
+                userId={userId}
+              />
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

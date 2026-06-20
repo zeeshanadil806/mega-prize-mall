@@ -5,6 +5,7 @@ import { ProductModel } from '@/models/Product';
 import { log } from '@/lib/logger';
 import { rateLimit } from '@/lib/rate-limit';
 import { CartItem } from '@/types';
+import { applyRateLimit, ipFromRequest } from '@/shared/http';
 
 const BATCH_RATE_LIMIT = 60; // requests per minute per IP
 const limiter = rateLimit({
@@ -23,28 +24,12 @@ type BatchProduct = Pick<CartItem,
 
 export async function POST(request: NextRequest) {
   try {
-    const ip =
-      request.headers.get('x-forwarded-for') ||
-      request.headers.get('x-real-ip') ||
-      'unknown';
-    const rateLimitResult = await limiter.check(BATCH_RATE_LIMIT, ip);
-    if (rateLimitResult.isRateLimited) {
-      const retryAfter = Math.ceil(
-        (rateLimitResult.resetTime - Date.now()) / 1000
-      );
-      return NextResponse.json(
-        { error: 'Too many requests', retryAfter },
-        {
-          status: 429,
-          headers: {
-            'Retry-After': retryAfter.toString(),
-            'X-RateLimit-Limit': String(BATCH_RATE_LIMIT),
-            'X-RateLimit-Remaining': '0',
-            'X-RateLimit-Reset': rateLimitResult.resetTime.toString(),
-          },
-        }
-      );
-    }
+    const rl = await applyRateLimit(
+      limiter,
+      BATCH_RATE_LIMIT,
+      ipFromRequest(request),
+    );
+    if (!rl.ok) return rl.response;
 
     const { productIds } = await request.json();
     

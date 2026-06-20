@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { UserModel } from "@/models/User";
-import { auth } from "@/auth";
+import { requireAdmin } from '@/shared/http';
 import { z } from "zod";
 import { log } from "@/lib/logger";
 import bcrypt from "bcryptjs";
@@ -19,21 +19,10 @@ export async function GET(
   props: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    const params = await props.params;
+        const params = await props.params;
     const id = params.id;
-
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const adminUser = await UserModel.findById(session.user.id);
-    if (!adminUser || adminUser.role !== "admin") {
-      return NextResponse.json(
-        { error: "Forbidden: Admin access required" },
-        { status: 403 }
-      );
-    }
+    const admin = await requireAdmin();
+    if (!admin.ok) return admin.response;
 
     await connectToDatabase();
 
@@ -67,20 +56,10 @@ export async function PATCH(
   props: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    const params = await props.params;
+        const params = await props.params;
     const id = params.id;
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const adminUser = await UserModel.findById(session.user.id);
-    if (!adminUser || adminUser.role !== "admin") {
-      return NextResponse.json(
-        { error: "Forbidden: Admin access required" },
-        { status: 403 }
-      );
-    }
+    const admin = await requireAdmin();
+    if (!admin.ok) return admin.response;
 
     await connectToDatabase();
 
@@ -117,7 +96,7 @@ export async function PATCH(
     await supportAccount.save();
 
     log.info("Admin updated support account", {
-      adminId: session.user.id,
+      adminId: admin.user.id,
       supportId: id,
       updates: Object.keys(validatedData),
     });
@@ -155,25 +134,15 @@ export async function DELETE(
   props: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    const params = await props.params;
+        const params = await props.params;
     const id = params.id;
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const adminUser = await UserModel.findById(session.user.id);
-    if (!adminUser || adminUser.role !== "admin") {
-      return NextResponse.json(
-        { error: "Forbidden: Admin access required" },
-        { status: 403 }
-      );
-    }
+    const admin = await requireAdmin();
+    if (!admin.ok) return admin.response;
 
     await connectToDatabase();
 
     // Check if trying to delete own account
-    if (id === session.user.id) {
+    if (id === admin.user.id) {
       return NextResponse.json(
         { error: "Cannot delete your own account" },
         { status: 400 }
@@ -196,7 +165,7 @@ export async function DELETE(
     await UserModel.findByIdAndDelete(id);
 
     log.info("Admin deleted support account", {
-      adminId: session.user.id,
+      adminId: admin.user.id,
       supportId: id,
       email: supportAccount.email,
     });

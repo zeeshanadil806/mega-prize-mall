@@ -20,6 +20,7 @@ import {
 } from "lucide-react"
 import { toast } from "sonner"
 import { formatCurrency } from "@/shared/format"
+import { formatDateTime } from "@/lib/utils"
 import Link from "next/link"
 import { BargainHistoryItem } from "@/types"
 
@@ -49,13 +50,7 @@ export default function BargainHistory() {
         const transformedHistory = data.data.history.map((item: BargainHistoryItem) => ({
           ...item,
           savingAmount: item.originalPrice - item.offeredPrice,
-          createdAt: new Date(item.createdAt).toLocaleDateString('en-PK', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-          })
+          createdAt: formatDateTime(item.createdAt)
         }))
 
         setHistory(transformedHistory)
@@ -404,7 +399,7 @@ export default function BargainHistory() {
           {/* View All Button */}
           <div className="mt-6 text-center">
             <Button variant="outline" asChild>
-              <Link href="/bargains">
+              <Link href="/products?bargain=true">
                 View All Bargains
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Link>

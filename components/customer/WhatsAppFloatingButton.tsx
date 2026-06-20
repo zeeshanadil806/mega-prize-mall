@@ -4,6 +4,7 @@
 import { MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { STORE_CONFIG } from "@/shared/config";
 
 interface WhatsAppFloatingButtonProps {
   phoneNumber?: string;
@@ -15,7 +16,7 @@ interface WhatsAppFloatingButtonProps {
 }
 
 export default function WhatsAppFloatingButton({
-  phoneNumber = "923254007037", // Your WhatsApp number without +
+  phoneNumber = STORE_CONFIG.supportPhone, // Your WhatsApp number without +
   message = "Hello! I have a question about your products",
   position = "bottom-right",
   showOnMobile = true,
@@ -86,8 +87,8 @@ export default function WhatsAppFloatingButton({
   if (!shouldShow) return null;
 
   const positionClasses = {
-    "bottom-right": "bottom-6 right-6",
-    "bottom-left": "bottom-6 left-6",
+    "bottom-right": "bottom-24 right-6 sm:bottom-6 sm:right-6",
+    "bottom-left": "bottom-24 left-6 sm:bottom-6 sm:left-6",
     "top-right": "top-6 right-6",
     "top-left": "top-6 left-6",
   }[position];

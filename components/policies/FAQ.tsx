@@ -1,5 +1,6 @@
-// app/(customer)/faq/page.tsx
 "use client";
+
+import { STORE_CONFIG } from "@/shared/config";
 import {
   HelpCircle,
   ShoppingBag,
@@ -618,7 +619,7 @@ export default function FAQPage() {
       {
         method: "WhatsApp Support",
         icon: MessageCircle,
-        contact: "+92 325 4007037",
+        contact: `+${STORE_CONFIG.supportPhone.slice(0, 2)} ${STORE_CONFIG.supportPhone.slice(2, 5)} ${STORE_CONFIG.supportPhone.slice(5)}`,
         response: "24 hours",
         color: "bg-green-100 text-green-800",
         description: "Quick assistance and instant messaging",
@@ -1189,12 +1190,12 @@ export default function FAQPage() {
                           <div>
                             <p className="font-medium">WhatsApp</p>
                             <Link
-                              href="https://wa.me/923254007037"
+                              href={STORE_CONFIG.whatsappLink}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-white/90 hover:text-white inline-flex items-center gap-1"
                             >
-                              +92 325 4007037
+                              +{STORE_CONFIG.supportPhone}
                               <ExternalLink className="h-3 w-3" />
                             </Link>
                           </div>

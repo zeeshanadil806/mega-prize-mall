@@ -2,8 +2,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 // import Image from 'next/image';
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { toast } from "sonner";
 import { formatCurrency } from "@/shared/format";
 import AddToCartButton from "@/components/cart/AddToCartButton";
@@ -30,6 +31,7 @@ import {
   Heart,
   Minus,
   Plus,
+  Package,
 } from "lucide-react";
 import { useCartStore } from "@/stores/cart-store";
 import { ImageProps, CustomerProductProps } from "@/types";
@@ -38,6 +40,7 @@ import Image from "next/image";
 import ProductStructuredData from "./ProductStructuredData";
 // import { useTikTokTracking } from "@/hooks/useTikTokTracking";
 import { useAllTracking } from '@/hooks/useAllTracking';
+import { useSession, signIn } from "next-auth/react";
 
 interface ProductDetailClientProps {
   product: CustomerProductProps;
@@ -47,11 +50,14 @@ interface ProductDetailClientProps {
 export default function ProductDetailClient({
   product,
 }: ProductDetailClientProps) {
+  const router = useRouter();
+  const { data: session } = useSession();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1); 
   const [isWishlisted, setIsWishlisted] = useState(false);
   const getItem = useCartStore((state) => state.getItem);
-  const { trackProductView } = useAllTracking();
+  const addItem = useCartStore((state) => state.addItem);
+  const { trackProductView, trackAddToCart } = useAllTracking();
 
 useEffect(() => {
   if (product._id && product.name && product.price) {
@@ -87,6 +93,8 @@ useEffect(() => {
     : 0;
 
   const images = product.images || [];
+  const imageCount = images.length;
+  const visualHighlightImages = product.featureImages || [];
   const cartItem = product._id && getItem(product._id.toString());
 
   // Inside the component, add these refs after other state declarations
@@ -109,7 +117,7 @@ useEffect(() => {
   }, []);
 
   // Handle touch end - detect swipe direction
-  const handleTouchEnd = useCallback(() => {
+  const handleTouchEnd = () => {
     if (!touchStart || !touchEnd) return;
 
     const distance = touchStart - touchEnd;
@@ -119,7 +127,7 @@ useEffect(() => {
     if (isLeftSwipe) {
       // Swipe left - next image
       setSelectedImageIndex((prev) =>
-        prev === images.length - 1 ? 0 : prev + 1
+        prev === imageCount - 1 ? 0 : prev + 1
       );
     }
 
@@ -129,7 +137,7 @@ useEffect(() => {
         prev === 0 ? images.length - 1 : prev - 1
       );
     }
-  }, [touchStart, touchEnd, images.length]);
+  };
 
   const handleShare = async () => {
     try {
@@ -153,6 +161,69 @@ useEffect(() => {
     toast.success(isWishlisted ? "Removed from wishlist" : "Added to wishlist");
   };
 
+  const handleBuyNow = async () => {
+    if (product.stock !== undefined && product.stock < 1) {
+      toast.error("Out of stock");
+      return;
+    }
+
+    const cartItem = {
+      productId: product._id.toString(),
+      name: product.name,
+      slug: product.slug,
+      price: product.price,
+      discountedPrice: product.discountedPrice,
+      bargainEnabled: product.bargainEnabled,
+      minBargainPrice: product.minBargainPrice,
+      maxBargainRounds: product.maxBargainRounds,
+      bargainValidityHours: product.bargainValidityHours,
+      images: product.images,
+      quantity: quantity,
+    };
+
+    addItem(cartItem);
+    trackAddToCart(
+      product._id.toString(),
+      product.name,
+      quantity,
+      product.discountedPrice || product.price,
+      "PKR"
+    );
+
+    if (session?.user) {
+      toast.success(`Redirecting to checkout...`);
+      router.push("/checkout");
+    } else {
+      toast.info(`Proceeding to checkout as guest...`);
+      try {
+        await signIn("guest", {
+          callbackUrl: "/checkout",
+          redirect: true,
+        });
+      } catch (error) {
+        console.error("Guest login failed:", error);
+        router.push("/checkout");
+      }
+    }
+  };
+
+  const buyNowIconVariants: Variants = {
+    initial: { scale: 1, rotate: 0 },
+    hover: {
+      scale: 1.15,
+      rotate: [-5, 5, -5, 5, 0],
+      transition: { duration: 0.4, ease: "easeInOut" },
+    },
+  };
+
+  const wishlistIconVariants: Variants = {
+    initial: { scale: 1 },
+    hover: {
+      scale: 1.2,
+      transition: { type: "spring", stiffness: 400, damping: 10 },
+    },
+  };
+
   const incrementQuantity = () => {
     if (quantity < (product.stock || 10)) {
       setQuantity(quantity + 1);
@@ -172,7 +243,7 @@ useEffect(() => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-full"
+      className="w-full pb-24 sm:pb-0"
     >
       <ProductStructuredData product={product} />
       {/* Breadcrumb */}
@@ -476,209 +547,243 @@ useEffect(() => {
         </div>
 
         {/* Product Info */}
-        <div className="space-y-4 sm:space-y-6 lg:space-y-8">
-          {/* Product Header */}
+        <div className="space-y-3 sm:space-y-6 lg:space-y-8">
+          {/* Product Header — mobile: compact single block */}
           <div>
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
-              <div className="flex-1">
-                <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-1.5 sm:mb-2 leading-tight">
-                  {product.name}
-                </h1>
-                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-3">
-                  <span className="text-xs sm:text-sm text-gray-600">
-                    SKU: {product.sku}
-                  </span>
-                  <Separator orientation="vertical" className="h-3 sm:h-4" />
-                  <span className="text-xs sm:text-sm text-gray-600 truncate max-w-[120px] sm:max-w-none">
-                    Brand: {product.brand}
-                  </span>
-                  <Separator
-                    orientation="vertical"
-                    className="h-3 sm:h-4 hidden sm:block"
-                  />
-                  {/* <div className="flex items-center gap-1 hidden sm:flex"> */}
-                    {/* <div className="flex">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`h-3 w-3 sm:h-3.5 sm:w-3.5 lg:h-4 lg:w-4 ${
-                            i < 4
-                              ? "text-yellow-400 fill-yellow-400"
-                              : "text-gray-300"
-                          }`}
-                        />
-                      ))}
-                    </div> */}
-                    {/* <span className="text-xs sm:text-sm text-gray-600">
-                      (42 reviews)
-                    </span> */}
-                  {/* </div> */}
-                </div>
-              </div>
+            {/* Name */}
+            <h1 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-1 sm:mb-2 leading-tight">
+              {product.name}
+            </h1>
 
-              {/* Stock Status */}
-              <div className="self-start">
-                {product.stock > 0 ? (
-                  <div className="flex items-center gap-1.5 sm:gap-2 text-green-600">
-                    <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5" />
-                    <span className="font-medium text-sm sm:text-base">
-                      In Stock
-                    </span>
-                    {product.stock <= 10 && (
-                      <span className="text-xs sm:text-sm text-orange-600 whitespace-nowrap">
-                        Only {product.stock} left!
-                      </span>
-                    )}
-                  </div>
-                ) : (
-                  <div className="text-red-600 font-medium text-sm sm:text-base">
-                    Out of Stock
-                  </div>
-                )}
-              </div>
+            {/* SKU / Brand / Stock — one tight row on mobile */}
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span className="text-xs text-gray-500">SKU: {product.sku}</span>
+              <span className="text-gray-300 text-xs">•</span>
+              <span className="text-xs text-gray-500">Brand: {product.brand}</span>
+              <span className="text-gray-300 text-xs">•</span>
+              {product.stock > 0 ? (
+                <span className="flex items-center gap-1 text-xs font-medium text-green-600">
+                  <CheckCircle className="h-3 w-3" />
+                  {product.stock <= 10 ? `Only ${product.stock} left!` : "In Stock"}
+                </span>
+              ) : (
+                <span className="text-xs font-medium text-red-600">Out of Stock</span>
+              )}
             </div>
           </div>
 
-          {/* Price Section */}
-          <div className="bg-gray-50 rounded-lg sm:rounded-xl lg:rounded-2xl p-4 sm:p-5 lg:p-6">
-            <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-3 sm:gap-4 mb-4 lg:mb-5">
+          {/* ── Price Block ── */}
+          {/* Mobile: flat/compact — no gray card background */}
+          {/* Desktop: keeps the rounded card style */}
+          <div className="pt-1 sm:bg-gray-50 sm:rounded-xl lg:rounded-2xl sm:p-5 lg:p-6">
+
+            {/* Price row */}
+            <div className="flex items-baseline justify-between gap-3 mb-3 sm:mb-4">
               <div>
                 <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900">
                   {formatCurrency(finalPrice)}
                 </div>
                 {product.discountedPrice && (
-                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-1">
-                    <span className="text-lg sm:text-xl lg:text-2xl text-gray-500 line-through">
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="text-sm sm:text-xl text-gray-400 line-through">
                       {formatCurrency(product.price)}
                     </span>
-                    <Badge className="bg-green-500 text-white text-xs sm:text-sm py-0.5 sm:py-1">
-                      Save{" "}
-                      {formatCurrency(product.price - product.discountedPrice)}
+                    <Badge className="bg-green-500 text-white text-xs py-0.5">
+                      Save {formatCurrency(product.price - product.discountedPrice)}
                     </Badge>
                   </div>
                 )}
               </div>
-
-              {/* Purchase Count */}
               {product.purchaseCount && product.purchaseCount > 0 && (
-                <div className="text-xs sm:text-sm text-gray-600 text-center sm:text-right">
-                  <div className="font-semibold">{product.purchaseCount}+</div>
-                  <div>purchased</div>
+                <div className="text-xs text-gray-500 text-right shrink-0">
+                  <div className="font-bold text-gray-700">{product.purchaseCount}+</div>
+                  <div>sold</div>
                 </div>
               )}
             </div>
 
-            {/* Quantity Selector */}
-            <div className="mb-5 lg:mb-6">
-              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1.5 sm:mb-2">
-                Quantity
-              </label>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                <div className="flex items-center border border-gray-300 rounded-lg w-fit">
-                  <button
-                    onClick={decrementQuantity}
-                    className="px-3 sm:px-4 py-1.5 sm:py-2 text-gray-600 hover:text-gray-900 disabled:text-gray-300"
-                    disabled={quantity <= 1}
-                    aria-label="Decrease quantity"
-                  >
-                    <Minus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  </button>
-                  <span className="px-3 sm:px-4 py-1.5 sm:py-2 text-base sm:text-lg font-medium min-w-10 sm:min-w-[50px] text-center">
-                    {quantity}
-                  </span>
-                  <button
-                    onClick={incrementQuantity}
-                    className="px-3 sm:px-4 py-1.5 sm:py-2 text-gray-600 hover:text-gray-900 disabled:text-gray-300"
-                    disabled={quantity >= (product.stock || 0)}
-                    aria-label="Increase quantity"
-                  >
-                    <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  </button>
-                </div>
-                <div className="text-xs sm:text-sm text-gray-600">
-                  {product.stock || 0} units available
-                </div>
+            {/* Quantity Selector — compact on mobile */}
+            <div className="flex items-center gap-3 mb-4 sm:mb-5">
+              <span className="text-sm font-medium text-gray-700 shrink-0">Qty:</span>
+              <div className="flex items-center border border-gray-300 rounded-lg">
+                <motion.button
+                  onClick={decrementQuantity}
+                  whileTap={{ scale: 0.85 }}
+                  whileHover={{ scale: 1.1 }}
+                  className="px-3 py-1.5 text-gray-600 hover:text-gray-900 disabled:text-gray-300 disabled:pointer-events-none"
+                  disabled={quantity <= 1}
+                  aria-label="Decrease quantity"
+                >
+                  <Minus className="h-3.5 w-3.5" />
+                </motion.button>
+                <span className="px-4 py-1.5 text-base font-semibold min-w-[40px] text-center">
+                  {quantity}
+                </span>
+                <motion.button
+                  onClick={incrementQuantity}
+                  whileTap={{ scale: 0.85 }}
+                  whileHover={{ scale: 1.1 }}
+                  className="px-3 py-1.5 text-gray-600 hover:text-gray-900 disabled:text-gray-300 disabled:pointer-events-none"
+                  disabled={quantity >= (product.stock || 0)}
+                  aria-label="Increase quantity"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                </motion.button>
               </div>
+              <span className="text-xs text-gray-500">{product.stock || 0} available</span>
             </div>
 
-            {/* Action Buttons */}
-            <div className="space-y-2.5 sm:space-y-3">
+            {/* Already in Cart — compact notification */}
+            {cartItem && (
+              <div className="mb-3 px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between gap-2">
+                <div className="flex items-center gap-1.5 text-blue-700">
+                  <CheckCircle className="h-4 w-4 shrink-0" />
+                  <span className="text-xs sm:text-sm font-medium">In cart ({cartItem.quantity})</span>
+                </div>
+                <Link href="/cart">
+                  <Button variant="ghost" size="sm" className="text-blue-700 text-xs h-auto py-1 px-2">
+                    View Cart →
+                  </Button>
+                </Link>
+              </div>
+            )}
+
+            {/* ── Desktop-only action buttons (hidden on mobile — see sticky bar below) ── */}
+            <div className="hidden sm:block space-y-3">
               <AddToCartButton
                 product={formattedProduct}
                 variant="default"
                 size="lg"
-                className="w-full py-3 sm:py-4 lg:py-6 text-sm sm:text-base lg:text-lg bg-linear-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] h-auto"
+                className="w-full h-14 lg:h-16 rounded-lg text-base lg:text-lg font-medium"
               />
 
               {product.bargainEnabled && (
                 <BargainButton
                   product={formattedProduct}
-                  className="w-full py-3 sm:py-4 text-sm sm:text-base h-auto"
+                  className="w-full py-4 text-base h-auto"
                 />
               )}
 
-              {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
-                <Button variant="outline" size="lg" className="py-3 sm:py-4 h-auto">
-                  <Heart className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-                  <span className="text-sm sm:text-base">Wishlist</span>
-                </Button>
-                <Button variant="outline" size="lg" className="py-3 sm:py-4 h-auto">
-                  <Package className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-                  <span className="text-sm sm:text-base">Buy Now</span>
-                </Button>
-              </div> */}
-            </div>
+              <div className="grid grid-cols-2 gap-3">
+                <motion.div whileHover="hover" whileTap="tap" className="w-full">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={handleWishlist}
+                    className={`w-full h-14 lg:h-16 flex items-center justify-center transition-all duration-300 font-medium rounded-lg ${
+                      isWishlisted
+                        ? "border-red-200 bg-red-50/50 text-red-500 hover:bg-red-50 shadow-[0_4px_15px_rgba(239,68,68,0.1)]"
+                        : "border-gray-200 hover:border-red-200 hover:bg-red-50/30 text-gray-700 hover:text-red-500 hover:shadow-[0_4px_15px_rgba(239,68,68,0.05)]"
+                    }`}
+                  >
+                    <motion.span variants={wishlistIconVariants} className="flex items-center">
+                      <Heart className={`h-5 w-5 mr-1.5 ${isWishlisted ? "fill-red-500 text-red-500 animate-pulse" : ""}`} />
+                    </motion.span>
+                    <span>{isWishlisted ? "Wishlisted" : "Wishlist"}</span>
+                  </Button>
+                </motion.div>
 
-            {/* Already in Cart Notification */}
-            {cartItem && (
-              <div className="mt-4 p-2.5 sm:p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
-                  <div className="flex items-center gap-1.5 sm:gap-2 text-blue-700">
-                    <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5" />
-                    <span className="font-medium text-sm sm:text-base">
-                      Already in Cart ({cartItem.quantity})
+                <motion.div whileHover="hover" whileTap="tap" className="w-full">
+                  <Button
+                    onClick={handleBuyNow}
+                    disabled={product.stock !== undefined && product.stock < 1}
+                    className="relative overflow-hidden w-full h-14 lg:h-16 flex items-center justify-center bg-gradient-to-r from-[#2E297D] to-[#7C2C78] hover:from-[#211E63] hover:to-[#6A2566] text-white shadow-[0_8px_30px_rgba(46,41,125,0.25)] hover:shadow-[0_12px_45px_rgba(124,44,120,0.45)] transition-all duration-500 font-medium rounded-lg border-0 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed disabled:shadow-none"
+                  >
+                    {!(product.stock !== undefined && product.stock < 1) && (
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none"
+                        initial={{ x: "-100%" }}
+                        whileHover={{ x: "100%", transition: { duration: 0.8, ease: "easeOut" } }}
+                      />
+                    )}
+                    <span className="relative z-10 flex items-center gap-2">
+                      <motion.span variants={buyNowIconVariants} className="flex items-center">
+                        <Package className="h-5 w-5 mr-1" />
+                      </motion.span>
+                      Buy Now
                     </span>
-                  </div>
-                  <Link href="/cart">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-blue-700 text-sm sm:text-base h-auto py-1.5 sm:py-2"
-                    >
-                      View Cart →
-                    </Button>
-                  </Link>
-                </div>
+                  </Button>
+                </motion.div>
               </div>
-            )}
+            </div>
           </div>
 
-          {/* Features & Services */}
-          <div className="grid grid-cols-3 gap-2 sm:gap-3 lg:gap-4">
+          {/* Features & Services — hidden on mobile to save space */}
+          <div className="hidden sm:grid grid-cols-3 gap-2 sm:gap-3 lg:gap-4">
             <div className="text-center p-2 sm:p-3 bg-white border border-gray-200 rounded-lg">
               <Truck className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 mx-auto text-[#7C2C78] mb-1 sm:mb-2" />
-              <div className="text-xs sm:text-sm font-medium">
-                Free Shipping
-              </div>
+              <div className="text-xs sm:text-sm font-medium">Free Shipping</div>
               <div className="text-xs text-gray-600">Over Rs 1000</div>
             </div>
             <div className="text-center p-2 sm:p-3 bg-white border border-gray-200 rounded-lg">
               <RotateCcw className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 mx-auto text-[#7C2C78] mb-1 sm:mb-2" />
-              <div className="text-xs sm:text-sm font-medium">
-                10-Day Returns
-              </div>
+              <div className="text-xs sm:text-sm font-medium">10-Day Returns</div>
               <div className="text-xs text-gray-600">Easy returns</div>
             </div>
             <div className="text-center p-2 sm:p-3 bg-white border border-gray-200 rounded-lg">
               <Shield className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 mx-auto text-[#7C2C78] mb-1 sm:mb-2" />
-              <div className="text-xs sm:text-sm font-medium">
-                1 Year Warranty
-              </div>
+              <div className="text-xs sm:text-sm font-medium">1 Year Warranty</div>
               <div className="text-xs text-gray-600">Full coverage</div>
+            </div>
+          </div>
+
+          {/* Mobile trust badges — compact horizontal strip */}
+          <div className="flex items-center justify-between sm:hidden border border-gray-100 rounded-xl px-3 py-2.5 bg-gray-50">
+            <div className="flex items-center gap-1.5">
+              <Truck className="h-3.5 w-3.5 text-[#7C2C78]" />
+              <span className="text-[10px] text-gray-600 font-medium">Free Ship</span>
+            </div>
+            <div className="h-4 w-px bg-gray-200" />
+            <div className="flex items-center gap-1.5">
+              <RotateCcw className="h-3.5 w-3.5 text-[#7C2C78]" />
+              <span className="text-[10px] text-gray-600 font-medium">10-Day Returns</span>
+            </div>
+            <div className="h-4 w-px bg-gray-200" />
+            <div className="flex items-center gap-1.5">
+              <Shield className="h-3.5 w-3.5 text-[#7C2C78]" />
+              <span className="text-[10px] text-gray-600 font-medium">1-Yr Warranty</span>
             </div>
           </div>
         </div>
       </div>
+
+      {visualHighlightImages.length > 0 && (
+        <section className="mt-10 sm:mt-12 lg:mt-16">
+          {/* Section label */}
+          <div className="flex items-center gap-3 mb-5">
+            <div className="h-px flex-1 bg-gray-200" />
+            <span className="text-xs font-semibold tracking-[0.2em] uppercase text-gray-400">Product Details</span>
+            <div className="h-px flex-1 bg-gray-200" />
+          </div>
+
+          {/* Full-bleed breakout — escape the container padding so banners go edge-to-edge */}
+          <div className="-mx-4 sm:-mx-6 lg:-mx-8">
+            <div className="flex flex-col divide-y divide-gray-100">
+              {visualHighlightImages.map((image: ImageProps, index: number) => (
+                <motion.div
+                  key={`banner-${image.url}-${index}`}
+                  initial={{ opacity: 0, y: 28 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-60px" }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                  className="w-full bg-white"
+                >
+                  {/* Natural-ratio image — no fixed height, preserves original aspect ratio exactly */}
+                  <Image
+                    src={image.url}
+                    alt={image.alt || `${product.name} detail ${index + 1}`}
+                    width={image.metadata?.width || 1200}
+                    height={image.metadata?.height || 800}
+                    className="w-full h-auto block"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1440px) 100vw, 1440px"
+                    style={{ display: "block" }}
+                  />
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Product Details Tabs */}
       <div className="mt-8 sm:mt-10 lg:mt-12">
@@ -839,6 +944,78 @@ useEffect(() => {
             </AccordionContent>
           </AccordionItem>
         </Accordion>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════
+           MOBILE STICKY BOTTOM ACTION BAR
+           Always visible — no scrolling required on mobile
+      ═══════════════════════════════════════════════════ */}
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-gray-200 shadow-[0_-4px_24px_rgba(0,0,0,0.08)]">
+        {/* Cart notification strip */}
+        {cartItem && (
+          <div className="bg-blue-50 border-b border-blue-100 px-4 py-1.5 flex items-center justify-between">
+            <div className="flex items-center gap-1.5 text-blue-700">
+              <CheckCircle className="h-3.5 w-3.5" />
+              <span className="text-xs font-medium">Already in cart ({cartItem.quantity})</span>
+            </div>
+            <Link href="/cart">
+              <span className="text-xs font-semibold text-blue-700 underline">View Cart →</span>
+            </Link>
+          </div>
+        )}
+
+        <div className="px-4 py-3 flex items-center gap-3">
+          {/* Compact Qty */}
+          <div className="flex items-center border border-gray-200 rounded-xl shrink-0 bg-gray-50">
+            <motion.button
+              onClick={decrementQuantity}
+              whileTap={{ scale: 0.85 }}
+              className="w-9 h-10 flex items-center justify-center text-gray-600 disabled:text-gray-300 disabled:pointer-events-none"
+              disabled={quantity <= 1}
+              aria-label="Decrease quantity"
+            >
+              <Minus className="h-3.5 w-3.5" />
+            </motion.button>
+            <span className="w-8 text-center text-sm font-bold text-gray-900">{quantity}</span>
+            <motion.button
+              onClick={incrementQuantity}
+              whileTap={{ scale: 0.85 }}
+              className="w-9 h-10 flex items-center justify-center text-gray-600 disabled:text-gray-300 disabled:pointer-events-none"
+              disabled={quantity >= (product.stock || 0)}
+              aria-label="Increase quantity"
+            >
+              <Plus className="h-3.5 w-3.5" />
+            </motion.button>
+          </div>
+
+          {/* Add to Cart */}
+          <div className="flex-1">
+            <AddToCartButton
+              product={formattedProduct}
+              variant="default"
+              size="default"
+              className="w-full h-11 rounded-xl text-sm font-semibold"
+            />
+          </div>
+
+          {/* Buy Now */}
+          <motion.button
+            onClick={handleBuyNow}
+            whileTap={{ scale: 0.97 }}
+            disabled={product.stock !== undefined && product.stock < 1}
+            className="relative overflow-hidden h-11 px-4 rounded-xl flex items-center justify-center gap-1.5 bg-gradient-to-r from-[#2E297D] to-[#7C2C78] text-white text-sm font-semibold shadow-[0_4px_15px_rgba(124,44,120,0.35)] disabled:opacity-40 disabled:pointer-events-none shrink-0"
+          >
+            {!(product.stock !== undefined && product.stock < 1) && (
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none"
+                initial={{ x: "-100%" }}
+                whileTap={{ x: "100%", transition: { duration: 0.6 } }}
+              />
+            )}
+            <Package className="h-4 w-4 relative z-10" />
+            <span className="relative z-10">Buy Now</span>
+          </motion.button>
+        </div>
       </div>
     </motion.div>
   );

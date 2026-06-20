@@ -2,18 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { WalletTransactionModel } from '@/models/WalletTransaction';
 import { UserModel } from '@/models/User';
-import { auth } from '@/auth';
+import { requireSession } from '@/shared/http';
 import { log } from '@/lib/logger';
+import { STORE_CONFIG } from '@/shared/config';
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth()
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const session = await requireSession();
+    if (!session.ok) return session.response;
 
     await connectToDatabase();
 
@@ -149,7 +145,7 @@ export async function GET(request: NextRequest) {
       label: `${new Date(item._id.year, item._id.month - 1).toLocaleString('default', { month: 'short' })} ${item._id.year}`,
       points: item.points,
       transactions: item.transactions,
-      value: item.points * 0.1,
+      value: item.points * STORE_CONFIG.pointsToRupeeRate,
     }));
 
     // Format type breakdown
@@ -169,7 +165,7 @@ export async function GET(request: NextRequest) {
 
     const stats = {
       currentPoints: user.points,
-      monetaryValue: user.points * 0.1,
+      monetaryValue: user.points * STORE_CONFIG.pointsToRupeeRate,
       currentMonthEarned: currentMonthEarned[0]?.total || 0,
       lastMonthEarned: lastMonthEarned[0]?.total || 0,
       pointsExpiringSoon: pointsExpiringSoon[0]?.total || 0,

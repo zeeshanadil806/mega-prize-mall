@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { unauthorized, serverError } from "@/shared/http";
 import crypto from "crypto";
 import { connectToDatabase } from "@/lib/mongodb";
 import { tiktokConversionAPI } from "@/lib/tiktok/server/conversion-api";
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
     // Verify webhook signature
     const signature = request.headers.get("x-webhook-signature");
     if (!verifySignature(signature, rawBody, secret)) {
-      return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+      return unauthorized("Invalid signature");
     }
 
     // Connect to MongoDB after signature passes — avoid DB work on bad requests.
@@ -108,10 +109,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     log.error("TikTok purchase webhook error", { error: error as Error });
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return serverError("Internal server error");
   }
 }
 

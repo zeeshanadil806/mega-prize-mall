@@ -9,8 +9,9 @@
 // stay identical; a later turn can replace it with Next.js
 // `revalidate` / `unstable_cache` for proper edge-cache integration.
 
+import { cache } from "react";
 import { connectToDatabase } from "@/lib/mongodb";
-import { transformProductForCustomer } from "./domain";
+import { transformProductForCustomer, getGroupedCategoryStats } from "./domain";
 import type {
   ProductListingFilters,
   ListingProductForSchema,
@@ -82,10 +83,11 @@ export async function getBargainProducts(
   return rows.map(transformProductForCustomer);
 }
 
-export async function getCategoryStats(): Promise<CategoryStat[]> {
+export const getCategoryStats = cache(async (): Promise<CategoryStat[]> => {
   await connectToDatabase();
-  return aggregateCategoryStats();
-}
+  const stats = await aggregateCategoryStats();
+  return getGroupedCategoryStats(stats);
+});
 
 // ─── Listing-page fetch (matches ProductGrid filter) ───────────────
 

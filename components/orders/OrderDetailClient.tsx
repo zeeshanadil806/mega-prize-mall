@@ -25,6 +25,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { formatCurrency } from '@/shared/format';
+import { STORE_CONFIG, getWhatsAppSupportLink } from '@/shared/config';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 // import { Progress } from '@/components/ui/progress';
@@ -300,7 +301,11 @@ export function OrderDetailClient({ order }: OrderDetailClientProps) {
                       </Button>
                       {order.status === 'delivered' && (
                         <Button variant="outline" size="sm" className="h-8 px-2.5 sm:px-3 text-xs sm:text-sm" asChild>
-                          <Link href={`/products/${item.productSlug}/review`}>
+                          <Link 
+                            href={`https://wa.me/923254007037?text=${encodeURIComponent(`Hi, I'd like to share feedback/review for order ${order._id.slice(-8).toUpperCase()} on product: ${item.productName}`)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
                             Write Review
                           </Link>
                         </Button>
@@ -496,7 +501,7 @@ export function OrderDetailClient({ order }: OrderDetailClientProps) {
                   className="w-full h-9 sm:h-10 mt-3 text-xs sm:text-sm border-[#7C2C78] text-[#7C2C78] hover:bg-[#7C2C78]/10"
                   asChild
                 >
-                  <Link href="/lucky-draw">
+                  <Link href="/dashboard/lucky-draw">
                     View Lucky Draw Details
                   </Link>
                 </Button>
@@ -520,7 +525,7 @@ export function OrderDetailClient({ order }: OrderDetailClientProps) {
         </div>
         <div className="flex gap-2 w-full md:w-auto">
           <Button variant="outline" className="flex-1 md:flex-none h-9 sm:h-10 text-xs sm:text-sm" asChild>
-            <Link href="https://wa.me/923254007037" target="_blank">Contact Whatsapp</Link>
+            <Link href={getWhatsAppSupportLink(`Hello Mega Prize Mall! I need support regarding my order #${order._id.toString().slice(-8).toUpperCase()}`)} target="_blank">Contact Whatsapp</Link>
           </Button>
           <Button variant="outline" className="flex-1 md:flex-none h-9 sm:h-10 text-xs sm:text-sm" asChild>
             <Link href="/dashboard/orders">View All Orders</Link>
