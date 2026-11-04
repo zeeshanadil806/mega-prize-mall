@@ -118,18 +118,15 @@ export async function PATCH(
           }
         }, 0);
 
-        // Award points for delivered orders
-        if (order.pointsEarned > 0) {
+        // Award points for delivered orders (only for registered accounts)
+        if (order.userId && order.pointsEarned > 0) {
+          const user = await UserModel.findById(order.userId).session(sessionDb);
+          const currentPoints = user?.points || 0;
           const pointsTransaction = new WalletTransactionModel({
             userId: order.userId,
             type: "earn",
             points: order.pointsEarned,
-            balanceAfter:
-              (
-                await OrderModel.findOne({ userId: order.userId }).sort({
-                  createdAt: -1,
-                })
-              )?.points || 0 + order.pointsEarned,
+            balanceAfter: currentPoints + order.pointsEarned,
             orderId: order._id,
             description: `Points earned for order ${order._id}`,
             status: "completed",

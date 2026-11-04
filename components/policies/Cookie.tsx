@@ -740,7 +740,7 @@ export default function CookiePolicyPage() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   href="/"
-                  className="text-[#7C2C78] hover:text-[#A43875]"
+                  className="text-[#011b54] hover:text-[#022b82]"
                 >
                   <Home className="h-4 w-4 mr-1 inline" />
                   Home
@@ -757,7 +757,7 @@ export default function CookiePolicyPage() {
         </div>
 
         {/* Hero Section */}
-        <header className="bg-linear-to-r from-[#7C2C78] via-[#8A347D] to-[#A43875] text-white">
+        <header className="bg-linear-to-r from-[#011b54] via-[#022b82] to-[#011b54] text-white">
           <div className="container mx-auto px-4 py-12 md:py-16">
             <div className="max-w-5xl mx-auto text-center">
               <div
@@ -837,7 +837,7 @@ export default function CookiePolicyPage() {
                   <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
                     Detailed Cookie Categories & Purposes
                   </h2>
-                  <div className="w-16 h-1 bg-linear-to-r from-[#7C2C78] to-[#A43875] rounded-full mt-2"></div>
+                  <div className="w-16 h-1 bg-linear-to-r from-[#011b54] to-[#022b82] rounded-full mt-2"></div>
                 </div>
               </div>
 
@@ -1092,7 +1092,7 @@ export default function CookiePolicyPage() {
                 ))}
                 <Link
                   href="#contact"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#7C2C78] text-white hover:bg-[#A43875] rounded-full text-sm font-medium transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#011b54] text-white hover:bg-[#022b82] rounded-full text-sm font-medium transition-colors"
                 >
                   <Mail className="h-4 w-4" />
                   Contact Support
@@ -1134,7 +1134,7 @@ export default function CookiePolicyPage() {
                         >
                           {section.description}
                         </p>
-                        <div className="w-16 h-1 bg-linear-to-r from-[#7C2C78] to-[#A43875] rounded-full mt-2"></div>
+                        <div className="w-16 h-1 bg-linear-to-r from-[#011b54] to-[#022b82] rounded-full mt-2"></div>
                       </div>
                     </div>
 
@@ -1171,7 +1171,7 @@ export default function CookiePolicyPage() {
                           <div className="flex gap-4">
                             {item.icon && (
                               <div className="h-10 w-10 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
-                                <item.icon className="h-5 w-5 text-[#7C2C78]" />
+                                <item.icon className="h-5 w-5 text-[#011b54]" />
                               </div>
                             )}
                             <div className="flex-1">
@@ -1213,7 +1213,7 @@ export default function CookiePolicyPage() {
                                       ) : item.legal ? (
                                         <Shield className="h-5 w-5 text-gray-500 mt-0.5 shrink-0" />
                                       ) : (
-                                        <div className="h-2 w-2 rounded-full bg-[#7C2C78] mt-2 shrink-0"></div>
+                                        <div className="h-2 w-2 rounded-full bg-[#011b54] mt-2 shrink-0"></div>
                                       )}
                                       <span className="text-gray-700 leading-relaxed">
                                         {point}
@@ -1248,8 +1248,8 @@ export default function CookiePolicyPage() {
                                     >
                                       <div className="flex items-start gap-3">
                                         {subpoint.icon && (
-                                          <div className="h-10 w-10 rounded-lg bg-[#7C2C78]/10 flex items-center justify-center shrink-0">
-                                            <subpoint.icon className="h-5 w-5 text-[#7C2C78]" />
+                                          <div className="h-10 w-10 rounded-lg bg-[#011b54]/10 flex items-center justify-center shrink-0">
+                                            <subpoint.icon className="h-5 w-5 text-[#011b54]" />
                                           </div>
                                         )}
                                         <div className="flex-1">
@@ -1367,18 +1367,18 @@ export default function CookiePolicyPage() {
               {/* Contact Section */}
               <section id="contact" className="scroll-mt-24">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="h-12 w-12 rounded-xl bg-linear-to-r from-[#2E297D] to-[#7C2C78] flex items-center justify-center">
+                  <div className="h-12 w-12 rounded-xl bg-linear-to-r from-[#011b54] to-[#022b82] flex items-center justify-center">
                     <Mail className="h-6 w-6 text-white" />
                   </div>
                   <div>
                     <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
                       Cookie Policy Support & Contact
                     </h2>
-                    <div className="w-16 h-1 bg-linear-to-r from-[#7C2C78] to-[#A43875] rounded-full mt-2"></div>
+                    <div className="w-16 h-1 bg-linear-to-r from-[#011b54] to-[#022b82] rounded-full mt-2"></div>
                   </div>
                 </div>
 
-                <div className="bg-linear-to-r from-[#7C2C78] to-[#A43875] rounded-2xl p-8 text-white">
+                <div className="bg-linear-to-r from-[#011b54] to-[#022b82] rounded-2xl p-8 text-white">
                   <div className="max-w-3xl">
                     <h3 className="text-xl font-bold mb-4">
                       📧 Technical & Policy Support
@@ -1483,7 +1483,7 @@ export default function CookiePolicyPage() {
                           .getElementById("contact")
                           ?.scrollIntoView({ behavior: "smooth" })
                       }
-                      className="bg-[#7C2C78] hover:bg-[#A43875] text-white px-8"
+                      className="bg-[#011b54] hover:bg-[#022b82] text-white px-8"
                     >
                       Contact Cookie Support
                     </Button>
@@ -1492,7 +1492,7 @@ export default function CookiePolicyPage() {
                         window.scrollTo({ top: 0, behavior: "smooth" })
                       }
                       variant="outline"
-                      className="border-[#7C2C78] text-[#7C2C78] hover:bg-[#7C2C78]/10"
+                      className="border-[#011b54] text-[#011b54] hover:bg-[#011b54]/10"
                     >
                       <ArrowUp className="h-4 w-4 mr-2" />
                       Back to Top

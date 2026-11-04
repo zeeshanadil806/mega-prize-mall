@@ -64,7 +64,7 @@ export default function AdminHeader({ user }: AdminHeaderProps) {
             {/* Notifications */}
             {/* <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-linear-to-r from-[#EAB75F] to-[#A43875] text-xs text-white flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-linear-to-r from-[#011b54] to-[#022b82] text-xs text-white flex items-center justify-center">
                 3
               </span>
             </Button> */}
@@ -81,7 +81,7 @@ export default function AdminHeader({ user }: AdminHeaderProps) {
                       src={user?.image || ""}
                       alt={user?.name || "User"}
                     />
-                    <AvatarFallback className="bg-linear-to-br from-[#7C2C78] to-[#A43875] text-white">
+                    <AvatarFallback className="bg-linear-to-br from-[#011b54] to-[#022b82] text-white">
                       {userInitials}
                     </AvatarFallback>
                   </Avatar>
@@ -96,7 +96,7 @@ export default function AdminHeader({ user }: AdminHeaderProps) {
                     <p className="text-xs leading-none text-gray-500">
                       {user?.email}
                     </p>
-                    <p className="text-xs mt-1 px-2 py-1 bg-linear-to-r from-[#7C2C78]/10 to-[#A43875]/10 text-[#7C2C78] rounded-full inline-block">
+                    <p className="text-xs mt-1 px-2 py-1 bg-linear-to-r from-[#011b54]/10 to-[#022b82]/10 text-[#011b54] rounded-full inline-block">
                       {user?.role?.toUpperCase()}
                     </p>
                   </div>

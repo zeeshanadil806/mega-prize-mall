@@ -383,7 +383,7 @@ export default function SalesAnalyticsClient() {
                   {topMetrics?.topProducts?.slice(0, 5).map((product: TopProduct, index: number) => (
                     <div key={product._id} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
                       <div className="flex items-center space-x-3">
-                        <div className="h-8 w-8 rounded-md bg-linear-to-br from-[#EAB75F] to-[#A43875] flex items-center justify-center text-white text-sm font-bold">
+                        <div className="h-8 w-8 rounded-md bg-linear-to-br from-[#011b54] to-[#022b82] flex items-center justify-center text-white text-sm font-bold">
                           {index + 1}
                         </div>
                         <div>
@@ -414,13 +414,13 @@ export default function SalesAnalyticsClient() {
                     <div key={category._id} className="space-y-2">
                       <div className="flex justify-between items-center">
                         <span className="font-medium text-gray-900">{category._id}</span>
-                        <span className="font-semibold text-[#7C2C78]">
+                        <span className="font-semibold text-[#011b54]">
                           {formatCurrency(category.revenue)}
                         </span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div 
-                          className="bg-linear-to-r from-[#7C2C78] to-[#A43875] h-2 rounded-full"
+                          className="bg-linear-to-r from-[#011b54] to-[#022b82] h-2 rounded-full"
                           style={{ 
                             width: `${Math.min(100, (category.revenue / (topMetrics.topCategories[0]?.revenue || 1)) * 100)}%` 
                           }}

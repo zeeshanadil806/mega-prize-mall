@@ -1,13 +1,13 @@
 import { ADMIN_EMAIL } from '@/lib/email';
 
 export const BRAND_COLORS = {
-  primary: '#7C2C78',      // Purple
-  secondary: '#EAB75F',    // Gold
-  accent: '#A43875',       // Pink
-  dark: '#2E297D',         // Dark Blue
-  light: '#F8F9FA',        // Off-white
+  primary: '#011b54',      // Deep Royal Navy
+  secondary: '#FFFFFF',    // White
+  accent: '#022b82',       // Navy Accent
+  dark: '#011b54',         // Navy Dark
+  light: '#F8FAFC',        // Slate-50 Off-white
   white: '#FFFFFF',
-  black: '#171717',
+  black: '#0F172A',
 };
 
 export const baseEmailTemplate = (content: string, title?: string) => `

@@ -4,7 +4,7 @@ import ProductGrid from "@/components/products/ProductGrid";
 import ProductFilters from "@/components/products/ProductFilters";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Metadata } from "next";
-import { getCategories, getPriceRange, getProductsForListingSchema } from "@/features/product/service";
+import { getCategories, getPriceRange, getProductsForListingSchema, getCategoryStats } from "@/features/product/service";
 import { connectToDatabase } from "@/lib/mongodb";
 import Link from "next/link";
 
@@ -12,10 +12,10 @@ import Link from "next/link";
 // ?sortBy, ?minPrice, ?maxPrice) combo is cached separately by Next's ISR.
 // Admin product edits should call revalidatePath('/products') to bust early.
 export const revalidate = 60;
-// import { Filter, X } from "lucide-react";
-// import MobileFilters from "@/components/products/ProductFilters";
 import MobileFilterTrigger from "@/components/products/MobileFilterTrigger";
 import MobileFilterDrawer from "@/components/products/MobileFilterDrawer";
+import QuickSortSelect from "@/components/products/QuickSortSelect";
+import { Search, X } from "lucide-react";
 
 // ✅ DYNAMIC METADATA FUNCTION
 export async function generateMetadata(props: {
@@ -26,6 +26,8 @@ export async function generateMetadata(props: {
     maxPrice?: string;
     sortBy?: string;
     search?: string;
+    bargain?: string;
+    new?: string;
   }>;
 }): Promise<Metadata> {
   const searchParams = await props.searchParams;
@@ -155,6 +157,8 @@ interface ProductsPageProps {
     maxPrice?: string;
     sortBy?: string;
     search?: string;
+    bargain?: string;
+    new?: string;
   }>;
 }
 
@@ -164,10 +168,11 @@ export default async function ProductsPage(props: ProductsPageProps) {
   // Await searchParams before accessing properties
   const searchParams = await props.searchParams;
   // Fetch filter data + a snapshot of the actual products on this page in parallel
-  const [categories, priceRange, listingForSchema] = await Promise.all([
+  const [categories, priceRange, listingForSchema, categoryStats] = await Promise.all([
     getCategories(),
     getPriceRange(),
     getProductsForListingSchema(searchParams, 24),
+    getCategoryStats(),
   ]);
 
   const listName = searchParams.category
@@ -234,6 +239,11 @@ export default async function ProductsPage(props: ProductsPageProps) {
     ]
   };
 
+  const activeFilterKeys = Object.keys(searchParams).filter(
+    (k) => k !== "page" && k !== "sortBy" && Boolean(searchParams[k as keyof typeof searchParams])
+  );
+  const activeFilterCount = activeFilterKeys.length;
+
   return (
     <>
       {/* ✅ Structured Data Scripts */}
@@ -246,95 +256,97 @@ export default async function ProductsPage(props: ProductsPageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
       />
       
-      <div className="min-h-screen bg-linear-to-b from-gray-50 to-white">
-        <div className="container mx-auto px-4 py-8">
-          {/* Page Header with Mobile Filter Button */}
-          <div className="mb-6 sm:mb-8">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              {/* Title Section */}
-              <div className="flex-1">
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2 leading-tight">
-                  {searchParams.category 
-                    ? `${decodeURIComponent(searchParams.category).charAt(0).toUpperCase() + decodeURIComponent(searchParams.category).slice(1).toLowerCase()} Collection`
-                    : "Discover Amazing Products"
-                  }
+      <div className="min-h-screen bg-linear-to-b from-gray-50 via-white to-gray-50">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 py-3 sm:py-5 md:py-6 max-w-[1560px]">
+          {/* Compact Top Bar: Title, Count & Instant Sort */}
+          <div className="flex items-center justify-between gap-3 mb-2.5 sm:mb-3.5">
+            <div className="min-w-0">
+              <div className="flex items-baseline gap-2 flex-wrap">
+                <h1 className="text-base sm:text-xl md:text-2xl font-black text-gray-900 tracking-tight truncate">
+                  {searchParams.category
+                    ? `${decodeURIComponent(searchParams.category)}`
+                    : searchParams.search
+                      ? `Results for "${decodeURIComponent(searchParams.search)}"`
+                      : "All Products"}
                 </h1>
-                <p className="text-gray-600 text-sm sm:text-base lg:text-lg">
-                  {searchParams.category 
-                    ? `Premium ${decodeURIComponent(searchParams.category).toLowerCase()} with bargain option`
-                    : "Browse our collection and bargain for the best prices"
-                  }
-                </p>
+                <span className="text-[11px] sm:text-xs font-semibold text-gray-500 whitespace-nowrap">
+                  ({listingForSchema.totalCount} {listingForSchema.totalCount === 1 ? 'item' : 'items'})
+                </span>
               </div>
-
-              {/* Mobile Filter Button - Perfectly aligned */}
-              <div className="flex justify-end lg:hidden">
-                <MobileFilterTrigger />
-              </div>
+              <p className="hidden sm:block text-xs text-gray-500 mt-0.5">
+                {searchParams.category
+                  ? `Authentic ${decodeURIComponent(searchParams.category).toLowerCase()} with live bargain & lucky draw entries`
+                  : "Explore authentic gadgets with live price negotiation & lucky draw rewards"}
+              </p>
             </div>
+
+            {/* Instant Quick Sort Dropdown */}
+            <QuickSortSelect currentSort={searchParams.sortBy} />
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Filters Sidebar - Hidden on mobile, shown on desktop */}
-            <aside className="hidden lg:block lg:w-1/4">
+          <div className="flex flex-col lg:flex-row gap-5 lg:gap-6 xl:gap-7 items-start">
+            {/* Filters Sidebar - Desktop (Fixed ergonomic width) */}
+            <aside className="hidden lg:block w-[260px] xl:w-[275px] shrink-0 sticky top-20">
               <ProductFilters
                 categories={categories}
+                categoryStats={categoryStats}
                 priceRange={priceRange}
                 selectedCategory={searchParams.category}
                 selectedMinPrice={searchParams.minPrice}
                 selectedMaxPrice={searchParams.maxPrice}
                 selectedSortBy={searchParams.sortBy}
+                selectedBargain={searchParams.bargain}
+                selectedNew={searchParams.new}
                 searchQuery={searchParams.search}
               />
             </aside>
 
-            {/* Main Content */}
-            <main className="lg:w-3/4">
-              {/* Search Bar */}
-              <div className="mb-6">
-                <div className="mb-6">
-                  <form
-                    action="/products"
-                    method="GET"
-                    className="flex flex-col sm:flex-row gap-2 sm:gap-3"
+            {/* Main Content (Expands to fill available wide layout) */}
+            <main className="w-full flex-1 min-w-0">
+              {/* Unified Mobile Search + Filter Toolbar (Single Compact Row) */}
+              <div className="mb-2 sm:mb-3">
+                <form
+                  action="/products"
+                  method="GET"
+                  className="flex items-center gap-2"
+                >
+                  {searchParams.category && (
+                    <input type="hidden" name="category" value={searchParams.category} />
+                  )}
+                  {searchParams.sortBy && (
+                    <input type="hidden" name="sortBy" value={searchParams.sortBy} />
+                  )}
+                  {searchParams.bargain && (
+                    <input type="hidden" name="bargain" value={searchParams.bargain} />
+                  )}
+
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 stroke-[2] pointer-events-none" />
+                    <input
+                      type="text"
+                      name="search"
+                      defaultValue={searchParams.search}
+                      placeholder="Search gadgets, audio, cases..."
+                      className="w-full h-9 sm:h-10 pl-9 pr-3 bg-white border border-gray-200/90 rounded-xl text-xs sm:text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#011b54]/20 focus:border-[#011b54] shadow-2xs transition-all"
+                    />
+                  </div>
+
+                  {/* Mobile Filter Button - in the same row! */}
+                  <div className="lg:hidden shrink-0">
+                    <MobileFilterTrigger activeCount={activeFilterCount} />
+                  </div>
+
+                  {/* Desktop Submit Button */}
+                  <button
+                    type="submit"
+                    className="hidden sm:inline-flex items-center justify-center h-10 px-4.5 bg-[#011b54] hover:bg-[#022b82] text-white rounded-xl text-xs sm:text-sm font-bold shadow-2xs transition-colors shrink-0"
                   >
-                    <div className="flex-1 relative">
-                      <input
-                        type="text"
-                        name="search"
-                        defaultValue={searchParams.search}
-                        placeholder="Search products by name, category, or keywords..."
-                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent text-sm sm:text-base"
-                      />
-                      {/* Optional: Add a search icon on mobile */}
-                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2 sm:hidden text-gray-400">
-                        <svg
-                          className="h-5 w-5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                    <button
-                      type="submit"
-                      className="px-4 sm:px-6 py-3 bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white rounded-lg hover:from-[#6A2566] hover:to-[#8D2F6A] transition-all text-sm sm:text-base font-medium whitespace-nowrap"
-                    >
-                      <span className="hidden sm:inline">Search</span>
-                      <span className="sm:hidden">🔍 Search</span>
-                    </button>
-                  </form>
-                </div>
+                    Search
+                  </button>
+                </form>
               </div>
 
-              {/* Active Filters */}
+              {/* Active Filter Chips */}
               <ActiveFilters searchParams={searchParams} />
 
               {/* Mobile Filter Drawer */}
@@ -356,21 +368,20 @@ export default async function ProductsPage(props: ProductsPageProps) {
   );
 }
 
-// Active Filters Component
+// Active Filters Component - Human-Friendly E-Commerce Chips
 function ActiveFilters({
   searchParams,
 }: {
   searchParams: Record<string, string | string[] | undefined>;
 }) {
-  const hasActiveFilters = Object.keys(searchParams).some(
-    (key) => key !== "page" && searchParams[key]
+  const filterEntries = Object.entries(searchParams).filter(
+    ([key, value]) => key !== "page" && key !== "sortBy" && Boolean(value)
   );
 
-  if (!hasActiveFilters) return null;
+  if (filterEntries.length === 0) return null;
 
   const removeFilter = (key: string) => {
     const params = new URLSearchParams();
-    // Reconstruct params carefully avoiding null/undefined
     Object.entries(searchParams).forEach(([k, v]) => {
       if (k !== key && k !== "page" && v) {
         params.append(k, Array.isArray(v) ? v[0] : v);
@@ -379,47 +390,42 @@ function ActiveFilters({
     return `/products?${params.toString()}`;
   };
 
+  const formatFilterLabel = (key: string, val: string) => {
+    if (key === "new") return "New Arrivals";
+    if (key === "bargain") return "Bargain Deals";
+    if (key === "category") return decodeURIComponent(val);
+    if (key === "search") return `"${decodeURIComponent(val)}"`;
+    if (key === "minPrice") return `Min: Rs. ${Number(val).toLocaleString()}`;
+    if (key === "maxPrice") return `Max: Rs. ${Number(val).toLocaleString()}`;
+    return `${key}: ${val}`;
+  };
+
   return (
-    <div className="mb-6 flex flex-wrap gap-2">
-      <span className="text-sm text-gray-600">Active filters:</span>
-      {Object.entries(searchParams).map(([key, value]) => {
-        if (key === "page" || !value) return null;
-
-        // Fix 2: Ensure value is treated as a string
-        const stringValue = Array.isArray(value) ? value[0] : value;
-
-        let displayValue = stringValue;
-
-        if (key === "sortBy") {
-          const sortLabels: Record<string, string> = {
-            price_asc: "Price: Low to High",
-            price_desc: "Price: High to Low",
-            newest: "Newest",
-            popular: "Most Popular",
-          };
-          // distinct string assignment
-          displayValue = sortLabels[stringValue] || stringValue;
-        }
+    <div className="mb-2.5 sm:mb-3 flex flex-wrap items-center gap-1.5 sm:gap-2">
+      <span className="text-[11px] sm:text-xs font-semibold text-gray-500 mr-0.5">
+        Active Filters:
+      </span>
+      {filterEntries.map(([key, value]) => {
+        const stringValue = Array.isArray(value) ? value[0] : value || "";
+        const label = formatFilterLabel(key, stringValue);
 
         return (
           <Link
             key={key}
             href={removeFilter(key)}
-            className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition-colors"
+            className="group inline-flex items-center gap-1.5 px-2.5 py-1 bg-white border border-gray-200/90 hover:border-rose-300 text-gray-700 hover:text-rose-600 rounded-full text-[11px] sm:text-xs font-semibold shadow-2xs transition-colors"
           >
-            <span className="font-medium">{key}:</span> {displayValue}
-            <span className="ml-1">×</span>
+            <span>{label}</span>
+            <X className="w-3 h-3 text-gray-400 group-hover:text-rose-600 transition-colors" />
           </Link>
         );
       })}
-      {hasActiveFilters && (
-        <Link
-          href="/products"
-          className="inline-flex items-center px-3 py-1 bg-red-50 text-red-600 rounded-full text-sm hover:bg-red-100 transition-colors"
-        >
-          Clear All
-        </Link>
-      )}
+      <Link
+        href="/products"
+        className="inline-flex items-center px-2.5 py-1 text-[11px] sm:text-xs font-bold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-full transition-colors ml-0.5"
+      >
+        Clear All
+      </Link>
     </div>
   );
 }

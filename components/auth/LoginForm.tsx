@@ -139,8 +139,8 @@ export default function LoginForm() {
       transition={{ duration: 0.3 }}
     >
       {/* Security Assurance */}
-      <div className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-linear-to-r from-[#2E297D]/5 to-[#7C2C78]/5 border border-gray-200">
-        <Shield className="h-4 w-4 text-[#2E297D]" />
+      <div className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-linear-to-r from-[#011b54]/5 to-[#011b54]/5 border border-gray-200">
+        <Shield className="h-4 w-4 text-[#011b54]" />
         <span className="text-xs text-gray-700">
           Your data is end to end Encrypted for security
         </span>
@@ -161,7 +161,7 @@ export default function LoginForm() {
               value={formData.email}
               onChange={handleInputChange("email")}
               disabled={loading}
-              className={`pl-10 pr-4 py-3 bg-gray-50 border-gray-200 focus:border-[#7C2C78] focus:ring-1 focus:ring-[#7C2C78]/20 transition-all ${errors.email ? "border-red-500 ring-1 ring-red-500" : ""}`}
+              className={`pl-10 pr-4 py-3 bg-gray-50 border-gray-200 focus:border-[#011b54] focus:ring-1 focus:ring-[#011b54]/20 transition-all ${errors.email ? "border-red-500 ring-1 ring-red-500" : ""}`}
             />
           </div>
           {errors.email && (
@@ -183,7 +183,7 @@ export default function LoginForm() {
             </Label>
             {/* <button
               type="button"
-              className="text-xs text-[#7C2C78] hover:text-[#A43875] font-medium transition-colors"
+              className="text-xs text-[#011b54] hover:text-[#022b82] font-medium transition-colors"
               onClick={() => toast.info("Password reset feature coming soon!")}
             >
               Forgot password?
@@ -198,7 +198,7 @@ export default function LoginForm() {
               value={formData.password}
               onChange={handleInputChange("password")}
               disabled={loading}
-              className={`pl-10 pr-12 py-3 bg-gray-50 border-gray-200 focus:border-[#7C2C78] focus:ring-1 focus:ring-[#7C2C78]/20 transition-all ${errors.password ? "border-red-500 ring-1 ring-red-500" : ""}`}
+              className={`pl-10 pr-12 py-3 bg-gray-50 border-gray-200 focus:border-[#011b54] focus:ring-1 focus:ring-[#011b54]/20 transition-all ${errors.password ? "border-red-500 ring-1 ring-red-500" : ""}`}
             />
             <button
               type="button"
@@ -224,7 +224,7 @@ export default function LoginForm() {
       <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
         <Button 
           type="submit" 
-          className="w-full h-12 text-base font-semibold bg-linear-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] shadow-lg hover:shadow-xl transition-all duration-300" 
+          className="w-full h-12 text-base font-semibold bg-linear-to-r from-[#011b54] to-[#022b82] hover:from-[#022b82] hover:to-[#03369f] shadow-lg hover:shadow-xl transition-all duration-300" 
           disabled={loading}
           size="lg"
         >
@@ -288,7 +288,7 @@ export default function LoginForm() {
         By signing in, you agree to our{" "}
         <button 
           type="button" 
-          className="text-[#7C2C78] hover:underline"
+          className="text-[#011b54] hover:underline"
           onClick={() => toast.info("Terms & Conditions page coming soon!")}
         >
           Terms
@@ -296,7 +296,7 @@ export default function LoginForm() {
         and{" "}
         <button 
           type="button" 
-          className="text-[#7C2C78] hover:underline"
+          className="text-[#011b54] hover:underline"
           onClick={() => toast.info("Privacy Policy page coming soon!")}
         >
           Privacy Policy

@@ -211,7 +211,7 @@ export default function BargainModal({
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle className="flex items-center text-xl">
-              <Tag className="h-5 w-5 mr-2 text-[#7C2C78]" />
+              <Tag className="h-5 w-5 mr-2 text-[#011b54]" />
               Make an Offer
             </DialogTitle>
             {/* <Button
@@ -246,7 +246,7 @@ export default function BargainModal({
               </div>
               <div className="text-center">
                 <p className="text-sm text-gray-600 mb-1">Your Offer</p>
-                <p className="text-2xl font-bold text-[#7C2C78]">
+                <p className="text-2xl font-bold text-[#011b54]">
                   {formatCurrency(offerPrice)}
                 </p>
                 <p className="text-sm text-green-600">
@@ -293,7 +293,7 @@ export default function BargainModal({
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Label htmlFor="offer-price">Your Offer Price</Label>
-              <span className="text-2xl font-bold text-[#7C2C78]">
+              <span className="text-2xl font-bold text-[#011b54]">
                 {formatCurrency(offerPrice)}
               </span>
             </div>
@@ -366,9 +366,9 @@ export default function BargainModal({
               >
                 <div className="flex flex-col items-center justify-center">
                   <div className="relative h-16 w-16 mb-4">
-                    <div className="absolute inset-0 border-4 border-[#7C2C78]/20 rounded-full"></div>
-                    <div className="absolute inset-2 border-4 border-[#7C2C78] rounded-full animate-spin border-t-transparent"></div>
-                    <Timer className="absolute inset-4 h-8 w-8 text-[#7C2C78]" />
+                    <div className="absolute inset-0 border-4 border-[#011b54]/20 rounded-full"></div>
+                    <div className="absolute inset-2 border-4 border-[#011b54] rounded-full animate-spin border-t-transparent"></div>
+                    <Timer className="absolute inset-4 h-8 w-8 text-[#011b54]" />
                   </div>
                   <p className="text-lg font-semibold text-gray-900">
                     Processing your offer...
@@ -441,8 +441,8 @@ export default function BargainModal({
                       <div className="mt-6 w-full space-y-4">
                         <div className="p-4 bg-white rounded-lg border border-green-200">
                           <div className="flex items-center justify-center mb-2">
-                            <Sparkles className="h-5 w-5 text-[#EAB75F] mr-2" />
-                            <span className="font-mono font-bold text-lg text-[#7C2C78]">
+                            <Sparkles className="h-5 w-5 text-[#011b54] mr-2" />
+                            <span className="font-mono font-bold text-lg text-[#011b54]">
                               {result.couponCode}
                             </span>
                           </div>
@@ -475,7 +475,7 @@ export default function BargainModal({
                             Copy Code
                           </Button>
                           <Button
-                            className="bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white"
+                            className="bg-linear-to-r from-[#011b54] to-[#022b82] text-white"
                             onClick={() => {
                               if (onBargainSuccess && result.couponCode) {
                                 onBargainSuccess(
@@ -537,7 +537,7 @@ export default function BargainModal({
                   offerPrice >= currentPrice ||
                   currentRound > product.maxBargainRounds
                 }
-                className="flex-1 bg-linear-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] text-white"
+                className="flex-1 bg-linear-to-r from-[#011b54] to-[#022b82] hover:from-[#022b82] hover:to-[#03369f] text-white"
               >
                 {loading ? (
                   <>

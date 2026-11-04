@@ -72,11 +72,11 @@ export default function CustomerDashboard() {
     return (
       <section 
         ref={containerRef}
-        className="relative overflow-hidden rounded-3xl bg-linear-to-br from-[#7C2C78]/10 via-[#A43875]/10 to-[#EAB75F]/10 p-8 md:p-12"
+        className="relative overflow-hidden rounded-3xl bg-linear-to-br from-[#011b54]/10 via-[#022b82]/10 to-[#011b54]/5 p-8 md:p-12"
       >
         <motion.div
           style={{ y }}
-          className="absolute inset-0 bg-linear-to-br from-[#7C2C78]/5 via-[#A43875]/5 to-[#EAB75F]/5"
+          className="absolute inset-0 bg-linear-to-br from-[#011b54]/5 via-[#022b82]/5 to-[#011b54]/5"
         />
         
         <div className="relative z-10">
@@ -86,18 +86,18 @@ export default function CustomerDashboard() {
             transition={{ duration: 0.6 }}
             className="max-w-2xl"
           >
-            <Badge className="mb-4 bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white border-0">
+            <Badge className="mb-4 bg-linear-to-r from-[#011b54] to-[#022b82] text-white border-0">
               <Sparkles className="h-3 w-3 mr-1" /> Welcome Back, {dashboardData?.user.name || 'Customer'}!
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Your Shopping Journey <span className="bg-linear-to-r from-[#7C2C78] to-[#A43875] bg-clip-text text-transparent">Continues</span>
+              Your Shopping Journey <span className="bg-linear-to-r from-[#011b54] to-[#022b82] bg-clip-text text-transparent">Continues</span>
             </h1>
             <p className="text-lg text-gray-600 mb-8">
               Track orders, manage bargains, and win amazing prizes in our lucky draws!
             </p>
             <div className="flex flex-wrap gap-4">
               <Button 
-                className="bg-linear-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] text-white shadow-lg hover:shadow-xl transition-all"
+                className="bg-linear-to-r from-[#011b54] to-[#022b82] hover:from-[#022b82] hover:to-[#03369f] text-white shadow-lg hover:shadow-xl transition-all"
                 asChild
               >
                 <Link href="/products">
@@ -112,12 +112,12 @@ export default function CustomerDashboard() {
         <motion.div
           animate={{ y: [0, -10, 0] }}
           transition={{ repeat: Infinity, duration: 3 }}
-          className="absolute top-8 right-8 w-24 h-24 bg-linear-to-br from-[#EAB75F]/20 to-[#2E297D]/20 rounded-full blur-xl"
+          className="absolute top-8 right-8 w-24 h-24 bg-linear-to-br from-[#011b54]/20 to-[#011b54]/20 rounded-full blur-xl"
         />
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 4, delay: 0.5 }}
-          className="absolute bottom-8 left-8 w-32 h-32 bg-linear-to-br from-[#7C2C78]/20 to-[#A43875]/20 rounded-full blur-xl"
+          className="absolute bottom-8 left-8 w-32 h-32 bg-linear-to-br from-[#011b54]/20 to-[#022b82]/20 rounded-full blur-xl"
         />
       </section>
     )
@@ -166,7 +166,7 @@ export default function CustomerDashboard() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-[#7C2C78] mx-auto mb-4" />
+          <Loader2 className="h-12 w-12 animate-spin text-[#011b54] mx-auto mb-4" />
           <p className="text-gray-600">Loading your dashboard...</p>
         </div>
       </div>
@@ -184,7 +184,7 @@ export default function CustomerDashboard() {
           <p className="text-gray-600 mb-6">{error}</p>
           <Button 
             onClick={fetchDashboardData}
-            className="bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white"
+            className="bg-linear-to-r from-[#011b54] to-[#022b82] text-white"
           >
             Try Again
           </Button>
@@ -240,7 +240,7 @@ export default function CustomerDashboard() {
           <Card className="border-gray-200">
             <CardHeader>
               <CardTitle className="flex items-center">
-                <ShoppingBag className="h-5 w-5 mr-2 text-[#7C2C78]" />
+                <ShoppingBag className="h-5 w-5 mr-2 text-[#011b54]" />
                 Recent Orders
               </CardTitle>
               <CardDescription>Your latest purchases</CardDescription>
@@ -279,7 +279,7 @@ export default function CustomerDashboard() {
                     <p className="text-gray-500">No orders yet</p>
                     <Button 
                       variant="ghost" 
-                      className="mt-4 text-[#7C2C78]"
+                      className="mt-4 text-[#011b54]"
                       asChild
                     >
                       <Link href="/products">Start Shopping</Link>
@@ -288,7 +288,7 @@ export default function CustomerDashboard() {
                 )}
               </div>
               {dashboardData?.recentOrders && dashboardData.recentOrders.length > 0 && (
-                <Button variant="ghost" className="w-full mt-4 text-[#7C2C78]" asChild>
+                <Button variant="ghost" className="w-full mt-4 text-[#011b54]" asChild>
                   <Link href="/dashboard/orders">View All Orders</Link>
                 </Button>
               )}
@@ -305,7 +305,7 @@ export default function CustomerDashboard() {
           <Card className="border-gray-200">
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Ticket className="h-5 w-5 mr-2 text-[#EAB75F]" />
+                <Ticket className="h-5 w-5 mr-2 text-[#011b54]" />
                 Active Bargains
               </CardTitle>
               <CardDescription>Your negotiation requests</CardDescription>
@@ -318,7 +318,7 @@ export default function CustomerDashboard() {
                     initial={{ opacity: 0, x: 10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="p-4 rounded-lg border border-gray-200 hover:border-[#EAB75F] transition-colors"
+                    className="p-4 rounded-lg border border-gray-200 hover:border-[#011b54] transition-colors"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-medium text-gray-900">{bargain.product}</h4>
@@ -336,7 +336,7 @@ export default function CustomerDashboard() {
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-500 line-through">{bargain.original}</span>
-                      <span className="font-bold text-[#7C2C78]">{bargain.offer}</span>
+                      <span className="font-bold text-[#011b54]">{bargain.offer}</span>
                       <span className="text-green-600 font-medium">
                         Save Rs {bargain.savingAmount.toLocaleString('en-PK')}
                       </span>
@@ -350,7 +350,7 @@ export default function CustomerDashboard() {
                     <p className="text-gray-500">No active bargains</p>
                     <Button 
                       variant="ghost" 
-                      className="mt-4 text-[#EAB75F]"
+                      className="mt-4 text-[#011b54]"
                       asChild
                     >
                       <Link href="/products">Browse Products</Link>
@@ -359,7 +359,7 @@ export default function CustomerDashboard() {
                 )}
               </div>
               {dashboardData?.activeBargains && dashboardData.activeBargains.length > 0 && (
-                <Button variant="ghost" className="w-full mt-4 text-[#EAB75F]" asChild>
+                <Button variant="ghost" className="w-full mt-4 text-[#011b54]" asChild>
                   <Link href="/products?filter=bargain">Start New Bargain</Link>
                 </Button>
               )}
@@ -375,7 +375,7 @@ export default function CustomerDashboard() {
         transition={{ duration: 0.5 }}
         className="text-center"
       >
-        <Card className="border-0 bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white overflow-hidden">
+        <Card className="border-0 bg-linear-to-r from-[#011b54] to-[#022b82] text-white overflow-hidden">
           <CardContent className="p-12">
             <Trophy className="h-16 w-16 mx-auto mb-6" />
             <h3 className="text-3xl font-bold mb-4">Enter Today&apos;s Lucky Draw!</h3>
@@ -385,7 +385,7 @@ export default function CustomerDashboard() {
             <div className="flex flex-wrap justify-center gap-4">
               <Button
                 size="lg"
-                className="bg-white text-[#7C2C78] hover:bg-white/90 shadow-lg"
+                className="bg-white text-[#011b54] hover:bg-white/90 shadow-lg"
                 asChild
               >
                 <Link href="/dashboard/lucky-draw">Check My Entries</Link>

@@ -21,8 +21,8 @@ export default function manifest(): MetadataRoute.Manifest {
     orientation: 'portrait-primary',
     
     // Theme & Colors
-    theme_color: '#7C2C78', // Your primary color
-    background_color: '#F8F9FA', // Your light color
+    theme_color: '#011b54', // Official Primary Navy
+    background_color: '#011b54', // Brand background
     
     // Icons - CRITICAL: You need to create these files in /public
     icons: [

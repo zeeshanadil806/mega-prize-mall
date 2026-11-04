@@ -120,7 +120,7 @@ export default function CartPage() {
   if (!mounted) {
     return (
       <div className="container mx-auto px-3 sm:px-4 lg:px-8 py-16 flex flex-col items-center justify-center min-h-[300px]">
-        <Loader2 className="h-8 w-8 animate-spin text-[#7C2C78] mb-4" />
+        <Loader2 className="h-8 w-8 animate-spin text-[#011b54] mb-4" />
         <p className="text-gray-600 text-sm">Loading your cart...</p>
       </div>
     );
@@ -130,7 +130,7 @@ export default function CartPage() {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <ShoppingCart className="h-24 w-24 text-muted-foreground mx-auto mb-6" />
-        <h1 className="text-3xl font-bold mb-4 text-[#7C2C78]">
+        <h1 className="text-3xl font-bold mb-4 text-[#011b54]">
           Your cart is empty
         </h1>
         <p className="text-muted-foreground mb-8 max-w-md mx-auto">
@@ -138,7 +138,7 @@ export default function CartPage() {
         </p>
         <Link
           href="/products"
-          className="bg-linear-to-r from-[#7C2C78] to-[#A43875]"
+          className="bg-linear-to-r from-[#011b54] to-[#022b82]"
         >
           <Button size="lg" className="gap-2">
             <ShoppingBag className="h-5 w-5" />
@@ -164,7 +164,7 @@ export default function CartPage() {
       {/* Loading State */}
       {isLoading && (
         <div className="flex flex-col sm:flex-row items-center justify-center py-8 sm:py-12 gap-3 sm:gap-4">
-          <Loader2 className="h-6 w-6 sm:h-8 sm:w-8 animate-spin text-[#7C2C78]" />
+          <Loader2 className="h-6 w-6 sm:h-8 sm:w-8 animate-spin text-[#011b54]" />
           <span className="text-sm sm:text-base text-gray-600">
             Loading product details...
           </span>
@@ -217,7 +217,7 @@ export default function CartPage() {
                         <div className="flex items-start justify-between gap-2">
                           <Link
                             href={`/products/${item.slug}`}
-                            className="text-sm font-semibold text-gray-900 hover:text-[#7C2C78] line-clamp-2 leading-tight"
+                            className="text-sm font-semibold text-gray-900 hover:text-[#011b54] line-clamp-2 leading-tight"
                           >
                             {item.name}
                           </Link>
@@ -344,7 +344,7 @@ export default function CartPage() {
                           <div className="flex-1 min-w-0">
                             <Link
                               href={`/products/${item.slug}`}
-                              className="text-xl lg:text-2xl font-semibold text-gray-900 hover:text-[#7C2C78] transition-colors line-clamp-2"
+                              className="text-xl lg:text-2xl font-semibold text-gray-900 hover:text-[#011b54] transition-colors line-clamp-2"
                             >
                               {item.name}
                             </Link>
@@ -530,7 +530,7 @@ export default function CartPage() {
                       <Button
                         size="lg"
                         onClick={handleCheckout}
-                        className="w-full h-11 sm:h-12 lg:h-14 text-sm sm:text-base lg:text-lg bg-linear-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] text-white gap-2"
+                        className="w-full h-11 sm:h-12 lg:h-14 text-sm sm:text-base lg:text-lg bg-linear-to-r from-[#011b54] to-[#022b82] hover:from-[#022b82] hover:to-[#03369f] text-white gap-2"
                       >
                         Proceed to Checkout
                         <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 rotate-180" />

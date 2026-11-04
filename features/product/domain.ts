@@ -198,90 +198,278 @@ export interface ListingProductForSchema {
   bargainEnabled: boolean;
 }
 
+export interface MegaMenuProduct {
+  id: string;
+  name: string;
+  slug: string;
+  price: number;
+  originalPrice?: number;
+  discountPercentage?: number;
+  imageUrl: string;
+  bargainEnabled: boolean;
+  category?: string;
+  brand?: string;
+  tag?: string;
+  rating?: number;
+}
+
 export interface CategoryStat {
   category: string;
   count: number;
 }
 
+export const CANONICAL_CATEGORIES = [
+  "Mobile Accessories",
+  "Audio and Multimedia",
+  "Smart Wearables",
+  "Power and Charging",
+  "Gaming Accessories",
+  "PC and Laptop Accessories",
+  "Other Accessories",
+] as const;
+
 export const CATEGORY_MAPPING: Record<string, string[]> = {
+  // Mobile Accessories (Holders, Mounts, Cases, Protectors) — 60 active products
   "Mobile Accessories": [
     "Mobile Accessories",
     "Mobile Holders",
     "Mobile Cases",
-    "Screen Protectors"
+    "Screen Protectors",
   ],
+  "Mobile & Holders": [
+    "Mobile Accessories",
+    "Mobile Holders",
+    "Mobile Cases",
+    "Screen Protectors",
+  ],
+  "Mobile Cases": [
+    "Mobile Accessories",
+    "Mobile Holders",
+    "Mobile Cases",
+    "Screen Protectors",
+  ],
+  "Mobile Holders": [
+    "Mobile Holders",
+  ],
+  "Holders": [
+    "Mobile Holders",
+  ],
+  "Screen Protectors": [
+    "Screen Protectors",
+  ],
+
+  // Audio and Multimedia (Headphones, Earbuds, Speakers) — 46 active products
   "Audio and Multimedia": [
     "Audio and Multimedia",
-    "Earphones and Headphones"
+    "Earphones and Headphones",
   ],
-  "Gaming Accessories": [
-    "Gaming Accessories"
+  "Audio & Multimedia": [
+    "Audio and Multimedia",
+    "Earphones and Headphones",
   ],
-  "PC and Laptop Accessories": [
-    "PC and Laptop Accessories",
-    "PC and Laptop"
+  "Earphones and Headphones": [
+    "Audio and Multimedia",
+    "Earphones and Headphones",
   ],
-  "PC and Laptop": [
-    "PC and Laptop Accessories",
-    "PC and Laptop"
+  "Earbuds & Audio": [
+    "Audio and Multimedia",
+    "Earphones and Headphones",
   ],
+  "Earbuds": [
+    "Audio and Multimedia",
+    "Earphones and Headphones",
+  ],
+  "Audio": [
+    "Audio and Multimedia",
+    "Earphones and Headphones",
+  ],
+
+  // Smart Wearables (Smart Watches, Fitness Trackers) — 20 active products
+  "Smart Wearables": [
+    "Smart Wearables",
+    "Smart Watches",
+  ],
+  "Smart Watches": [
+    "Smart Wearables",
+    "Smart Watches",
+  ],
+  "Smartwatches": [
+    "Smart Wearables",
+    "Smart Watches",
+  ],
+  "Watches": [
+    "Smart Wearables",
+    "Smart Watches",
+  ],
+
+  // Power and Charging (Chargers, Cables, Power Banks) — 14 active products
   "Power and Charging": [
     "Power Charging",
     "Power Banks",
     "Chargers and Cables",
     "Chargers & Cables",
-    "Power and Charging"
+    "Power and Charging",
+  ],
+  "Power & Charging": [
+    "Power Charging",
+    "Power Banks",
+    "Chargers and Cables",
+    "Chargers & Cables",
+    "Power and Charging",
   ],
   "Power Charging": [
     "Power Charging",
     "Power Banks",
     "Chargers and Cables",
     "Chargers & Cables",
-    "Power and Charging"
+    "Power and Charging",
   ],
-  "Smart Wearables": [
-    "Smart Wearables",
-    "Smart Watches"
+  "Chargers and Cables": [
+    "Chargers and Cables",
+    "Chargers & Cables",
+    "Power Banks",
+    "Power and Charging",
+    "Power Charging",
   ],
+  "Chargers & Cables": [
+    "Chargers and Cables",
+    "Chargers & Cables",
+    "Power Banks",
+    "Power and Charging",
+    "Power Charging",
+  ],
+  "Power Banks": [
+    "Power Banks",
+  ],
+  "Power": [
+    "Power Charging",
+    "Power Banks",
+    "Chargers and Cables",
+    "Chargers & Cables",
+    "Power and Charging",
+  ],
+  "Chargers": [
+    "Chargers and Cables",
+    "Chargers & Cables",
+    "Power and Charging",
+    "Power Charging",
+  ],
+
+  // Gaming Accessories — 11 active products
+  "Gaming Accessories": [
+    "Gaming Accessories",
+  ],
+  "Gaming Gear": [
+    "Gaming Accessories",
+  ],
+  "Gaming": [
+    "Gaming Accessories",
+  ],
+
+  // PC and Laptop Accessories — 3 active products
+  "PC and Laptop Accessories": [
+    "PC and Laptop Accessories",
+    "PC and Laptop",
+  ],
+  "PC & Laptop Accessories": [
+    "PC and Laptop Accessories",
+    "PC and Laptop",
+  ],
+  "PC and Laptop": [
+    "PC and Laptop Accessories",
+    "PC and Laptop",
+  ],
+  "PC & Laptop": [
+    "PC and Laptop Accessories",
+    "PC and Laptop",
+  ],
+  "PC & Laptops": [
+    "PC and Laptop Accessories",
+    "PC and Laptop",
+  ],
+  "Laptops": [
+    "PC and Laptop Accessories",
+    "PC and Laptop",
+  ],
+
+  // Other Accessories — 51 active products
   "Other Accessories": [
     "Other Accessories",
     "Content Creation and Vlogging",
-    "TV Accessories"
-  ]
+    "TV Accessories",
+  ],
+  "Accessories": [
+    "Other Accessories",
+    "Content Creation and Vlogging",
+    "TV Accessories",
+  ],
+  "Content Creation and Vlogging": [
+    "Content Creation and Vlogging",
+  ],
+  "Content Creation": [
+    "Content Creation and Vlogging",
+  ],
+  "TV Accessories": [
+    "TV Accessories",
+  ],
 };
 
-export function resolveCategoryQuery(category: string) {
+export function resolveCategoryQuery(category: string): { $in: string[] } | string {
+  if (!category) return category;
+  const decoded = decodeURIComponent(category).trim();
   const matchedKey = Object.keys(CATEGORY_MAPPING).find(
-    (key) => key.toLowerCase() === category.toLowerCase()
+    (key) => key.toLowerCase() === decoded.toLowerCase()
   );
   if (matchedKey) {
     return { $in: CATEGORY_MAPPING[matchedKey] };
   }
-  return category;
+  return decoded;
 }
 
 export function getGroupedCategoryStats(stats: CategoryStat[]): CategoryStat[] {
   const groupedMap: Record<string, number> = {};
 
-  Object.keys(CATEGORY_MAPPING).forEach((parentKey) => {
-    if (parentKey === "PC and Laptop" || parentKey === "Power Charging") return;
+  CANONICAL_CATEGORIES.forEach((parentKey) => {
     groupedMap[parentKey] = 0;
   });
 
   (stats || []).forEach((stat) => {
     const dbName = stat.category;
-    const foundParent = Object.entries(CATEGORY_MAPPING).find(([parent, subList]) =>
-      subList.some((sub) => sub.toLowerCase() === dbName.toLowerCase())
-    );
-
-    if (foundParent) {
-      let parentKey = foundParent[0];
-      if (parentKey === "PC and Laptop") parentKey = "PC and Laptop Accessories";
-      if (parentKey === "Power Charging") parentKey = "Power and Charging";
-
-      groupedMap[parentKey] = (groupedMap[parentKey] || 0) + stat.count;
+    const lowerDb = dbName.toLowerCase();
+    if (
+      lowerDb.includes("holder") ||
+      lowerDb === "mobile accessories" ||
+      lowerDb === "mobile cases" ||
+      lowerDb === "screen protectors"
+    ) {
+      groupedMap["Mobile Accessories"] += stat.count;
+    } else if (
+      lowerDb.includes("earphone") ||
+      lowerDb.includes("headphone") ||
+      lowerDb.includes("audio") ||
+      lowerDb.includes("multimedia")
+    ) {
+      groupedMap["Audio and Multimedia"] += stat.count;
+    } else if (
+      lowerDb.includes("wearable") ||
+      lowerDb.includes("watch")
+    ) {
+      groupedMap["Smart Wearables"] += stat.count;
+    } else if (
+      lowerDb.includes("power") ||
+      lowerDb.includes("charger") ||
+      lowerDb.includes("cable")
+    ) {
+      groupedMap["Power and Charging"] += stat.count;
+    } else if (lowerDb.includes("gaming")) {
+      groupedMap["Gaming Accessories"] += stat.count;
+    } else if (
+      lowerDb.includes("pc") ||
+      lowerDb.includes("laptop")
+    ) {
+      groupedMap["PC and Laptop Accessories"] += stat.count;
     } else {
-      groupedMap["Other Accessories"] = (groupedMap["Other Accessories"] || 0) + stat.count;
+      groupedMap["Other Accessories"] += stat.count;
     }
   });
 

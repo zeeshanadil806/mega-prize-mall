@@ -18,9 +18,9 @@ export default function NotFound() {
     <div className="min-h-screen bg-linear-to-b from-gray-50 to-white">
       {/* Animated Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 md:w-96 md:h-96 bg-[#7C2C78]/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 md:w-96 md:h-96 bg-[#A43875]/5 rounded-full blur-3xl" />
-        <div className="absolute top-3/4 left-1/3 w-48 h-48 md:w-64 md:h-64 bg-[#EAB75F]/5 rounded-full blur-3xl" />
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 md:w-96 md:h-96 bg-[#011b54]/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 md:w-96 md:h-96 bg-[#022b82]/5 rounded-full blur-3xl" />
+        <div className="absolute top-3/4 left-1/3 w-48 h-48 md:w-64 md:h-64 bg-[#011b54]/5 rounded-full blur-3xl" />
       </div>
 
       <div className="mx-auto px-3 sm:px-4 md:px-6">
@@ -36,22 +36,22 @@ export default function NotFound() {
             </div>
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="relative">
-                <div className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-transparent bg-clip-text bg-linear-to-r from-[#7C2C78] via-[#A43875] to-[#EAB75F] animate-pulse">
+                <div className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-transparent bg-clip-text bg-linear-to-r from-[#011b54] via-[#022b82] to-[#011b54] animate-pulse">
                   404
                 </div>
-                <div className="absolute -inset-2 sm:-inset-3 md:-inset-4 bg-linear-to-r from-[#7C2C78]/10 via-[#A43875]/10 to-[#EAB75F]/10 rounded-full blur-lg sm:blur-xl" />
+                <div className="absolute -inset-2 sm:-inset-3 md:-inset-4 bg-linear-to-r from-[#011b54]/10 via-[#022b82]/10 to-[#011b54]/5 rounded-full blur-lg sm:blur-xl" />
               </div>
             </div>
           </div>
 
           {/* Message */}
           <div className="mb-8 md:mb-12">
-            <Badge className="mb-4 md:mb-6 bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white border-0 text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2">
+            <Badge className="mb-4 md:mb-6 bg-linear-to-r from-[#011b54] to-[#022b82] text-white border-0 text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2">
               Oops! Page Not Found
             </Badge>
             
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 md:mb-4 px-2">
-              Lost in <span className="text-[#7C2C78]">Tech Space</span>?
+              Lost in <span className="text-[#011b54]">Tech Space</span>?
             </h1>
             
             <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-6 md:mb-8 max-w-2xl mx-auto px-2">
@@ -67,10 +67,10 @@ export default function NotFound() {
               <Input
                 type="search"
                 placeholder="Search for products, categories, or brands..."
-                className="pl-9 sm:pl-12 pr-20 sm:pr-24 py-2.5 sm:py-3 text-sm sm:text-base md:text-lg border-2 border-gray-300 rounded-xl focus:border-[#7C2C78] focus:ring-[#7C2C78] w-full"
+                className="pl-9 sm:pl-12 pr-20 sm:pr-24 py-2.5 sm:py-3 text-sm sm:text-base md:text-lg border-2 border-gray-300 rounded-xl focus:border-[#011b54] focus:ring-[#011b54] w-full"
               />
               <Button 
-                className="absolute right-1.5 sm:right-2 top-1/2 transform -translate-y-1/2 bg-linear-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] h-8 sm:h-9 px-3 sm:px-4 text-xs sm:text-sm"
+                className="absolute right-1.5 sm:right-2 top-1/2 transform -translate-y-1/2 bg-linear-to-r from-[#011b54] to-[#022b82] hover:from-[#022b82] hover:to-[#03369f] h-8 sm:h-9 px-3 sm:px-4 text-xs sm:text-sm"
               >
                 Search
               </Button>
@@ -84,7 +84,7 @@ export default function NotFound() {
           <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 mb-12 md:mb-16 px-2">
             <Button
               size="default"
-              className="w-full sm:w-auto bg-linear-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] text-white px-6 sm:px-8 shadow-lg h-10 sm:h-11"
+              className="w-full sm:w-auto bg-linear-to-r from-[#011b54] to-[#022b82] hover:from-[#022b82] hover:to-[#03369f] text-white px-6 sm:px-8 shadow-lg h-10 sm:h-11"
               asChild
             >
               <Link href="/">
@@ -96,7 +96,7 @@ export default function NotFound() {
             <Button
               size="default"
               variant="outline"
-              className="w-full sm:w-auto border-[#EAB75F] text-[#EAB75F] hover:bg-[#EAB75F]/10 px-6 sm:px-8 h-10 sm:h-11"
+              className="w-full sm:w-auto border-[#011b54] text-[#011b54] hover:bg-[#011b54]/10 px-6 sm:px-8 h-10 sm:h-11"
               asChild
             >
               <Link href="/products">
@@ -108,7 +108,7 @@ export default function NotFound() {
             <Button
               size="default"
               variant="ghost"
-              className="w-full sm:w-auto text-gray-600 hover:text-[#7C2C78] h-10 sm:h-11"
+              className="w-full sm:w-auto text-gray-600 hover:text-[#011b54] h-10 sm:h-11"
               onClick={() => window.history.back()}
             >
               <ArrowLeft className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
@@ -139,9 +139,9 @@ export default function NotFound() {
 
 
           {/* Bargain Zone CTA */}
-          <div className="bg-linear-to-r from-[#7C2C78]/5 via-[#A43875]/5 to-[#EAB75F]/5 rounded-2xl sm:rounded-3xl p-6 sm:p-8 mb-8 md:mb-12 border border-[#EAB75F]/20 mx-2">
+          <div className="bg-linear-to-r from-[#011b54]/5 via-[#022b82]/5 to-[#011b54]/5 rounded-2xl sm:rounded-3xl p-6 sm:p-8 mb-8 md:mb-12 border border-[#011b54]/20 mx-2">
             <div className="flex items-center justify-center mb-4 sm:mb-6">
-              <div className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 rounded-full bg-linear-to-r from-[#EAB75F] to-amber-400 flex items-center justify-center">
+              <div className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 rounded-full bg-linear-to-r from-[#011b54] to-amber-400 flex items-center justify-center">
                 <Zap className="h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8 text-white" />
               </div>
             </div>
@@ -153,7 +153,7 @@ export default function NotFound() {
             </p>
             <Button
               size="default"
-              className="bg-linear-to-r from-[#EAB75F] to-amber-500 hover:from-amber-500 hover:to-orange-500 text-white shadow-lg h-10 sm:h-11 px-6 sm:px-8"
+              className="bg-linear-to-r from-[#011b54] to-amber-500 hover:from-amber-500 hover:to-orange-500 text-white shadow-lg h-10 sm:h-11 px-6 sm:px-8"
               asChild
             >
               <Link href="/products?filter=bargain">
@@ -164,7 +164,7 @@ export default function NotFound() {
           </div>
 
           {/* Lucky Draw CTA */}
-          <div className="bg-linear-to-r from-[#7C2C78] to-[#A43875] rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white mx-2">
+          <div className="bg-linear-to-r from-[#011b54] to-[#022b82] rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white mx-2">
             <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4">
               🎉 Win Amazing Prizes!
             </h3>
@@ -175,7 +175,7 @@ export default function NotFound() {
             <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4">
               <Button
                 size="default"
-                className="w-full sm:w-auto bg-white text-[#7C2C78] hover:bg-white/90 h-10 sm:h-11"
+                className="w-full sm:w-auto bg-white text-[#011b54] hover:bg-white/90 h-10 sm:h-11"
                 asChild
               >
                 <Link href="/dashboard/lucky-draw">

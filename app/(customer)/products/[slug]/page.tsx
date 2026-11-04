@@ -162,7 +162,7 @@ export default async function ProductPage({
             { name: product.name, url: `/products/${product.slug}` },
           ]}
         />
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 pt-4 sm:pt-8 pb-3 sm:pb-6">
           {/* Product Detail */}
           <ProductDetailClient
             product={serialize(product)}

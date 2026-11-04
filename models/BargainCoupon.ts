@@ -31,8 +31,7 @@ const BargainCouponSchemaMongoose = new Schema<IBargainCoupon>({
     type: String, 
     required: true, 
     unique: true, 
-    uppercase: true,
-    index: true 
+    uppercase: true
   },
   productId: { type: String, required: true, ref: 'Product', index: true },
   userId: { type: String, required: true, ref: 'User', index: true },

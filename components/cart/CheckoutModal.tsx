@@ -35,8 +35,8 @@ export default function CheckoutModal({
           {/* Login Option */}
           <div className="mb-6 sm:mb-8">
             <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-              <div className="p-2 bg-[#7C2C78]/10 rounded-lg">
-                <User className="h-5 w-5 sm:h-6 sm:w-6 text-[#7C2C78]" />
+              <div className="p-2 bg-[#011b54]/10 rounded-lg">
+                <User className="h-5 w-5 sm:h-6 sm:w-6 text-[#011b54]" />
               </div>
               <div>
                 <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
@@ -55,7 +55,7 @@ export default function CheckoutModal({
             >
               <Button
                 size="lg"
-                className="w-full h-12 sm:h-14 text-base sm:text-lg bg-linear-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] text-white gap-2 sm:gap-3"
+                className="w-full h-12 sm:h-14 text-base sm:text-lg bg-linear-to-r from-[#011b54] to-[#022b82] hover:from-[#022b82] hover:to-[#03369f] text-white gap-2 sm:gap-3"
               >
                 Login to Continue
                 <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -67,7 +67,7 @@ export default function CheckoutModal({
                 Don&apos;t have an account?{" "}
                 <Link
                   href={`/register?callbackUrl=${encodeURIComponent("/checkout")}`}
-                  className="text-[#7C2C78] hover:text-[#6A2566] font-medium underline underline-offset-2"
+                  className="text-[#011b54] hover:text-[#022b82] font-medium underline underline-offset-2"
                   onClick={onClose}
                 >
                   Sign up
@@ -157,7 +157,7 @@ export default function CheckoutModal({
               Need help?{" "}
               <Link
                 href="/contact"
-                className="text-[#7C2C78] hover:text-[#6A2566] underline underline-offset-2"
+                className="text-[#011b54] hover:text-[#022b82] underline underline-offset-2"
                 onClick={onClose}
               >
                 Contact our support team

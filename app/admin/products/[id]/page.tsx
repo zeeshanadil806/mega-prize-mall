@@ -69,7 +69,7 @@ if (!session?.user || (session.user.role !== "admin" && session.user.role !== "s
               Edit Product
             </Link>
           </Button>
-          <Button className="bg-gradient-to-r from-[#7C2C78] to-[#A43875] text-white">
+          <Button className="bg-gradient-to-r from-[#011b54] to-[#022b82] text-white">
             View on Store
           </Button>
         </div>
@@ -98,7 +98,7 @@ if (!session?.user || (session.user.role !== "admin" && session.user.role !== "s
                       sizes="(max-width: 768px) 50vw, 33vw"
                     />
                     {index === 0 && (
-                      <Badge className="absolute top-2 left-2 bg-gradient-to-r from-[#7C2C78] to-[#A43875]">
+                      <Badge className="absolute top-2 left-2 bg-gradient-to-r from-[#011b54] to-[#022b82]">
                         Main
                       </Badge>
                     )}
@@ -154,7 +154,7 @@ if (!session?.user || (session.user.role !== "admin" && session.user.role !== "s
               
               <div className="flex flex-wrap gap-2">
                 {productData.isFeatured && (
-                  <Badge className="bg-gradient-to-r from-[#EAB75F] to-[#A43875] text-white">
+                  <Badge className="bg-gradient-to-r from-[#011b54] to-[#022b82] text-white">
                     Featured
                   </Badge>
                 )}

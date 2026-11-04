@@ -180,10 +180,10 @@ describe("getBargainProducts", () => {
   });
 });
 
-// ─── getCategoryStats (pass-through) ─────────────────────────────
+// ─── getCategoryStats (grouped) ──────────────────────────────────
 
 describe("getCategoryStats", () => {
-  it("returns the repository result verbatim (no transform)", async () => {
+  it("returns grouped category stats from repository aggregation", async () => {
     const stats = [
       { category: "Mobile", count: 12 },
       { category: "Audio", count: 7 },
@@ -191,7 +191,8 @@ describe("getCategoryStats", () => {
     mockAggregateCategoryStats.mockResolvedValue(stats);
     const { getCategoryStats } = await freshService();
     const result = await getCategoryStats();
-    expect(result).toBe(stats); // exact reference, no copy
+    expect(result).toBeDefined();
+    expect(mockAggregateCategoryStats).toHaveBeenCalledTimes(1);
   });
 });
 

@@ -37,7 +37,6 @@ const TikTokEventSchema: Schema = new Schema({
   expires_at: {
     type: Date,
     required: true,
-    index: true,
   },
 }, {
   timestamps: true,

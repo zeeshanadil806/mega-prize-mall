@@ -406,7 +406,7 @@ export default function CheckoutClient({
   if (status === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[#7C2C78]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[#011b54]" />
       </div>
     );
   }
@@ -424,7 +424,7 @@ export default function CheckoutClient({
             onClick={() => setMobileSummaryOpen((v) => !v)}
             className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200"
           >
-            <div className="flex items-center gap-2 text-[#7C2C78] font-semibold text-sm">
+            <div className="flex items-center gap-2 text-[#011b54] font-semibold text-sm">
               <Package className="h-4 w-4" />
               <span>Order summary</span>
               <ChevronDown
@@ -465,7 +465,7 @@ export default function CheckoutClient({
         {/* Desktop header: just logo centered */}
         <div className="hidden lg:flex items-center justify-center py-5">
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-2xl font-black bg-gradient-to-r from-[#2E297D] to-[#7C2C78] bg-clip-text text-transparent tracking-tight">
+            <span className="text-2xl font-black bg-[#011b54] hover:bg-[#022b82] bg-clip-text text-transparent tracking-tight">
               Mega Prize Mall
             </span>
           </Link>
@@ -497,7 +497,7 @@ export default function CheckoutClient({
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-gray-900">Contact</h2>
                 {!session?.user || session?.user?.isGuest ? (
-                  <Link href="/login" className="text-sm text-[#7C2C78] hover:underline">
+                  <Link href="/login" className="text-sm text-[#011b54] hover:underline">
                     Sign in
                   </Link>
                 ) : (
@@ -524,7 +524,7 @@ export default function CheckoutClient({
                         guestEmail: e.target.value,
                       }))
                     }
-                    className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors"
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#011b54]/30 focus:border-[#011b54] transition-colors"
                     placeholder="Email or mobile phone number"
                     required
                   />
@@ -569,7 +569,7 @@ export default function CheckoutClient({
                       <div
                         className={`p-4 border-2 rounded-xl transition-all ${
                           checkoutData.shippingAddress?._id === address._id
-                            ? "border-[#7C2C78] bg-[#7C2C78]/5"
+                            ? "border-[#011b54] bg-[#011b54]/5"
                             : "border-gray-200 hover:border-gray-300"
                         }`}
                       >
@@ -577,7 +577,7 @@ export default function CheckoutClient({
                           <div
                             className={`mt-0.5 h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
                               checkoutData.shippingAddress?._id === address._id
-                                ? "border-[#7C2C78] bg-[#7C2C78]"
+                                ? "border-[#011b54] bg-[#011b54]"
                                 : "border-gray-300"
                             }`}
                           >
@@ -610,7 +610,7 @@ export default function CheckoutClient({
                   {/* Add new address toggle */}
                   <button
                     onClick={() => setShowAddressForm(true)}
-                    className="w-full flex items-center gap-2 p-3 text-sm text-[#7C2C78] hover:bg-[#7C2C78]/5 rounded-xl border border-dashed border-[#7C2C78]/40 hover:border-[#7C2C78] transition-all"
+                    className="w-full flex items-center gap-2 p-3 text-sm text-[#011b54] hover:bg-[#011b54]/5 rounded-xl border border-dashed border-[#011b54]/40 hover:border-[#011b54] transition-all"
                   >
                     <Plus className="h-4 w-4" />
                     Use a different address
@@ -639,7 +639,7 @@ export default function CheckoutClient({
                         const last = newAddress.fullName.split(" ").slice(1).join(" ");
                         setNewAddress((prev) => ({ ...prev, fullName: `${e.target.value} ${last}`.trim() }));
                       }}
-                      className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors"
+                      className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#011b54]/30 focus:border-[#011b54] transition-colors"
                       placeholder="First name"
                     />
                     <input
@@ -649,7 +649,7 @@ export default function CheckoutClient({
                         const first = newAddress.fullName.split(" ")[0] || "";
                         setNewAddress((prev) => ({ ...prev, fullName: `${first} ${e.target.value}`.trim() }));
                       }}
-                      className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors"
+                      className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#011b54]/30 focus:border-[#011b54] transition-colors"
                       placeholder="Last name"
                     />
                   </div>
@@ -659,7 +659,7 @@ export default function CheckoutClient({
                     type="text"
                     value={newAddress.addressLine1}
                     onChange={(e) => setNewAddress((prev) => ({ ...prev, addressLine1: e.target.value }))}
-                    className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors"
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#011b54]/30 focus:border-[#011b54] transition-colors"
                     placeholder="Address"
                     required
                   />
@@ -669,7 +669,7 @@ export default function CheckoutClient({
                     type="text"
                     value={newAddress.addressLine2}
                     onChange={(e) => setNewAddress((prev) => ({ ...prev, addressLine2: e.target.value }))}
-                    className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors"
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#011b54]/30 focus:border-[#011b54] transition-colors"
                     placeholder="Apartment, suite, etc. (optional)"
                   />
 
@@ -679,7 +679,7 @@ export default function CheckoutClient({
                       type="text"
                       value={newAddress.city}
                       onChange={(e) => setNewAddress((prev) => ({ ...prev, city: e.target.value }))}
-                      className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors"
+                      className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#011b54]/30 focus:border-[#011b54] transition-colors"
                       placeholder="City"
                       required
                     />
@@ -687,7 +687,7 @@ export default function CheckoutClient({
                       type="text"
                       value={newAddress.postalCode}
                       onChange={(e) => setNewAddress((prev) => ({ ...prev, postalCode: e.target.value }))}
-                      className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors"
+                      className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#011b54]/30 focus:border-[#011b54] transition-colors"
                       placeholder="Postal code (optional)"
                     />
                   </div>
@@ -698,7 +698,7 @@ export default function CheckoutClient({
                       type="text"
                       value={newAddress.state}
                       onChange={(e) => setNewAddress((prev) => ({ ...prev, state: e.target.value }))}
-                      className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors"
+                      className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#011b54]/30 focus:border-[#011b54] transition-colors"
                       placeholder="Province / State"
                       required
                     />
@@ -706,7 +706,7 @@ export default function CheckoutClient({
                       type="tel"
                       value={newAddress.phone}
                       onChange={(e) => setNewAddress((prev) => ({ ...prev, phone: e.target.value }))}
-                      className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors"
+                      className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#011b54]/30 focus:border-[#011b54] transition-colors"
                       placeholder="Phone"
                       required
                     />
@@ -717,7 +717,7 @@ export default function CheckoutClient({
                     <label className="flex items-center gap-2.5 cursor-pointer select-none">
                       <input
                         type="checkbox"
-                        className="h-4 w-4 rounded border-gray-300 text-[#7C2C78] focus:ring-[#7C2C78]"
+                        className="h-4 w-4 rounded border-gray-300 text-[#011b54] focus:ring-[#011b54]"
                       />
                       <span className="text-sm text-gray-700">Save this information for next time</span>
                     </label>
@@ -730,7 +730,7 @@ export default function CheckoutClient({
                         type="checkbox"
                         checked={newAddress.isDefault}
                         onChange={(e) => setNewAddress((prev) => ({ ...prev, isDefault: e.target.checked }))}
-                        className="h-4 w-4 rounded border-gray-300 text-[#7C2C78] focus:ring-[#7C2C78]"
+                        className="h-4 w-4 rounded border-gray-300 text-[#011b54] focus:ring-[#011b54]"
                       />
                       <span className="text-sm text-gray-700">Set as default shipping address</span>
                     </label>
@@ -759,7 +759,7 @@ export default function CheckoutClient({
                   </div>
                   <button
                     onClick={() => setShowAddressForm(true)}
-                    className="ml-auto text-xs text-[#7C2C78] hover:underline shrink-0"
+                    className="ml-auto text-xs text-[#011b54] hover:underline shrink-0"
                   >
                     Edit
                   </button>
@@ -770,16 +770,16 @@ export default function CheckoutClient({
             {/* â”€â”€ PAYMENT METHOD â”€â”€ */}
             <div className="mb-8">
               <h2 className="text-lg font-bold text-gray-900 mb-4">Payment</h2>
-              <div className="border-2 border-[#7C2C78] rounded-xl p-4 bg-[#7C2C78]/5">
+              <div className="border-2 border-[#011b54] rounded-xl p-4 bg-[#011b54]/5">
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-white shadow-sm border border-gray-200 flex items-center justify-center shrink-0">
-                    <Shield className="h-5 w-5 text-[#7C2C78]" />
+                    <Shield className="h-5 w-5 text-[#011b54]" />
                   </div>
                   <div className="flex-1">
                     <p className="font-semibold text-gray-900 text-sm">Cash on Delivery</p>
                     <p className="text-xs text-gray-500">Pay when you receive your order</p>
                   </div>
-                  <div className="h-5 w-5 rounded-full bg-[#7C2C78] flex items-center justify-center shrink-0">
+                  <div className="h-5 w-5 rounded-full bg-[#011b54] flex items-center justify-center shrink-0">
                     <Check className="h-3 w-3 text-white" />
                   </div>
                 </div>
@@ -794,7 +794,7 @@ export default function CheckoutClient({
                   setCheckoutData((prev: CheckoutState) => ({ ...prev, notes: e.target.value }))
                 }
                 rows={2}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors resize-none"
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#011b54]/30 focus:border-[#011b54] transition-colors resize-none"
                 placeholder="Order notes (optional) â€” special instructions, landmarks, etc."
               />
             </div>
@@ -813,7 +813,7 @@ export default function CheckoutClient({
                 (!checkoutData.shippingAddress &&
                   !(newAddress.addressLine1 && newAddress.city && newAddress.phone && newAddress.fullName))
               }
-              className="w-full h-14 rounded-xl flex items-center justify-center gap-2 bg-gradient-to-r from-[#2E297D] to-[#7C2C78] hover:from-[#211E63] hover:to-[#6A2566] text-white font-semibold text-base shadow-[0_8px_30px_rgba(46,41,125,0.3)] hover:shadow-[0_12px_40px_rgba(124,44,120,0.4)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+              className="w-full h-14 rounded-xl flex items-center justify-center gap-2 bg-[#011b54] hover:bg-[#022b82] hover:from-[#211E63] hover:to-[#6A2566] text-white font-semibold text-base shadow-[0_8px_30px_rgba(46,41,125,0.3)] hover:shadow-[0_12px_40px_rgba(124,44,120,0.4)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
             >
               {isSubmitting ? (
                 <><Loader2 className="h-5 w-5 animate-spin" /> Processing...</>

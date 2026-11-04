@@ -139,7 +139,7 @@ export default function AddToCartButton({
             animate={{ opacity: 0, y: -60, scale: 1.3 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-50 flex items-center justify-center bg-white text-[#7C2C78] font-bold text-sm sm:text-base px-3 py-1.5 rounded-full shadow-[0_8px_20px_rgba(124,44,120,0.25)] border border-purple-100 whitespace-nowrap"
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-50 flex items-center justify-center bg-white text-[#011b54] font-bold text-sm sm:text-base px-3 py-1.5 rounded-full shadow-[0_8px_20px_rgba(1,27,84,0.25)] border border-blue-100 whitespace-nowrap"
           >
             +1 Added
           </motion.div>
@@ -163,7 +163,7 @@ export default function AddToCartButton({
               : variant === "default"
               ? added
                 ? "bg-transparent text-white shadow-[0_8px_30px_rgba(16,185,129,0.35)] border-0"
-                : "bg-gradient-to-r from-[#7C2C78] via-[#91328A] to-[#A43875] text-white shadow-[0_8px_30px_rgba(124,44,120,0.3)] hover:shadow-[0_12px_45px_rgba(164,56,117,0.55)] border-0"
+                : "bg-[#011b54] hover:bg-[#022b82] text-white shadow-[0_8px_30px_rgba(1,27,84,0.3)] hover:shadow-[0_12px_45px_rgba(1,27,84,0.55)] border-0"
               : ""
           }`}
         >
@@ -176,16 +176,9 @@ export default function AddToCartButton({
             />
           )}
 
-          {/* Light Sweep Shine Effect */}
+          {/* Periodic Light Sweep Shine Effect */}
           {!isOutOfStock && !added && (
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none"
-              initial={{ x: "-100%" }}
-              whileHover={{
-                x: "100%",
-                transition: { duration: 0.8, ease: "easeOut" },
-              }}
-            />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none animate-cta-sheen" />
           )}
 
           {/* Button Content */}

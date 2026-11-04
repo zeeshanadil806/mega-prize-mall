@@ -298,7 +298,7 @@ export default function CouponDetailsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7C2C78]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#011b54]"></div>
       </div>
     );
   }
@@ -335,7 +335,7 @@ export default function CouponDetailsPage() {
               </p>
             </div>
           </div>
-          <Badge className="text-[#7C2C78] bg-[#7C2C78]/10 border-[#7C2C78]/30">
+          <Badge className="text-[#011b54] bg-[#011b54]/10 border-[#011b54]/30">
             {coupon.code}
           </Badge>
         </div>
@@ -390,7 +390,7 @@ export default function CouponDetailsPage() {
             <p className="text-muted-foreground">{coupon.description}</p>
             <div className="flex items-center gap-4 mt-2">
               <div className="flex items-center text-sm text-gray-600">
-                <Tag className="h-4 w-4 mr-2 text-[#A43875]" />
+                <Tag className="h-4 w-4 mr-2 text-[#022b82]" />
                 <code className="font-mono font-bold text-lg gradient-text">
                   {coupon.code}
                 </code>
@@ -407,7 +407,7 @@ export default function CouponDetailsPage() {
             variant="outline"
             size="sm"
             onClick={handleCopyCode}
-            className="border-[#7C2C78]/30 text-[#7C2C78] hover:bg-[#7C2C78]/10"
+            className="border-[#011b54]/30 text-[#011b54] hover:bg-[#011b54]/10"
           >
             <Copy className="h-4 w-4 mr-2" />
             Copy Code
@@ -417,7 +417,7 @@ export default function CouponDetailsPage() {
             variant="outline"
             size="sm"
             onClick={() => router.push(`?edit=true`)}
-            className="border-[#2E297D]/30 text-[#2E297D] hover:bg-[#2E297D]/10"
+            className="border-[#011b54]/30 text-[#011b54] hover:bg-[#011b54]/10"
           >
             <Edit className="h-4 w-4 mr-2" />
             Edit
@@ -463,19 +463,19 @@ export default function CouponDetailsPage() {
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview" className="data-[state=active]:bg-[#7C2C78] data-[state=active]:text-white">
+          <TabsTrigger value="overview" className="data-[state=active]:bg-[#011b54] data-[state=active]:text-white">
             <Eye className="h-4 w-4 mr-2" />
             Overview
           </TabsTrigger>
-          <TabsTrigger value="usage" className="data-[state=active]:bg-[#A43875] data-[state=active]:text-white">
+          <TabsTrigger value="usage" className="data-[state=active]:bg-[#022b82] data-[state=active]:text-white">
             <BarChart3 className="h-4 w-4 mr-2" />
             Usage Stats
           </TabsTrigger>
-          <TabsTrigger value="settings" className="data-[state=active]:bg-[#2E297D] data-[state=active]:text-white">
+          <TabsTrigger value="settings" className="data-[state=active]:bg-[#011b54] data-[state=active]:text-white">
             <Tag className="h-4 w-4 mr-2" />
             Settings
           </TabsTrigger>
-          <TabsTrigger value="history" className="data-[state=active]:bg-[#EAB75F] data-[state=active]:text-white">
+          <TabsTrigger value="history" className="data-[state=active]:bg-[#011b54] data-[state=active]:text-white">
             <Clock className="h-4 w-4 mr-2" />
             History
           </TabsTrigger>
@@ -487,9 +487,9 @@ export default function CouponDetailsPage() {
             {/* Left Column - Coupon Details */}
             <div className="lg:col-span-2 space-y-6">
               {/* Discount Card */}
-              <Card className="border border-[#A43875]/20">
+              <Card className="border border-[#022b82]/20">
                 <CardHeader>
-                  <CardTitle className="text-[#A43875] flex items-center gap-2">
+                  <CardTitle className="text-[#022b82] flex items-center gap-2">
                     {coupon.discountType === 'percentage' ? (
                       <Percent className="h-5 w-5" />
                     ) : coupon.discountType === 'fixed' ? (
@@ -504,7 +504,7 @@ export default function CouponDetailsPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <div className="text-sm text-gray-600">Discount Type</div>
-                      <div className="text-lg font-bold text-[#A43875] capitalize">
+                      <div className="text-lg font-bold text-[#022b82] capitalize">
                         {coupon.discountType.replace('_', ' ')}
                       </div>
                     </div>
@@ -542,9 +542,9 @@ export default function CouponDetailsPage() {
               </Card>
 
               {/* Validity Card */}
-              <Card className="border border-[#EAB75F]/20">
+              <Card className="border border-[#011b54]/20">
                 <CardHeader>
-                  <CardTitle className="text-[#EAB75F] flex items-center gap-2">
+                  <CardTitle className="text-[#011b54] flex items-center gap-2">
                     <Calendar className="h-5 w-5" />
                     Validity Period
                   </CardTitle>
@@ -565,7 +565,7 @@ export default function CouponDetailsPage() {
                     </div>
                   </div>
                   
-                  <div className="p-3 bg-linear-to-r from-[#EAB75F]/10 to-[#A43875]/10 rounded-lg">
+                  <div className="p-3 bg-linear-to-r from-[#011b54]/10 to-[#022b82]/10 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="text-sm text-gray-600">Status</div>
@@ -578,7 +578,7 @@ export default function CouponDetailsPage() {
                            `${coupon.daysRemaining} days remaining`}
                         </div>
                       </div>
-                      <Clock className="h-8 w-8 text-[#EAB75F]" />
+                      <Clock className="h-8 w-8 text-[#011b54]" />
                     </div>
                   </div>
                 </CardContent>
@@ -588,9 +588,9 @@ export default function CouponDetailsPage() {
             {/* Right Column - Stats Sidebar */}
             <div className="space-y-6">
               {/* Usage Stats Card */}
-              <Card className="border border-[#7C2C78]/20">
+              <Card className="border border-[#011b54]/20">
                 <CardHeader>
-                  <CardTitle className="text-[#7C2C78] flex items-center gap-2">
+                  <CardTitle className="text-[#011b54] flex items-center gap-2">
                     <Users className="h-5 w-5" />
                     Usage Statistics
                   </CardTitle>
@@ -617,7 +617,7 @@ export default function CouponDetailsPage() {
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2">
                           <div 
-                            className="bg-linear-to-r from-[#7C2C78] to-[#A43875] h-2 rounded-full"
+                            className="bg-linear-to-r from-[#011b54] to-[#022b82] h-2 rounded-full"
                             style={{ width: `${Math.min((coupon.usedCount / coupon.maxUses) * 100, 100)}%` }}
                           />
                         </div>
@@ -626,7 +626,7 @@ export default function CouponDetailsPage() {
                     
                     <div>
                       <div className="text-sm text-gray-600">Total Discount Given</div>
-                      <div className="text-xl font-bold text-[#A43875]">
+                      <div className="text-xl font-bold text-[#022b82]">
                         {formatCurrency(coupon.totalDiscountGiven || 0)}
                       </div>
                     </div>
@@ -642,9 +642,9 @@ export default function CouponDetailsPage() {
               </Card>
 
               {/* Minimum Order Card */}
-              <Card className="border border-[#2E297D]/20">
+              <Card className="border border-[#011b54]/20">
                 <CardHeader>
-                  <CardTitle className="text-[#2E297D] flex items-center gap-2">
+                  <CardTitle className="text-[#011b54] flex items-center gap-2">
                     <Package className="h-5 w-5" />
                     Requirements
                   </CardTitle>
@@ -704,7 +704,7 @@ export default function CouponDetailsPage() {
             <>
               {/* Stats Overview */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <Card className="border border-[#7C2C78]/20">
+                <Card className="border border-[#011b54]/20">
                   <CardContent className="pt-6">
                     <div className="text-center">
                       <div className="text-3xl font-bold gradient-text">
@@ -715,10 +715,10 @@ export default function CouponDetailsPage() {
                   </CardContent>
                 </Card>
                 
-                <Card className="border border-[#A43875]/20">
+                <Card className="border border-[#022b82]/20">
                   <CardContent className="pt-6">
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-[#A43875]">
+                      <div className="text-3xl font-bold text-[#022b82]">
                         {formatCurrency(stats.totalDiscount)}
                       </div>
                       <div className="text-sm text-gray-600">Total Discount</div>
@@ -726,10 +726,10 @@ export default function CouponDetailsPage() {
                   </CardContent>
                 </Card>
                 
-                <Card className="border border-[#2E297D]/20">
+                <Card className="border border-[#011b54]/20">
                   <CardContent className="pt-6">
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-[#2E297D]">
+                      <div className="text-3xl font-bold text-[#011b54]">
                         {formatCurrency(stats.avgDiscountPerOrder)}
                       </div>
                       <div className="text-sm text-gray-600">Avg. Discount/Order</div>
@@ -737,10 +737,10 @@ export default function CouponDetailsPage() {
                   </CardContent>
                 </Card>
                 
-                <Card className="border border-[#EAB75F]/20">
+                <Card className="border border-[#011b54]/20">
                   <CardContent className="pt-6">
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-[#EAB75F]">
+                      <div className="text-3xl font-bold text-[#011b54]">
                         {stats.uniqueUserCount}
                       </div>
                       <div className="text-sm text-gray-600">Unique Users</div>
@@ -761,7 +761,7 @@ export default function CouponDetailsPage() {
                       variant="outline"
                       size="sm"
                       onClick={handleExportData}
-                      className="border-[#7C2C78]/30 text-[#7C2C78]"
+                      className="border-[#011b54]/30 text-[#011b54]"
                     >
                       <Download className="h-4 w-4 mr-2" />
                       Export All
@@ -852,7 +852,7 @@ export default function CouponDetailsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Combination Rules */}
                 <div className="space-y-4">
-                  <h3 className="font-medium text-[#2E297D]">Combination Rules</h3>
+                  <h3 className="font-medium text-[#011b54]">Combination Rules</h3>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-3 border rounded-lg">
                       <div>
@@ -878,7 +878,7 @@ export default function CouponDetailsPage() {
 
                 {/* Restrictions */}
                 <div className="space-y-4">
-                  <h3 className="font-medium text-[#A43875]">Restrictions</h3>
+                  <h3 className="font-medium text-[#022b82]">Restrictions</h3>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-3 border rounded-lg">
                       <div>
@@ -895,7 +895,7 @@ export default function CouponDetailsPage() {
                         <div className="font-medium">Applicability</div>
                         <div className="text-sm text-gray-600">Where coupon can be used</div>
                       </div>
-                      <Badge className="bg-[#A43875]/10 text-[#A43875] border-[#A43875]/30">
+                      <Badge className="bg-[#022b82]/10 text-[#022b82] border-[#022b82]/30">
                         {coupon.applicableTo.replace('_', ' ')}
                       </Badge>
                     </div>

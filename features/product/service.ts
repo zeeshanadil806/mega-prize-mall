@@ -16,6 +16,7 @@ import type {
   ProductListingFilters,
   ListingProductForSchema,
   CategoryStat,
+  MegaMenuProduct,
 } from "./domain";
 import {
   findDistinctActiveCategories,
@@ -25,7 +26,9 @@ import {
   findBargainProducts,
   aggregateCategoryStats,
   findProductsForListing,
+  findHeaderMegaMenuProducts,
 } from "./repository";
+export type { MegaMenuProduct };
 import type { CustomerProductProps } from "@/types";
 
 // ─── In-process cache for low-change reads ─────────────────────────
@@ -98,3 +101,11 @@ export async function getProductsForListingSchema(
   await connectToDatabase();
   return findProductsForListing(filters, limit);
 }
+
+export const getHeaderMegaMenuProducts = cache(
+  async (): Promise<Record<string, MegaMenuProduct[]>> => {
+    await connectToDatabase();
+    return findHeaderMegaMenuProducts();
+  }
+);
+

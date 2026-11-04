@@ -103,7 +103,10 @@ export interface BargainHistoryItem {
 export interface ProductFilter {
   isActive?: boolean;
   bargainEnabled?: boolean;
-  category?: string;
+  isNewArrival?: boolean;
+  isFeatured?: boolean;
+  isBestSeller?: boolean;
+  category?: string | { $in: string[] };
   price?: {
     $gte?: number;
     $lte?: number;
@@ -233,6 +236,10 @@ export interface ClientOrder {
   luckyDrawEntryIds: string[];
   notes?: string;
   transactionId?: string;
+  isGuestOrder?: boolean;
+  guestPhone?: string;
+  guestEmail?: string;
+  guestSessionId?: string;
   estimatedDelivery?: string;
   createdAt: string;
   updatedAt: string;

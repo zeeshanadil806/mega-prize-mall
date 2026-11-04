@@ -214,7 +214,7 @@ export default function ManagePointsDialog({
           {/* User Info */}
           <div className="border rounded-lg p-4">
             <div className="flex items-center space-x-3">
-              <div className="h-10 w-10 rounded-full bg-linear-to-br from-[#EAB75F] to-[#A43875] flex items-center justify-center text-white font-bold">
+              <div className="h-10 w-10 rounded-full bg-linear-to-br from-[#011b54] to-[#022b82] flex items-center justify-center text-white font-bold">
                 {user.name?.charAt(0).toUpperCase() || 'U'}
               </div>
               <div>
@@ -230,7 +230,7 @@ export default function ManagePointsDialog({
               <div className="space-y-1">
                 <div className="text-sm text-gray-500">Current Points</div>
                 <div className="flex items-center">
-                  <Gift className="h-4 w-4 mr-2 text-[#EAB75F]" />
+                  <Gift className="h-4 w-4 mr-2 text-[#011b54]" />
                   <span className="text-lg font-bold text-gray-900">{user.points}</span>
                   <span className="text-sm text-gray-500 ml-1">
                     (Rs {getPointsValue(user.points).toFixed(2)})
@@ -343,8 +343,8 @@ export default function ManagePointsDialog({
                 <div className="flex justify-between items-center">
                   <span className="font-semibold">New Balance:</span>
                   <div className="flex items-center">
-                    <Gift className="h-5 w-5 mr-2 text-[#7C2C78]" />
-                    <span className="text-xl font-bold text-[#7C2C78]">
+                    <Gift className="h-5 w-5 mr-2 text-[#011b54]" />
+                    <span className="text-xl font-bold text-[#011b54]">
                       {preview.newBalance} points
                     </span>
                     <span className="text-sm text-gray-500 ml-2">

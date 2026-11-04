@@ -7,6 +7,15 @@ import { validateReferralCode, processReferral } from "@/lib/referral-utils";
 import { z } from "zod";
 import { log } from "@/lib/logger";
 import { sendWelcomeEmail } from "@/lib/email-templates";
+import { rateLimit } from "@/lib/rate-limit";
+import { applyRateLimit, ipFromRequest } from "@/shared/http";
+
+// Rate limiter: 10 registrations per 15 minutes per IP to mitigate account creation spam
+const REGISTER_RATE_LIMIT = 10;
+const limiter = rateLimit({
+  interval: 15 * 60 * 1000,
+  uniqueTokenPerInterval: 500,
+});
 
 // Updated schema with optional referral code
 const registerSchema = z.object({
@@ -38,6 +47,15 @@ export async function POST(
   request: Request
 ): Promise<NextResponse<SuccessResponse | ErrorResponse>> {
   try {
+    const rl = await applyRateLimit(
+      limiter,
+      REGISTER_RATE_LIMIT,
+      ipFromRequest(request)
+    );
+    if (!rl.ok) {
+      return rl.response as NextResponse<SuccessResponse | ErrorResponse>;
+    }
+
     await connectToDatabase();
 
     const body: unknown = await request.json();
@@ -104,12 +122,12 @@ export async function POST(
     // Hash password
     const hashedPassword = await bcrypt.hash(validatedData.password, 12);
 
-    // Create user with 0 points initially
+    // Create user with 0 points initially (role is strictly enforced as "customer")
     const user = await UserModel.create({
       name: validatedData.name,
       email: validatedData.email,
       password: hashedPassword,
-      role: validatedData.role,
+      role: "customer",
       emailVerified: new Date(),
       points: emailSubscriberPoints || 0, // Start with 0, referral will add if valid
       referredBy: validatedData.referralCode?.trim() || null,

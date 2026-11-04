@@ -121,7 +121,7 @@ export const metadata: Metadata = {
 
     // Mobile
     "format-detection": "telephone=yes",
-    "theme-color": "#7C2C78",
+    "theme-color": "#011b54",
 
     // SEO enhancement
     referrer: "origin-when-cross-origin",

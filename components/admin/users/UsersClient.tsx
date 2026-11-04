@@ -338,7 +338,7 @@ export default function UsersClient() {
             <CardTitle className="text-sm font-medium text-gray-600">
               Total Points
             </CardTitle>
-            <div className="h-4 w-4 bg-linear-to-br from-[#EAB75F] to-[#A43875] rounded-full" />
+            <div className="h-4 w-4 bg-linear-to-br from-[#011b54] to-[#022b82] rounded-full" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-gray-900">
@@ -397,7 +397,7 @@ export default function UsersClient() {
         <CardContent className="pt-6">
           {loading && users.length === 0 ? (
             <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7C2C78] mx-auto"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#011b54] mx-auto"></div>
               <p className="mt-4 text-gray-600">Loading users...</p>
             </div>
           ) : (

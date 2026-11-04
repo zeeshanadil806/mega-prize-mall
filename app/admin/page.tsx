@@ -140,7 +140,7 @@ if (!session?.user || (session.user.role !== "admin" && session.user.role !== "s
       value: formatNumber(analyticsData.summary.totalPointsEarned), 
       subtitle: `Value: ${formatCurrency(analyticsData.summary.totalPointsEarned * 0.1)}`,
       icon: Gift,
-      color: "from-[#EAB75F] to-[#A43875]"
+      color: "from-[#011b54] to-[#022b82]"
     },
     { 
       title: "Conversion Rate", 
@@ -273,7 +273,7 @@ if (!session?.user || (session.user.role !== "admin" && session.user.role !== "s
           <CardContent>
             <div className="grid grid-cols-2 gap-4">
               <Link href="/admin/products/new">
-                <Button className="h-24 w-full flex-col gap-2 bg-linear-to-br from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] text-white">
+                <Button className="h-24 w-full flex-col gap-2 bg-linear-to-br from-[#011b54] to-[#022b82] hover:from-[#022b82] hover:to-[#03369f] text-white">
                   <Package className="h-6 w-6" />
                   Add Product
                 </Button>
@@ -310,7 +310,7 @@ if (!session?.user || (session.user.role !== "admin" && session.user.role !== "s
             <div className="space-y-4">
               {formattedRecentActivities.map((activity:FormattedActivity) => (
                 <div key={activity.id} className="flex items-start space-x-3">
-                  <div className="h-8 w-8 rounded-full bg-linear-to-br from-[#EAB75F] to-[#A43875] flex items-center justify-center text-white text-xs font-bold">
+                  <div className="h-8 w-8 rounded-full bg-linear-to-br from-[#011b54] to-[#022b82] flex items-center justify-center text-white text-xs font-bold">
                     {activity.user.charAt(0)}
                   </div>
                   <div className="flex-1">
@@ -325,7 +325,7 @@ if (!session?.user || (session.user.role !== "admin" && session.user.role !== "s
                         )}
                       </div>
                       {activity.amount && (
-                        <span className="text-sm font-semibold text-[#7C2C78]">
+                        <span className="text-sm font-semibold text-[#011b54]">
                           {activity.amount}
                         </span>
                       )}
@@ -348,7 +348,7 @@ if (!session?.user || (session.user.role !== "admin" && session.user.role !== "s
               ))}
             </div>
             <Link href="/admin/orders">
-              <Button variant="ghost" className="w-full mt-4 text-[#7C2C78] hover:text-[#6A2566]">
+              <Button variant="ghost" className="w-full mt-4 text-[#011b54] hover:text-[#022b82]">
                 View all orders
               </Button>
             </Link>
@@ -368,7 +368,7 @@ if (!session?.user || (session.user.role !== "admin" && session.user.role !== "s
               {analyticsData.topProducts.map((product: TopProduct, index: number) => (
                 <div key={product.id} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
                   <div className="flex items-center space-x-3">
-                    <div className="h-10 w-10 rounded-lg bg-linear-to-br from-[#EAB75F] to-[#A43875] flex items-center justify-center text-white font-bold">
+                    <div className="h-10 w-10 rounded-lg bg-linear-to-br from-[#011b54] to-[#022b82] flex items-center justify-center text-white font-bold">
                       {index + 1}
                     </div>
                     <div>

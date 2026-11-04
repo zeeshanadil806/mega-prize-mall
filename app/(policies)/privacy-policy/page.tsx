@@ -129,7 +129,7 @@ export const metadata: Metadata = {
 
     // Mobile
     "format-detection": "telephone=no",
-    "theme-color": "#7C2C78",
+    "theme-color": "#011b54",
 
     // SEO enhancement
     rating: "safe for kids",

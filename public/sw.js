@@ -1,6 +1,6 @@
 // Bump this on every deploy that changes cached assets so the activate handler
 // deletes the previous cache and clients fetch fresh resources.
-const CACHE_NAME = 'megaprizemall-v2';
+const CACHE_NAME = 'megaprizemall-v3';
 const urlsToCache = [
   '/',
   '/manifest.json',

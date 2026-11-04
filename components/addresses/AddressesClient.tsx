@@ -223,7 +223,7 @@ export default function AddressesClient({ addresses, userId }: AddressesClientPr
                             {address.fullName}
                           </h3>
                           {address.isDefault && (
-                            <span className="px-2 py-1 bg-[#7C2C78] text-white text-xs rounded-full">
+                            <span className="px-2 py-1 bg-[#011b54] text-white text-xs rounded-full">
                               Default
                             </span>
                           )}
@@ -321,7 +321,7 @@ export default function AddressesClient({ addresses, userId }: AddressesClientPr
                     type="text"
                     value={formData.fullName}
                     onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#011b54] focus:border-transparent"
                     required
                   />
                 </div>
@@ -333,7 +333,7 @@ export default function AddressesClient({ addresses, userId }: AddressesClientPr
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#011b54] focus:border-transparent"
                     required
                   />
                 </div>
@@ -347,7 +347,7 @@ export default function AddressesClient({ addresses, userId }: AddressesClientPr
                   type="text"
                   value={formData.addressLine1}
                   onChange={(e) => setFormData(prev => ({ ...prev, addressLine1: e.target.value }))}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#011b54] focus:border-transparent"
                   required
                 />
               </div>
@@ -360,7 +360,7 @@ export default function AddressesClient({ addresses, userId }: AddressesClientPr
                   type="text"
                   value={formData.addressLine2}
                   onChange={(e) => setFormData(prev => ({ ...prev, addressLine2: e.target.value }))}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#011b54] focus:border-transparent"
                 />
               </div>
               
@@ -373,7 +373,7 @@ export default function AddressesClient({ addresses, userId }: AddressesClientPr
                     type="text"
                     value={formData.city}
                     onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#011b54] focus:border-transparent"
                     required
                   />
                 </div>
@@ -385,7 +385,7 @@ export default function AddressesClient({ addresses, userId }: AddressesClientPr
                     type="text"
                     value={formData.state}
                     onChange={(e) => setFormData(prev => ({ ...prev, state: e.target.value }))}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#011b54] focus:border-transparent"
                     required
                   />
                 </div>
@@ -397,7 +397,7 @@ export default function AddressesClient({ addresses, userId }: AddressesClientPr
                     type="text"
                     value={formData.postalCode}
                     onChange={(e) => setFormData(prev => ({ ...prev, postalCode: e.target.value }))}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#011b54] focus:border-transparent"
                     required
                   />
                 </div>
@@ -414,7 +414,7 @@ export default function AddressesClient({ addresses, userId }: AddressesClientPr
                       ...prev, 
                       label: e.target.value as 'home' | 'work' | 'other' 
                     }))}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#011b54] focus:border-transparent"
                   >
                     <option value="home">Home</option>
                     <option value="work">Work</option>
@@ -429,7 +429,7 @@ export default function AddressesClient({ addresses, userId }: AddressesClientPr
                     type="text"
                     value={formData.country}
                     onChange={(e) => setFormData(prev => ({ ...prev, country: e.target.value }))}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#011b54] focus:border-transparent"
                   />
                 </div>
               </div>
@@ -440,7 +440,7 @@ export default function AddressesClient({ addresses, userId }: AddressesClientPr
                   id="isDefault"
                   checked={formData.isDefault}
                   onChange={(e) => setFormData(prev => ({ ...prev, isDefault: e.target.checked }))}
-                  className="h-5 w-5 text-[#7C2C78] focus:ring-[#7C2C78] border-gray-300 rounded"
+                  className="h-5 w-5 text-[#011b54] focus:ring-[#011b54] border-gray-300 rounded"
                 />
                 <label htmlFor="isDefault" className="text-gray-700">
                   Set as default shipping address
@@ -462,7 +462,7 @@ export default function AddressesClient({ addresses, userId }: AddressesClientPr
                 </Button>
                 <Button
                   type="submit"
-                  className="flex-1 bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white hover:from-[#6A2566] hover:to-[#8D2F6A]"
+                  className="flex-1 bg-linear-to-r from-[#011b54] to-[#022b82] text-white hover:from-[#022b82] hover:to-[#03369f]"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? 'Saving...' : editingAddress ? 'Update Address' : 'Save Address'}
@@ -473,7 +473,7 @@ export default function AddressesClient({ addresses, userId }: AddressesClientPr
         ) : (
           <Button
             onClick={() => setShowForm(true)}
-            className="w-full py-6 border-2 border-dashed border-gray-300 hover:border-[#7C2C78] bg-transparent hover:bg-[#7C2C78]/5 text-gray-700 hover:text-[#7C2C78]"
+            className="w-full py-6 border-2 border-dashed border-gray-300 hover:border-[#011b54] bg-transparent hover:bg-[#011b54]/5 text-gray-700 hover:text-[#011b54]"
           >
             <Plus className="h-5 w-5 mr-2" />
             Add New Address

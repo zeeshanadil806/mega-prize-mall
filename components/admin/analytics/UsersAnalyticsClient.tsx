@@ -335,7 +335,7 @@ export default function UsersAnalyticsClient() {
                          '10000+ points'}
                       </span>
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-[#7C2C78]">
+                        <span className="font-semibold text-[#011b54]">
                           {bucket.count} users
                         </span>
                         <Badge variant="outline">
@@ -345,7 +345,7 @@ export default function UsersAnalyticsClient() {
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div 
-                        className="bg-linear-to-r from-[#7C2C78] to-[#A43875] h-2 rounded-full"
+                        className="bg-linear-to-r from-[#011b54] to-[#022b82] h-2 rounded-full"
                         style={{ 
                           width: `${Math.min(100, (bucket.count / (distribution.points.reduce((sum: number, b: PointsBucket) => sum + b.count, 0) || 1)) * 100)}%` 
                         }}
@@ -408,7 +408,7 @@ export default function UsersAnalyticsClient() {
                 {topUsers?.slice(0, 10).map((user: TopUser, index: number) => (
                   <div key={user.userId} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                     <div className="flex items-center space-x-4">
-                      <div className="h-10 w-10 rounded-full bg-linear-to-br from-[#EAB75F] to-[#A43875] flex items-center justify-center text-white font-bold">
+                      <div className="h-10 w-10 rounded-full bg-linear-to-br from-[#011b54] to-[#022b82] flex items-center justify-center text-white font-bold">
                         {index + 1}
                       </div>
                       <div>

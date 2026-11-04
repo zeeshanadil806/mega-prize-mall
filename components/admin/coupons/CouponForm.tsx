@@ -219,16 +219,16 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
         {/* Coupon Code Display */}
-        <Card className="border border-[#7C2C78]/20 glass">
+        <Card className="border border-[#011b54]/20 glass">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-[#7C2C78]">
+            <CardTitle className="flex items-center gap-2 text-[#011b54]">
               <Tag className="h-5 w-5" />
               {isEditing ? 'Edit Coupon' : 'Create New Coupon'}
             </CardTitle>
           </CardHeader>
           <CardContent>
             {!isEditing && generatedCode && (
-              <div className="mb-6 p-4 bg-linear-to-r from-[#7C2C78]/10 to-[#A43875]/10 rounded-lg border border-[#7C2C78]/30">
+              <div className="mb-6 p-4 bg-linear-to-r from-[#011b54]/10 to-[#022b82]/10 rounded-lg border border-[#011b54]/30">
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="text-sm text-gray-600 mb-1">Coupon Code</div>
@@ -244,7 +244,7 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                     variant="outline"
                     size="sm"
                     onClick={generateCode}
-                    className="border-[#EAB75F] text-[#EAB75F] hover:bg-[#EAB75F]/10"
+                    className="border-[#011b54] text-[#011b54] hover:bg-[#011b54]/10"
                   >
                     <Sparkles className="h-4 w-4 mr-2" />
                     Regenerate
@@ -259,9 +259,9 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
           {/* Left Column - Basic Info */}
           <div className="lg:col-span-2 space-y-6">
             {/* Basic Info Card */}
-            <Card className="border border-[#2E297D]/20">
+            <Card className="border border-[#011b54]/20">
               <CardHeader>
-                <CardTitle className="text-[#2E297D] flex items-center gap-2">
+                <CardTitle className="text-[#011b54] flex items-center gap-2">
                   <Info className="h-5 w-5" />
                   Basic Information
                 </CardTitle>
@@ -276,7 +276,7 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                       <FormControl>
                         <Input 
                           placeholder="e.g., Summer Sale 2024" 
-                          className="border-[#7C2C78]/30 focus:border-[#7C2C78]"
+                          className="border-[#011b54]/30 focus:border-[#011b54]"
                           {...field} 
                         />
                       </FormControl>
@@ -297,7 +297,7 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                       <FormControl>
                         <Textarea 
                           placeholder="Optional description about this coupon offer..."
-                          className="min-h-20 border-[#7C2C78]/30 focus:border-[#7C2C78]"
+                          className="min-h-20 border-[#011b54]/30 focus:border-[#011b54]"
                           {...field} 
                         />
                       </FormControl>
@@ -312,9 +312,9 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
             </Card>
 
             {/* Discount Configuration Card */}
-            <Card className="border border-[#A43875]/20">
+            <Card className="border border-[#022b82]/20">
               <CardHeader>
-                <CardTitle className="text-[#A43875] flex items-center gap-2">
+                <CardTitle className="text-[#022b82] flex items-center gap-2">
                   <Percent className="h-5 w-5" />
                   Discount Configuration
                 </CardTitle>
@@ -328,26 +328,26 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                       <FormLabel className="text-gray-700">Discount Type *</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
-                          <SelectTrigger className="border-[#A43875]/30">
+                          <SelectTrigger className="border-[#022b82]/30">
                             <SelectValue placeholder="Select discount type" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="percentage" className="focus:bg-[#A43875]/10">
+                          <SelectItem value="percentage" className="focus:bg-[#022b82]/10">
                             <div className="flex items-center gap-2">
-                              <Percent className="h-4 w-4 text-[#A43875]" />
+                              <Percent className="h-4 w-4 text-[#022b82]" />
                               Percentage Discount
                             </div>
                           </SelectItem>
-                          <SelectItem value="fixed" className="focus:bg-[#7C2C78]/10">
+                          <SelectItem value="fixed" className="focus:bg-[#011b54]/10">
                             <div className="flex items-center gap-2">
-                              <DollarSign className="h-4 w-4 text-[#7C2C78]" />
+                              <DollarSign className="h-4 w-4 text-[#011b54]" />
                               Fixed Amount Discount
                             </div>
                           </SelectItem>
-                          <SelectItem value="free_shipping" className="focus:bg-[#2E297D]/10">
+                          <SelectItem value="free_shipping" className="focus:bg-[#011b54]/10">
                             <div className="flex items-center gap-2">
-                              <Truck className="h-4 w-4 text-[#2E297D]" />
+                              <Truck className="h-4 w-4 text-[#011b54]" />
                               Free Shipping
                             </div>
                           </SelectItem>
@@ -374,7 +374,7 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                                 type="number"
                                 step="0.01"
                                 placeholder={watchDiscountType === 'percentage' ? "10" : "500"}
-                                className="pl-10 border-[#A43875]/30 focus:border-[#A43875]"
+                                className="pl-10 border-[#022b82]/30 focus:border-[#022b82]"
                                 {...field}
                               />
                               <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
@@ -400,7 +400,7 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                                   type="number"
                                   step="0.01"
                                   placeholder="1000"
-                                  className="pl-10 border-[#A43875]/30 focus:border-[#A43875]"
+                                  className="pl-10 border-[#022b82]/30 focus:border-[#022b82]"
                                   {...field}
                                   value={field.value || ''}
                                   onChange={(e) => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}
@@ -434,7 +434,7 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                               type="number"
                               step="0.01"
                               placeholder="5000"
-                              className="pl-16 border-[#A43875]/30 focus:border-[#A43875]"
+                              className="pl-16 border-[#022b82]/30 focus:border-[#022b82]"
                               {...field}
                               value={field.value || ''}
                               onChange={(e) => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}
@@ -459,9 +459,9 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
             </Card>
 
             {/* Validity Card */}
-            <Card className="border border-[#EAB75F]/20">
+            <Card className="border border-[#011b54]/20">
               <CardHeader>
-                <CardTitle className="text-[#EAB75F] flex items-center gap-2">
+                <CardTitle className="text-[#011b54] flex items-center gap-2">
                   <Calendar className="h-5 w-5" />
                   Validity Period
                 </CardTitle>
@@ -477,7 +477,7 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                         <FormControl>
                           <Input
                             type="date"
-                            className="border-[#EAB75F]/30 focus:border-[#EAB75F]"
+                            className="border-[#011b54]/30 focus:border-[#011b54]"
                             {...field}
                           />
                         </FormControl>
@@ -495,7 +495,7 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                         <FormControl>
                           <Input
                             type="date"
-                            className="border-[#EAB75F]/30 focus:border-[#EAB75F]"
+                            className="border-[#011b54]/30 focus:border-[#011b54]"
                             {...field}
                           />
                         </FormControl>
@@ -511,7 +511,7 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
             <Button
               type="button"
               variant="outline"
-              className="w-full border-[#7C2C78]/30 text-[#7C2C78] hover:bg-[#7C2C78]/10"
+              className="w-full border-[#011b54]/30 text-[#011b54] hover:bg-[#011b54]/10"
               onClick={() => setShowAdvanced(!showAdvanced)}
             >
               <ChevronDown className={`h-4 w-4 mr-2 transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
@@ -522,9 +522,9 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
             {showAdvanced && (
               <div className="space-y-6">
                 {/* Usage Limits Card */}
-                <Card className="border border-[#7C2C78]/20">
+                <Card className="border border-[#011b54]/20">
                   <CardHeader>
-                    <CardTitle className="text-[#7C2C78] flex items-center gap-2">
+                    <CardTitle className="text-[#011b54] flex items-center gap-2">
                       <Users className="h-5 w-5" />
                       Usage Limits
                     </CardTitle>
@@ -540,7 +540,7 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                             <Input
                               type="number"
                               placeholder="e.g., 100 (leave empty for unlimited)"
-                              className="border-[#7C2C78]/30 focus:border-[#7C2C78]"
+                              className="border-[#011b54]/30 focus:border-[#011b54]"
                               {...field}
                               value={field.value || ''}
                               onChange={(e) => field.onChange(e.target.value === '' ? undefined : parseInt(e.target.value))}
@@ -563,7 +563,7 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                           <FormControl>
                             <Input
                               type="number"
-                              className="border-[#7C2C78]/30 focus:border-[#7C2C78]"
+                              className="border-[#011b54]/30 focus:border-[#011b54]"
                               {...field}
                             />
                           </FormControl>
@@ -586,7 +586,7 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                               <Input
                                 type="number"
                                 step="0.01"
-                                className="pl-10 border-[#7C2C78]/30 focus:border-[#7C2C78]"
+                                className="pl-10 border-[#011b54]/30 focus:border-[#011b54]"
                                 {...field}
                               />
                               <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
@@ -605,9 +605,9 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                 </Card>
 
                 {/* Combination Rules Card */}
-                {/* <Card className="border border-[#2E297D]/20">
+                {/* <Card className="border border-[#011b54]/20">
                   <CardHeader>
-                    <CardTitle className="text-[#2E297D] flex items-center gap-2">
+                    <CardTitle className="text-[#011b54] flex items-center gap-2">
                       <Filter className="h-5 w-5" />
                       Combination Rules
                     </CardTitle>
@@ -617,7 +617,7 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                       control={form.control}
                       name="canCombineWithBargain"
                       render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 border-[#2E297D]/20">
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 border-[#011b54]/20">
                           <div className="space-y-0.5">
                             <FormLabel className="text-base">Combine with Bargain Coupons</FormLabel>
                             <FormDescription>
@@ -628,7 +628,7 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                             <Switch
                               checked={field.value}
                               onCheckedChange={field.onChange}
-                              className="data-[state=checked]:bg-[#2E297D]"
+                              className="data-[state=checked]:bg-[#011b54]"
                             />
                           </FormControl>
                         </FormItem>
@@ -639,7 +639,7 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                       control={form.control}
                       name="canCombineWithOtherGlobal"
                       render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 border-[#2E297D]/20">
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 border-[#011b54]/20">
                           <div className="space-y-0.5">
                             <FormLabel className="text-base">Combine with Other Global Coupons</FormLabel>
                             <FormDescription>
@@ -650,7 +650,7 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                             <Switch
                               checked={field.value}
                               onCheckedChange={field.onChange}
-                              className="data-[state=checked]:bg-[#2E297D]"
+                              className="data-[state=checked]:bg-[#011b54]"
                             />
                           </FormControl>
                         </FormItem>
@@ -665,9 +665,9 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
           {/* Right Column - Sidebar */}
           <div className="space-y-6">
             {/* Applicability Card */}
-            <Card className="border border-[#A43875]/20">
+            <Card className="border border-[#022b82]/20">
               <CardHeader>
-                <CardTitle className="text-[#A43875] flex items-center gap-2">
+                <CardTitle className="text-[#022b82] flex items-center gap-2">
                   <Package className="h-5 w-5" />
                   Applicability
                 </CardTitle>
@@ -681,7 +681,7 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                       <FormLabel className="text-gray-700">Applies To</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
-                          <SelectTrigger className="border-[#A43875]/30">
+                          <SelectTrigger className="border-[#022b82]/30">
                             <SelectValue />
                           </SelectTrigger>
                         </FormControl>
@@ -697,8 +697,8 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                 />
 
                 {watchApplicableTo !== 'all_products' && (
-                  <div className="p-3 bg-linear-to-r from-[#A43875]/10 to-[#7C2C78]/10 rounded-lg border border-[#A43875]/30">
-                    <div className="text-sm font-medium text-[#A43875] mb-2">
+                  <div className="p-3 bg-linear-to-r from-[#022b82]/10 to-[#011b54]/10 rounded-lg border border-[#022b82]/30">
+                    <div className="text-sm font-medium text-[#022b82] mb-2">
                       {watchApplicableTo === 'specific_categories' 
                         ? 'Category restrictions will be configured after creation'
                         : 'Product restrictions will be configured after creation'
@@ -713,9 +713,9 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
             </Card>
 
             {/* User Eligibility Card */}
-            <Card className="border border-[#EAB75F]/20">
+            <Card className="border border-[#011b54]/20">
               <CardHeader>
-                <CardTitle className="text-[#EAB75F] flex items-center gap-2">
+                <CardTitle className="text-[#011b54] flex items-center gap-2">
                   <Users className="h-5 w-5" />
                   User Eligibility
                 </CardTitle>
@@ -729,7 +729,7 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                       <FormLabel className="text-gray-700">Eligible Users</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
-                          <SelectTrigger className="border-[#EAB75F]/30">
+                          <SelectTrigger className="border-[#011b54]/30">
                             <SelectValue />
                           </SelectTrigger>
                         </FormControl>
@@ -745,8 +745,8 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                 />
 
                 {watchUserEligibility === 'specific_users' && (
-                  <div className="p-3 bg-linear-to-r from-[#EAB75F]/10 to-[#A43875]/10 rounded-lg border border-[#EAB75F]/30">
-                    <div className="text-sm font-medium text-[#EAB75F] mb-2">
+                  <div className="p-3 bg-linear-to-r from-[#011b54]/10 to-[#022b82]/10 rounded-lg border border-[#011b54]/30">
+                    <div className="text-sm font-medium text-[#011b54] mb-2">
                       User restrictions will be configured after creation
                     </div>
                     <div className="text-xs text-gray-600">
@@ -759,7 +759,7 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                   control={form.control}
                   name="firstOrderOnly"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 border-[#EAB75F]/20">
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 border-[#011b54]/20">
                       <div className="space-y-0.5">
                         <FormLabel className="text-sm">First Order Only</FormLabel>
                         <FormDescription className="text-xs">
@@ -770,7 +770,7 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                         <Switch
                           checked={field.value}
                           onCheckedChange={field.onChange}
-                          className="data-[state=checked]:bg-[#EAB75F]"
+                          className="data-[state=checked]:bg-[#011b54]"
                         />
                       </FormControl>
                     </FormItem>
@@ -780,9 +780,9 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
             </Card>
 
             {/* Notes Card */}
-            <Card className="border border-[#2E297D]/20">
+            <Card className="border border-[#011b54]/20">
               <CardHeader>
-                <CardTitle className="text-[#2E297D] flex items-center gap-2">
+                <CardTitle className="text-[#011b54] flex items-center gap-2">
                   <Info className="h-5 w-5" />
                   Admin Notes
                 </CardTitle>
@@ -796,7 +796,7 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
                       <FormControl>
                         <Textarea
                           placeholder="Internal notes about this coupon..."
-                          className="min-h-[100px] border-[#2E297D]/30 focus:border-[#2E297D]"
+                          className="min-h-[100px] border-[#011b54]/30 focus:border-[#011b54]"
                           {...field}
                         />
                       </FormControl>
@@ -811,14 +811,14 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
             </Card>
 
             {/* Preview Card */}
-            <Card className="border border-gradient-to-r from-[#7C2C78]/30 to-[#A43875]/30 glass">
+            <Card className="border border-gradient-to-r from-[#011b54]/30 to-[#022b82]/30 glass">
               <CardHeader>
                 <CardTitle className="gradient-text">Preview</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="space-y-2">
                   <div className="text-sm text-gray-600">Discount</div>
-                  <div className="text-lg font-bold text-[#7C2C78]">
+                  <div className="text-lg font-bold text-[#011b54]">
                     {watchDiscountType === 'percentage' 
                       ? `${form.getValues('discountValue') || 0}% OFF`
                       : watchDiscountType === 'fixed'
@@ -858,14 +858,14 @@ const watchUserEligibility = useWatch({ control: form.control, name: 'userEligib
             variant="outline"
             onClick={onCancel}
             disabled={loading}
-            className="border-[#7C2C78]/30 text-[#7C2C78] hover:bg-[#7C2C78]/10"
+            className="border-[#011b54]/30 text-[#011b54] hover:bg-[#011b54]/10"
           >
             Cancel
           </Button>
           <Button
             type="submit"
             disabled={loading}
-            className="bg-linear-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] text-white"
+            className="bg-linear-to-r from-[#011b54] to-[#022b82] hover:from-[#022b82] hover:to-[#03369f] text-white"
           >
             {loading ? (
               <>

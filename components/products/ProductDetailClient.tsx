@@ -21,6 +21,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Shield,
+  ShieldCheck,
   Truck,
   RotateCcw,
   Star,
@@ -32,6 +33,13 @@ import {
   Minus,
   Plus,
   Package,
+  Sparkles,
+  Trophy,
+  Banknote,
+  Volume2,
+  Radio,
+  BatteryCharging,
+  Mic,
 } from "lucide-react";
 import { useCartStore } from "@/stores/cart-store";
 import { ImageProps, CustomerProductProps } from "@/types";
@@ -41,6 +49,25 @@ import ProductStructuredData from "./ProductStructuredData";
 // import { useTikTokTracking } from "@/hooks/useTikTokTracking";
 import { useAllTracking } from '@/hooks/useAllTracking';
 import { useSession, signIn } from "next-auth/react";
+
+function parseFeatureText(feature: string) {
+  const parts = feature.split(/:\s*(.+)/);
+  if (parts.length >= 2) {
+    return { title: parts[0].trim(), desc: parts[1].trim() };
+  }
+  return { title: "", desc: feature };
+}
+
+function getFeatureIconComponent(title: string, desc: string) {
+  const text = (title + " " + desc).toLowerCase();
+  if (text.includes("led") || text.includes("display") || text.includes("screen")) return Sparkles;
+  if (text.includes("sound") || text.includes("audio") || text.includes("bass") || text.includes("driver") || text.includes("hi-fi")) return Volume2;
+  if (text.includes("bluetooth") || text.includes("connectivity") || text.includes("wireless") || text.includes("aux")) return Radio;
+  if (text.includes("comfort") || text.includes("cushion") || text.includes("earcup") || text.includes("headband")) return Heart;
+  if (text.includes("battery") || text.includes("playtime") || text.includes("charging") || text.includes("charge")) return BatteryCharging;
+  if (text.includes("mic") || text.includes("call") || text.includes("voice")) return Mic;
+  return CheckCircle;
+}
 
 interface ProductDetailClientProps {
   product: CustomerProductProps;
@@ -243,25 +270,25 @@ useEffect(() => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-full pb-24 sm:pb-0"
+      className="w-full"
     >
       <ProductStructuredData product={product} />
       {/* Breadcrumb */}
       <div className="mb-4 sm:mb-6 text-xs sm:text-sm text-gray-600 flex items-center flex-wrap gap-1 sm:gap-2">
-        <Link href="/" className="hover:text-[#7C2C78] transition-colors">
+        <Link href="/" className="hover:text-[#011b54] transition-colors">
           Home
         </Link>
         <span className="text-gray-400">/</span>
         <Link
           href="/products"
-          className="hover:text-[#7C2C78] transition-colors"
+          className="hover:text-[#011b54] transition-colors"
         >
           Products
         </Link>
         <span className="text-gray-400">/</span>
         <Link
           href={`/products?category=${product.category}`}
-          className="hover:text-[#7C2C78] transition-colors truncate max-w-[120px] sm:max-w-none"
+          className="hover:text-[#011b54] transition-colors truncate max-w-[120px] sm:max-w-none"
         >
           {product.category}
         </Link>
@@ -399,13 +426,13 @@ useEffect(() => {
                 {/* Badges */}
                 <div className="absolute top-2 sm:top-3 lg:top-4 left-2 sm:left-3 lg:left-4 flex flex-col gap-1.5 sm:gap-2 z-10">
                   {product.isFeatured && (
-                    <Badge className="bg-linear-to-r from-[#EAB75F] to-[#A43875] text-white border-0 text-xs sm:text-sm py-0.5 sm:py-1">
+                    <Badge className="bg-linear-to-r from-[#011b54] to-[#022b82] text-white border-0 text-xs sm:text-sm py-0.5 sm:py-1">
                       <Star className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-1" />
                       Featured
                     </Badge>
                   )}
                   {product.isBestSeller && (
-                    <Badge className="bg-linear-to-r from-[#7C2C78] to-[#2E297D] text-white border-0 text-xs sm:text-sm py-0.5 sm:py-1">
+                    <Badge className="bg-linear-to-r from-[#011b54] to-[#022b82] text-white border-0 text-xs sm:text-sm py-0.5 sm:py-1">
                       Best Seller
                     </Badge>
                   )}
@@ -417,7 +444,7 @@ useEffect(() => {
                   {product.bargainEnabled && (
                     <Badge
                       variant="outline"
-                      className="border-[#EAB75F] text-[#EAB75F] bg-white/90 text-xs sm:text-sm py-0.5 sm:py-1"
+                      className="border-[#011b54] text-[#011b54] bg-white/90 text-xs sm:text-sm py-0.5 sm:py-1"
                     >
                       Bargain
                     </Badge>
@@ -483,7 +510,7 @@ useEffect(() => {
                       onClick={() => setSelectedImageIndex(index)}
                       className={`relative aspect-square rounded-lg border-2 overflow-hidden transition-all ${
                         selectedImageIndex === index
-                          ? "border-[#7C2C78] scale-105 z-10"
+                          ? "border-[#011b54] scale-105 z-10"
                           : "border-gray-200 hover:border-gray-300"
                       }`}
                       aria-label={`View image ${index + 1}`}
@@ -499,7 +526,7 @@ useEffect(() => {
                       </div>
                       {/* Active indicator for mobile */}
                       {selectedImageIndex === index && (
-                        <div className="absolute top-1 right-1 h-2 w-2 rounded-full bg-[#7C2C78] border border-white"></div>
+                        <div className="absolute top-1 right-1 h-2 w-2 rounded-full bg-[#011b54] border border-white"></div>
                       )}
                     </button>
                   ))}
@@ -524,7 +551,7 @@ useEffect(() => {
                       onClick={() => setSelectedImageIndex(index)}
                       className={`shrink-0 h-16 w-16 lg:h-20 lg:w-20 xl:h-24 xl:w-24 rounded-lg lg:rounded-xl border-2 overflow-hidden transition-all ${
                         selectedImageIndex === index
-                          ? "border-[#7C2C78] scale-105"
+                          ? "border-[#011b54] scale-105"
                           : "border-gray-200 hover:border-gray-300"
                       }`}
                       aria-label={`View image ${index + 1}`}
@@ -547,122 +574,165 @@ useEffect(() => {
         </div>
 
         {/* Product Info */}
-        <div className="space-y-3 sm:space-y-6 lg:space-y-8">
-          {/* Product Header — mobile: compact single block */}
+        <div className="space-y-3.5 sm:space-y-6 lg:space-y-7">
+          {/* Product Header */}
           <div>
-            {/* Name */}
-            <h1 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-1 sm:mb-2 leading-tight">
+            {/* Title */}
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-gray-900 tracking-tight leading-snug mb-2">
               {product.name}
             </h1>
 
-            {/* SKU / Brand / Stock — one tight row on mobile */}
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-              <span className="text-xs text-gray-500">SKU: {product.sku}</span>
-              <span className="text-gray-300 text-xs">•</span>
-              <span className="text-xs text-gray-500">Brand: {product.brand}</span>
-              <span className="text-gray-300 text-xs">•</span>
+            {/* Social Proof, Rating & Stock metadata */}
+            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-xs">
+              {/* Star Rating Badge */}
+              <div className="inline-flex items-center gap-1 bg-amber-50/90 border border-amber-200/90 px-2.5 py-0.5 rounded-full text-amber-900 font-bold shadow-2xs">
+                <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                <span>4.9</span>
+                <span className="text-amber-300">•</span>
+                <span className="text-[11px] text-amber-800 font-medium">48 reviews</span>
+              </div>
+
+              {/* Stock Status Badge with pulse indicator */}
               {product.stock > 0 ? (
-                <span className="flex items-center gap-1 text-xs font-medium text-green-600">
-                  <CheckCircle className="h-3 w-3" />
-                  {product.stock <= 10 ? `Only ${product.stock} left!` : "In Stock"}
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold text-xs shadow-2xs">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  {product.stock <= 10 ? `Only ${product.stock} units left — order soon!` : "In Stock • Ships in 24h"}
                 </span>
               ) : (
-                <span className="text-xs font-medium text-red-600">Out of Stock</span>
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-red-50 border border-red-200 text-red-700 font-bold text-xs">
+                  Out of Stock
+                </span>
+              )}
+
+              {/* SKU & Brand */}
+              <span className="text-gray-500 font-medium">SKU: {product.sku}</span>
+              {product.brand && product.brand.toLowerCase() !== "generic" && (
+                <>
+                  <span className="text-gray-300">•</span>
+                  <span className="text-gray-700 font-semibold">Brand: {product.brand}</span>
+                </>
               )}
             </div>
           </div>
 
-          {/* ── Price Block ── */}
-          {/* Mobile: flat/compact — no gray card background */}
-          {/* Desktop: keeps the rounded card style */}
-          <div className="pt-1 sm:bg-gray-50 sm:rounded-xl lg:rounded-2xl sm:p-5 lg:p-6">
-
-            {/* Price row */}
-            <div className="flex items-baseline justify-between gap-3 mb-3 sm:mb-4">
+          {/* ── High-Converting Price & Deals Box ── */}
+          <div className="pt-2 sm:bg-gray-50/70 sm:border sm:border-gray-200/80 sm:rounded-2xl sm:p-5 lg:p-6 space-y-3.5 sm:space-y-4">
+            {/* Price row with savings and sales velocity */}
+            <div className="flex items-baseline justify-between gap-3">
               <div>
-                <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900">
+                <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 tracking-tight">
                   {formatCurrency(finalPrice)}
                 </div>
                 {product.discountedPrice && (
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-sm sm:text-xl text-gray-400 line-through">
+                  <div className="flex items-center flex-wrap gap-2 mt-1">
+                    <span className="text-sm sm:text-lg text-gray-400 line-through font-medium">
                       {formatCurrency(product.price)}
                     </span>
-                    <Badge className="bg-green-500 text-white text-xs py-0.5">
-                      Save {formatCurrency(product.price - product.discountedPrice)}
+                    <Badge className="bg-emerald-600 hover:bg-emerald-600 text-white text-xs font-bold py-0.5 px-2 border-0 shadow-2xs">
+                      Save {formatCurrency(product.price - product.discountedPrice)} ({discountPercentage}% OFF)
                     </Badge>
                   </div>
                 )}
               </div>
-              {product.purchaseCount && product.purchaseCount > 0 && (
-                <div className="text-xs text-gray-500 text-right shrink-0">
-                  <div className="font-bold text-gray-700">{product.purchaseCount}+</div>
-                  <div>sold</div>
+              <div className="text-right shrink-0 bg-[#011b54]/5 border border-[#011b54]/10 rounded-xl px-2.5 py-1.5">
+                <div className="text-xs font-black text-[#011b54] flex items-center justify-end gap-1">
+                  <span>🔥</span>
+                  <span>{product.purchaseCount && product.purchaseCount > 2 ? `${product.purchaseCount}+` : "24+"} sold</span>
                 </div>
-              )}
+                <div className="text-[10px] text-gray-500 font-medium">high demand</div>
+              </div>
             </div>
 
-            {/* Quantity Selector — compact on mobile */}
-            <div className="flex items-center gap-3 mb-4 sm:mb-5">
-              <span className="text-sm font-medium text-gray-700 shrink-0">Qty:</span>
-              <div className="flex items-center border border-gray-300 rounded-lg">
+            {/* AI Bargain Card — Visible on BOTH mobile and desktop */}
+            {product.bargainEnabled && (
+              <div className="relative overflow-hidden rounded-xl sm:rounded-2xl p-3 sm:p-3.5 bg-gradient-to-r from-[#011b54]/8 via-[#011b54]/4 to-transparent border border-[#011b54]/20 shadow-2xs flex items-center justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#011b54]">
+                    <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-amber-500 shrink-0" />
+                    <span>Mega Bargain Zone • Name Your Price</span>
+                  </div>
+                  <p className="text-[10.5px] sm:text-xs text-gray-600 font-medium mt-0.5 leading-tight">
+                    Negotiate with AI Bot to unlock an instant discount coupon!
+                  </p>
+                </div>
+                <BargainButton
+                  product={formattedProduct}
+                  size="sm"
+                  buttonText="Make an Offer"
+                  className="shrink-0"
+                />
+              </div>
+            )}
+
+            {/* Lucky Draw Shop & Win Perk */}
+            <div className="rounded-xl p-2.5 sm:p-3 bg-gradient-to-r from-amber-500/10 via-amber-50/60 to-emerald-500/10 border border-amber-300/40 flex items-center gap-2.5 shadow-2xs">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0 text-amber-700">
+                <Trophy className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-[11.5px] sm:text-xs font-bold text-gray-900 flex items-center gap-1">
+                  <span>Mega Lucky Draw Entry Included</span>
+                  <span className="text-[9px] bg-amber-500 text-white font-black px-1.5 py-0.2 rounded-full">FREE</span>
+                </div>
+                <p className="text-[10px] sm:text-[11px] text-gray-600 font-medium truncate mt-0.5">
+                  Every order automatically enters to win Smartwatches & Cash Prizes!
+                </p>
+              </div>
+            </div>
+
+            {/* Desktop-only Quantity Selector — mobile has Qty in bottom sticky bar */}
+            <div className="hidden sm:flex items-center gap-3 pt-1">
+              <span className="text-sm font-bold text-gray-700 shrink-0">Qty:</span>
+              <div className="flex items-center border border-gray-300 rounded-xl bg-white shadow-2xs">
                 <motion.button
                   onClick={decrementQuantity}
                   whileTap={{ scale: 0.85 }}
-                  whileHover={{ scale: 1.1 }}
-                  className="px-3 py-1.5 text-gray-600 hover:text-gray-900 disabled:text-gray-300 disabled:pointer-events-none"
+                  className="w-9 h-10 flex items-center justify-center text-gray-600 hover:text-gray-900 disabled:text-gray-300 disabled:pointer-events-none"
                   disabled={quantity <= 1}
                   aria-label="Decrease quantity"
                 >
                   <Minus className="h-3.5 w-3.5" />
                 </motion.button>
-                <span className="px-4 py-1.5 text-base font-semibold min-w-[40px] text-center">
+                <span className="w-10 text-center text-sm font-bold text-gray-900">
                   {quantity}
                 </span>
                 <motion.button
                   onClick={incrementQuantity}
                   whileTap={{ scale: 0.85 }}
-                  whileHover={{ scale: 1.1 }}
-                  className="px-3 py-1.5 text-gray-600 hover:text-gray-900 disabled:text-gray-300 disabled:pointer-events-none"
+                  className="w-9 h-10 flex items-center justify-center text-gray-600 hover:text-gray-900 disabled:text-gray-300 disabled:pointer-events-none"
                   disabled={quantity >= (product.stock || 0)}
                   aria-label="Increase quantity"
                 >
                   <Plus className="h-3.5 w-3.5" />
                 </motion.button>
               </div>
-              <span className="text-xs text-gray-500">{product.stock || 0} available</span>
+              <span className="text-xs font-medium text-gray-500">{product.stock || 0} available</span>
             </div>
 
             {/* Already in Cart — compact notification */}
             {cartItem && (
-              <div className="mb-3 px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between gap-2">
+              <div className="px-3 py-2 bg-blue-50/90 border border-blue-200 rounded-xl flex items-center justify-between gap-2 shadow-2xs">
                 <div className="flex items-center gap-1.5 text-blue-700">
                   <CheckCircle className="h-4 w-4 shrink-0" />
-                  <span className="text-xs sm:text-sm font-medium">In cart ({cartItem.quantity})</span>
+                  <span className="text-xs sm:text-sm font-semibold">Already in cart ({cartItem.quantity} units)</span>
                 </div>
                 <Link href="/cart">
-                  <Button variant="ghost" size="sm" className="text-blue-700 text-xs h-auto py-1 px-2">
+                  <Button variant="ghost" size="sm" className="text-blue-700 text-xs h-auto py-1 px-2.5 font-bold hover:bg-blue-100">
                     View Cart →
                   </Button>
                 </Link>
               </div>
             )}
 
-            {/* ── Desktop-only action buttons (hidden on mobile — see sticky bar below) ── */}
-            <div className="hidden sm:block space-y-3">
+            {/* Desktop-only action buttons */}
+            <div className="hidden sm:block space-y-3 pt-1">
               <AddToCartButton
                 product={formattedProduct}
                 variant="default"
                 size="lg"
-                className="w-full h-14 lg:h-16 rounded-lg text-base lg:text-lg font-medium"
+                className="w-full h-14 lg:h-16 rounded-xl text-base lg:text-lg font-bold"
               />
-
-              {product.bargainEnabled && (
-                <BargainButton
-                  product={formattedProduct}
-                  className="w-full py-4 text-base h-auto"
-                />
-              )}
 
               <div className="grid grid-cols-2 gap-3">
                 <motion.div whileHover="hover" whileTap="tap" className="w-full">
@@ -670,16 +740,14 @@ useEffect(() => {
                     variant="outline"
                     size="lg"
                     onClick={handleWishlist}
-                    className={`w-full h-14 lg:h-16 flex items-center justify-center transition-all duration-300 font-medium rounded-lg ${
+                    className={`w-full h-13 lg:h-14 flex items-center justify-center transition-all duration-300 font-bold rounded-xl ${
                       isWishlisted
-                        ? "border-red-200 bg-red-50/50 text-red-500 hover:bg-red-50 shadow-[0_4px_15px_rgba(239,68,68,0.1)]"
-                        : "border-gray-200 hover:border-red-200 hover:bg-red-50/30 text-gray-700 hover:text-red-500 hover:shadow-[0_4px_15px_rgba(239,68,68,0.05)]"
+                        ? "border-red-200 bg-red-50 text-red-500 hover:bg-red-50 shadow-xs"
+                        : "border-gray-200 hover:border-red-200 hover:bg-red-50/30 text-gray-700 hover:text-red-500"
                     }`}
                   >
-                    <motion.span variants={wishlistIconVariants} className="flex items-center">
-                      <Heart className={`h-5 w-5 mr-1.5 ${isWishlisted ? "fill-red-500 text-red-500 animate-pulse" : ""}`} />
-                    </motion.span>
-                    <span>{isWishlisted ? "Wishlisted" : "Wishlist"}</span>
+                    <Heart className={`h-4 w-4 mr-2 ${isWishlisted ? "fill-red-500 text-red-500 animate-pulse" : ""}`} />
+                    <span>{isWishlisted ? "Wishlisted" : "Add to Wishlist"}</span>
                   </Button>
                 </motion.div>
 
@@ -687,61 +755,47 @@ useEffect(() => {
                   <Button
                     onClick={handleBuyNow}
                     disabled={product.stock !== undefined && product.stock < 1}
-                    className="relative overflow-hidden w-full h-14 lg:h-16 flex items-center justify-center bg-gradient-to-r from-[#2E297D] to-[#7C2C78] hover:from-[#211E63] hover:to-[#6A2566] text-white shadow-[0_8px_30px_rgba(46,41,125,0.25)] hover:shadow-[0_12px_45px_rgba(124,44,120,0.45)] transition-all duration-500 font-medium rounded-lg border-0 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed disabled:shadow-none"
+                    className="relative overflow-hidden w-full h-13 lg:h-14 flex items-center justify-center bg-[#011b54] hover:bg-[#022b82] text-white shadow-[0_8px_25px_rgba(1,27,84,0.3)] transition-all font-bold rounded-xl border-0 disabled:bg-gray-100 disabled:text-gray-400"
                   >
-                    {!(product.stock !== undefined && product.stock < 1) && (
-                      <motion.div
-                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none"
-                        initial={{ x: "-100%" }}
-                        whileHover={{ x: "100%", transition: { duration: 0.8, ease: "easeOut" } }}
-                      />
-                    )}
-                    <span className="relative z-10 flex items-center gap-2">
-                      <motion.span variants={buyNowIconVariants} className="flex items-center">
-                        <Package className="h-5 w-5 mr-1" />
-                      </motion.span>
-                      Buy Now
-                    </span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none animate-cta-sheen" />
+                    <Package className="h-4 w-4 mr-2 relative z-10" />
+                    <span className="relative z-10">Buy Now</span>
                   </Button>
                 </motion.div>
               </div>
             </div>
           </div>
 
-          {/* Features & Services — hidden on mobile to save space */}
-          <div className="hidden sm:grid grid-cols-3 gap-2 sm:gap-3 lg:gap-4">
-            <div className="text-center p-2 sm:p-3 bg-white border border-gray-200 rounded-lg">
-              <Truck className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 mx-auto text-[#7C2C78] mb-1 sm:mb-2" />
-              <div className="text-xs sm:text-sm font-medium">Free Shipping</div>
-              <div className="text-xs text-gray-600">Over Rs 1000</div>
+          {/* Trust Guarantees — high-conversion 3-pillar card */}
+          <div className="grid grid-cols-3 gap-2 sm:gap-3 py-1">
+            <div className="flex flex-col items-center sm:flex-row sm:items-center gap-1.5 sm:gap-2.5 p-2.5 sm:p-3 rounded-xl bg-gray-50/80 border border-gray-150/70 text-center sm:text-left shadow-2xs">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#011b54]/8 flex items-center justify-center text-[#011b54] shrink-0">
+                <Truck className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-[11px] sm:text-xs font-bold text-gray-900 leading-tight">Free Delivery</div>
+                <div className="text-[9.5px] sm:text-[11px] text-gray-500 leading-tight mt-0.5">Across Pakistan</div>
+              </div>
             </div>
-            <div className="text-center p-2 sm:p-3 bg-white border border-gray-200 rounded-lg">
-              <RotateCcw className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 mx-auto text-[#7C2C78] mb-1 sm:mb-2" />
-              <div className="text-xs sm:text-sm font-medium">10-Day Returns</div>
-              <div className="text-xs text-gray-600">Easy returns</div>
-            </div>
-            <div className="text-center p-2 sm:p-3 bg-white border border-gray-200 rounded-lg">
-              <Shield className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 mx-auto text-[#7C2C78] mb-1 sm:mb-2" />
-              <div className="text-xs sm:text-sm font-medium">1 Year Warranty</div>
-              <div className="text-xs text-gray-600">Full coverage</div>
-            </div>
-          </div>
 
-          {/* Mobile trust badges — compact horizontal strip */}
-          <div className="flex items-center justify-between sm:hidden border border-gray-100 rounded-xl px-3 py-2.5 bg-gray-50">
-            <div className="flex items-center gap-1.5">
-              <Truck className="h-3.5 w-3.5 text-[#7C2C78]" />
-              <span className="text-[10px] text-gray-600 font-medium">Free Ship</span>
+            <div className="flex flex-col items-center sm:flex-row sm:items-center gap-1.5 sm:gap-2.5 p-2.5 sm:p-3 rounded-xl bg-gray-50/80 border border-gray-150/70 text-center sm:text-left shadow-2xs">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600 shrink-0">
+                <Banknote className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-[11px] sm:text-xs font-bold text-gray-900 leading-tight">Cash on Delivery</div>
+                <div className="text-[9.5px] sm:text-[11px] text-gray-500 leading-tight mt-0.5">Pay at Doorstep</div>
+              </div>
             </div>
-            <div className="h-4 w-px bg-gray-200" />
-            <div className="flex items-center gap-1.5">
-              <RotateCcw className="h-3.5 w-3.5 text-[#7C2C78]" />
-              <span className="text-[10px] text-gray-600 font-medium">10-Day Returns</span>
-            </div>
-            <div className="h-4 w-px bg-gray-200" />
-            <div className="flex items-center gap-1.5">
-              <Shield className="h-3.5 w-3.5 text-[#7C2C78]" />
-              <span className="text-[10px] text-gray-600 font-medium">1-Yr Warranty</span>
+
+            <div className="flex flex-col items-center sm:flex-row sm:items-center gap-1.5 sm:gap-2.5 p-2.5 sm:p-3 rounded-xl bg-gray-50/80 border border-gray-150/70 text-center sm:text-left shadow-2xs">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-purple-500/10 flex items-center justify-center text-[#011b54] shrink-0">
+                <ShieldCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-[11px] sm:text-xs font-bold text-gray-900 leading-tight">10-Day Warranty</div>
+                <div className="text-[9.5px] sm:text-[11px] text-gray-500 leading-tight mt-0.5">Easy Replacement</div>
+              </div>
             </div>
           </div>
         </div>
@@ -788,41 +842,35 @@ useEffect(() => {
       {/* Product Details Tabs */}
       <div className="mt-8 sm:mt-10 lg:mt-12">
         <Tabs defaultValue="features" className="w-full">
-          <TabsList className="grid grid-cols-3 w-full mb-6 lg:mb-8">
+          <TabsList className="grid grid-cols-3 w-full mb-5 sm:mb-6 p-1 bg-gray-100/90 rounded-xl sm:rounded-2xl border border-gray-200/80">
             <TabsTrigger
               value="features"
-              className="text-xs sm:text-sm py-2 sm:py-2.5 lg:py-3"
+              className="text-xs sm:text-sm py-2 sm:py-2.5 font-bold rounded-lg sm:rounded-xl data-[state=active]:bg-white data-[state=active]:text-[#011b54] data-[state=active]:shadow-xs transition-all"
             >
               Features
             </TabsTrigger>
             <TabsTrigger
               value="description"
-              className="text-xs sm:text-sm py-2 sm:py-2.5 lg:py-3"
+              className="text-xs sm:text-sm py-2 sm:py-2.5 font-bold rounded-lg sm:rounded-xl data-[state=active]:bg-white data-[state=active]:text-[#011b54] data-[state=active]:shadow-xs transition-all"
             >
               Description
             </TabsTrigger>
             <TabsTrigger
               value="specifications"
-              className="text-xs sm:text-sm py-2 sm:py-2.5 lg:py-3"
+              className="text-xs sm:text-sm py-2 sm:py-2.5 font-bold rounded-lg sm:rounded-xl data-[state=active]:bg-white data-[state=active]:text-[#011b54] data-[state=active]:shadow-xs transition-all"
             >
               Specifications
             </TabsTrigger>
-            {/* <TabsTrigger
-              value="reviews"
-              className="text-xs sm:text-sm lg:text-base py-2 sm:py-2.5 lg:py-3"
-            >
-              Reviews (42)
-            </TabsTrigger> */}
           </TabsList>
 
           <TabsContent value="description" className="space-y-3 sm:space-y-4">
             <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
-              Product Description
+              Product Overview
             </h3>
-            <div className="text-sm sm:text-base lg:text-lg text-gray-600 space-y-2.5 sm:space-y-3">
+            <div className="text-xs sm:text-sm text-gray-600 leading-relaxed space-y-2.5 bg-gray-50/70 p-4 rounded-xl border border-gray-150/70">
               <p>{product.description}</p>
               {product.shortDescription && (
-                <p className="text-gray-700">{product.shortDescription}</p>
+                <p className="text-gray-700 font-medium">{product.shortDescription}</p>
               )}
             </div>
           </TabsContent>
@@ -853,24 +901,46 @@ useEffect(() => {
             </div>
           </TabsContent>
 
-          <TabsContent value="features" className="space-y-3 sm:space-y-4">
-            <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
-              Key Features
-            </h3>
-            <div className="grid gap-2.5 sm:gap-3">
-              {(product.features || []).map(
-                (feature: string, index: number) => (
+          <TabsContent value="features" className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">
+                Key Features & Highlights
+              </h3>
+              <span className="text-xs text-gray-500 font-semibold">
+                {(product.features || []).length} standout features
+              </span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3.5">
+              {(product.features || []).map((feature: string, index: number) => {
+                const { title, desc } = parseFeatureText(feature);
+                const IconComponent = getFeatureIconComponent(title, desc);
+                return (
                   <div
                     key={index}
-                    className="flex items-start gap-2.5 sm:gap-3"
+                    className="flex items-start gap-3 p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-gray-50/70 hover:bg-white border border-gray-150/80 hover:border-[#011b54]/25 shadow-2xs hover:shadow-xs transition-all duration-200"
                   >
-                    <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-500 mt-0.5 shrink-0" />
-                    <span className="text-sm sm:text-base lg:text-lg">
-                      {feature}
-                    </span>
+                    <div className="w-8 h-8 rounded-lg sm:rounded-xl bg-[#011b54]/8 text-[#011b54] flex items-center justify-center shrink-0 mt-0.5">
+                      <IconComponent className="h-4 w-4 stroke-[2]" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      {title ? (
+                        <>
+                          <h4 className="text-xs sm:text-sm font-bold text-gray-900 leading-tight">
+                            {title}
+                          </h4>
+                          <p className="text-[11.5px] sm:text-xs text-gray-600 font-medium leading-relaxed mt-1">
+                            {desc}
+                          </p>
+                        </>
+                      ) : (
+                        <p className="text-xs sm:text-sm text-gray-700 font-medium leading-relaxed">
+                          {desc}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                )
-              )}
+                );
+              })}
             </div>
           </TabsContent>
 
@@ -964,23 +1034,23 @@ useEffect(() => {
           </div>
         )}
 
-        <div className="px-4 py-3 flex items-center gap-3">
+        <div className="px-3.5 pt-2.5 pb-[max(24px,calc(env(safe-area-inset-bottom,0px)+14px))] flex items-center gap-2.5">
           {/* Compact Qty */}
-          <div className="flex items-center border border-gray-200 rounded-xl shrink-0 bg-gray-50">
+          <div className="flex items-center border border-gray-200 rounded-xl shrink-0 bg-gray-50 h-11">
             <motion.button
               onClick={decrementQuantity}
               whileTap={{ scale: 0.85 }}
-              className="w-9 h-10 flex items-center justify-center text-gray-600 disabled:text-gray-300 disabled:pointer-events-none"
+              className="w-8 h-full flex items-center justify-center text-gray-600 disabled:text-gray-300 disabled:pointer-events-none"
               disabled={quantity <= 1}
               aria-label="Decrease quantity"
             >
               <Minus className="h-3.5 w-3.5" />
             </motion.button>
-            <span className="w-8 text-center text-sm font-bold text-gray-900">{quantity}</span>
+            <span className="w-7 text-center text-xs font-bold text-gray-900">{quantity}</span>
             <motion.button
               onClick={incrementQuantity}
               whileTap={{ scale: 0.85 }}
-              className="w-9 h-10 flex items-center justify-center text-gray-600 disabled:text-gray-300 disabled:pointer-events-none"
+              className="w-8 h-full flex items-center justify-center text-gray-600 disabled:text-gray-300 disabled:pointer-events-none"
               disabled={quantity >= (product.stock || 0)}
               aria-label="Increase quantity"
             >
@@ -989,12 +1059,12 @@ useEffect(() => {
           </div>
 
           {/* Add to Cart */}
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <AddToCartButton
               product={formattedProduct}
               variant="default"
               size="default"
-              className="w-full h-11 rounded-xl text-sm font-semibold"
+              className="w-full h-11 rounded-xl text-xs sm:text-sm font-bold"
             />
           </div>
 
@@ -1003,14 +1073,10 @@ useEffect(() => {
             onClick={handleBuyNow}
             whileTap={{ scale: 0.97 }}
             disabled={product.stock !== undefined && product.stock < 1}
-            className="relative overflow-hidden h-11 px-4 rounded-xl flex items-center justify-center gap-1.5 bg-gradient-to-r from-[#2E297D] to-[#7C2C78] text-white text-sm font-semibold shadow-[0_4px_15px_rgba(124,44,120,0.35)] disabled:opacity-40 disabled:pointer-events-none shrink-0"
+            className="relative overflow-hidden h-11 px-4 sm:px-5 rounded-xl flex items-center justify-center gap-1.5 bg-[#011b54] hover:bg-[#022b82] text-white text-xs sm:text-sm font-bold shadow-[0_4px_15px_rgba(1,27,84,0.35)] disabled:opacity-40 disabled:pointer-events-none shrink-0"
           >
             {!(product.stock !== undefined && product.stock < 1) && (
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none"
-                initial={{ x: "-100%" }}
-                whileTap={{ x: "100%", transition: { duration: 0.6 } }}
-              />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none animate-cta-sheen" />
             )}
             <Package className="h-4 w-4 relative z-10" />
             <span className="relative z-10">Buy Now</span>

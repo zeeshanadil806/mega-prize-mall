@@ -712,7 +712,7 @@ export default function WarrantyPolicyPage() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   href="/"
-                  className="text-[#7C2C78] hover:text-[#A43875]"
+                  className="text-[#011b54] hover:text-[#022b82]"
                 >
                   <Home className="h-4 w-4 mr-1 inline" />
                   Home
@@ -729,7 +729,7 @@ export default function WarrantyPolicyPage() {
         </div>
 
         {/* Hero Section */}
-        <header className="bg-linear-to-r from-[#7C2C78] via-[#8A347D] to-[#A43875] text-white">
+        <header className="bg-linear-to-r from-[#011b54] via-[#022b82] to-[#011b54] text-white">
           <div className="container mx-auto px-4 py-12 md:py-16">
             <div className="max-w-4xl mx-auto text-center">
               <div
@@ -824,7 +824,7 @@ export default function WarrantyPolicyPage() {
                 ))}
                 <Link
                   href="#contact"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#7C2C78] text-white hover:bg-[#A43875] rounded-full text-sm font-medium transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#011b54] text-white hover:bg-[#022b82] rounded-full text-sm font-medium transition-colors"
                 >
                   <HelpCircle className="h-4 w-4" />
                   Support Contact
@@ -842,7 +842,7 @@ export default function WarrantyPolicyPage() {
                   <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
                     Warranty Types Explained
                   </h2>
-                  <div className="w-16 h-1 bg-linear-to-r from-[#7C2C78] to-[#A43875] rounded-full mt-2"></div>
+                  <div className="w-16 h-1 bg-linear-to-r from-[#011b54] to-[#022b82] rounded-full mt-2"></div>
                 </div>
               </div>
 
@@ -1085,7 +1085,7 @@ export default function WarrantyPolicyPage() {
                       >
                         {section.title}
                       </h2>
-                      <div className="w-16 h-1 bg-linear-to-r from-[#7C2C78] to-[#A43875] rounded-full mt-2"></div>
+                      <div className="w-16 h-1 bg-linear-to-r from-[#011b54] to-[#022b82] rounded-full mt-2"></div>
                       <meta
                         itemProp="description"
                         content={section.description}
@@ -1127,7 +1127,7 @@ export default function WarrantyPolicyPage() {
                         <div className="flex gap-4">
                           {item.icon && (
                             <div className="h-10 w-10 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
-                              <item.icon className="h-5 w-5 text-[#7C2C78]" />
+                              <item.icon className="h-5 w-5 text-[#011b54]" />
                             </div>
                           )}
                           <div className="flex-1">
@@ -1167,7 +1167,7 @@ export default function WarrantyPolicyPage() {
                                     ) : section.id === "warranty-void" ? (
                                       <Ban className="h-5 w-5 text-red-500 mt-0.5 shrink-0" />
                                     ) : (
-                                      <div className="h-2 w-2 rounded-full bg-[#7C2C78] mt-2 shrink-0"></div>
+                                      <div className="h-2 w-2 rounded-full bg-[#011b54] mt-2 shrink-0"></div>
                                     )}
                                     <span className="text-gray-700 leading-relaxed">
                                       {point}
@@ -1184,7 +1184,7 @@ export default function WarrantyPolicyPage() {
                                     key={stepIdx}
                                     className="flex items-start gap-3"
                                   >
-                                    <div className="h-6 w-6 rounded-full bg-[#7C2C78] text-white flex items-center justify-center text-sm font-bold shrink-0">
+                                    <div className="h-6 w-6 rounded-full bg-[#011b54] text-white flex items-center justify-center text-sm font-bold shrink-0">
                                       {stepIdx + 1}
                                     </div>
                                     <span className="text-gray-700 leading-relaxed pt-0.5">
@@ -1240,14 +1240,14 @@ export default function WarrantyPolicyPage() {
               {/* Contact & Support Section */}
               <section id="contact" className="scroll-mt-24">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="h-12 w-12 rounded-xl bg-linear-to-r from-[#2E297D] to-[#7C2C78] flex items-center justify-center">
+                  <div className="h-12 w-12 rounded-xl bg-linear-to-r from-[#011b54] to-[#022b82] flex items-center justify-center">
                     <HelpCircle className="h-6 w-6 text-white" />
                   </div>
                   <div>
                     <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
                       Warranty Support & Contact
                     </h2>
-                    <div className="w-16 h-1 bg-linear-to-r from-[#7C2C78] to-[#A43875] rounded-full mt-2"></div>
+                    <div className="w-16 h-1 bg-linear-to-r from-[#011b54] to-[#022b82] rounded-full mt-2"></div>
                   </div>
                 </div>
 
@@ -1440,7 +1440,7 @@ export default function WarrantyPolicyPage() {
                           .getElementById("contact")
                           ?.scrollIntoView({ behavior: "smooth" })
                       }
-                      className="bg-[#7C2C78] hover:bg-[#A43875] text-white px-8"
+                      className="bg-[#011b54] hover:bg-[#022b82] text-white px-8"
                     >
                       Contact Support
                     </Button>
@@ -1449,7 +1449,7 @@ export default function WarrantyPolicyPage() {
                         window.scrollTo({ top: 0, behavior: "smooth" })
                       }
                       variant="outline"
-                      className="border-[#7C2C78] text-[#7C2C78] hover:bg-[#7C2C78]/10"
+                      className="border-[#011b54] text-[#011b54] hover:bg-[#011b54]/10"
                     >
                       <ArrowUp className="h-4 w-4 mr-2" />
                       Back to Top

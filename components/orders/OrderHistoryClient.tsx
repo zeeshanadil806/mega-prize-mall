@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { getWhatsAppSupportLink } from '@/shared/config';
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -175,8 +176,8 @@ export function OrderHistoryClient({
                   {stats.total}
                 </p>
               </div>
-              <div className="h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full bg-gradient-to-r from-[#7C2C78]/10 to-[#A43875]/10 flex items-center justify-center shrink-0">
-                <Package className="h-4 w-4 sm:h-4.5 sm:w-4.5 lg:h-5 lg:w-5 text-[#7C2C78]" />
+              <div className="h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full bg-gradient-to-r from-[#011b54]/10 to-[#022b82]/10 flex items-center justify-center shrink-0">
+                <Package className="h-4 w-4 sm:h-4.5 sm:w-4.5 lg:h-5 lg:w-5 text-[#011b54]" />
               </div>
             </div>
           </div>
@@ -383,11 +384,13 @@ export function OrderHistoryClient({
                         {order.items.slice(0, 3).map((item, index) => (
                           <div key={index} className="flex items-center gap-2">
                             {item.productImage && (
-                              <div className="h-10 w-10 rounded-md border overflow-hidden">
-                                <img
+                              <div className="h-10 w-10 rounded-md border overflow-hidden relative shrink-0">
+                                <Image
                                   src={item.productImage}
                                   alt={item.productName}
-                                  className="h-full w-full object-cover"
+                                  fill
+                                  sizes="40px"
+                                  className="object-cover"
                                 />
                               </div>
                             )}

@@ -40,32 +40,6 @@ export async function POST(request: NextRequest) {
 
     // Check if order qualifies and create entry
     const result = await createLuckyDrawEntry(orderId);
-    
-    // Send lucky draw entry email (non-blocking)
-setTimeout(async () => {
-  try {
-    // Import models
-    const { UserModel } = await import('@/models/User');
-    const { LuckyDrawEntryModel } = await import('@/models/LuckyDrawEntry');
-    const { LuckyDrawModel } = await import('@/models/LuckyDraw');
-    
-    const user = await UserModel.findById(order.userId);
-    const entry = await LuckyDrawEntryModel.findById(result.entry?._id);
-    const draw = await LuckyDrawModel.findById(result.drawId);
-    
-    if (user?.email && entry && draw) {
-      await sendLuckyDrawEntryEmail(
-        { email: user.email, name: user.name },
-        entry,
-        draw,
-        order
-      );
-      console.log(`Lucky draw entry email sent for entry ${entry._id}`);
-    }
-  } catch (emailError) {
-    log.error('Failed to send lucky draw entry email', { error: emailError as Error });
-  }
-}, 0);
 
     if (!result.success) {
       return NextResponse.json(
@@ -76,6 +50,37 @@ setTimeout(async () => {
         },
         { status: 400 }
       );
+    }
+
+    // Send lucky draw entry email (non-blocking)
+    if (result.entry) {
+      setTimeout(async () => {
+        try {
+          // Import models
+          const { UserModel } = await import('@/models/User');
+          const { LuckyDrawEntryModel } = await import('@/models/LuckyDrawEntry');
+          const { LuckyDrawModel } = await import('@/models/LuckyDraw');
+          
+          const user = order.userId ? await UserModel.findById(order.userId) : null;
+          const entry = await LuckyDrawEntryModel.findById(result.entry?._id);
+          const draw = await LuckyDrawModel.findById(result.drawId);
+          
+          const recipientEmail = user?.email || (order as { guestEmail?: string }).guestEmail || result.entry?.customerEmail;
+          const recipientName = user?.name || result.entry?.customerName || "Customer";
+
+          if (recipientEmail && entry && draw) {
+            await sendLuckyDrawEntryEmail(
+              { email: recipientEmail, name: recipientName },
+              entry,
+              draw,
+              order
+            );
+            log.info(`Lucky draw entry email sent for entry ${entry._id}`);
+          }
+        } catch (emailError) {
+          log.error('Failed to send lucky draw entry email', { error: emailError as Error });
+        }
+      }, 0);
     }
 
     return NextResponse.json({
@@ -90,7 +95,7 @@ setTimeout(async () => {
 
   } catch (error) {
     log.error('Error creating lucky draw entry', { error: error as Error });
-        const errorMessage = error instanceof Error ? error.message : 'Failed to cancel order';
+    const errorMessage = error instanceof Error ? error.message : 'Failed to create lucky draw entry';
 
     return NextResponse.json(
       { 

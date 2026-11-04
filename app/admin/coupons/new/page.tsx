@@ -89,16 +89,16 @@ export default function NewCouponPage() {
         </div>
         
         <div className="flex items-center gap-2">
-          <Tag className="h-5 w-5 text-[#A43875]" />
+          <Tag className="h-5 w-5 text-[#022b82]" />
           <span className="text-sm text-gray-600">New Coupon</span>
         </div>
       </div>
 
       {/* Help Card */}
-      <Card className="border border-[#EAB75F]/30 bg-linear-to-r from-[#EAB75F]/5 to-[#A43875]/5">
+      <Card className="border border-[#011b54]/30 bg-linear-to-r from-[#011b54]/5 to-[#022b82]/5">
         <CardContent className="pt-6">
           <div className="space-y-2">
-            <h3 className="font-medium text-[#EAB75F] flex items-center gap-2">
+            <h3 className="font-medium text-[#011b54] flex items-center gap-2">
               <Info className="h-4 w-4" />
               Tips for creating effective coupons
             </h3>

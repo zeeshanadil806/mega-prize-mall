@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { useCartStore } from "@/stores/cart-store";
 import { formatCurrency } from "@/shared/format";
@@ -77,7 +78,7 @@ export default function CheckoutSummary({
     return (
       <div className="sticky top-24">
         <div className="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden p-6 text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-[#7C2C78] mx-auto mb-4" />
+          <Loader2 className="h-8 w-8 animate-spin text-[#011b54] mx-auto mb-4" />
           <p className="text-gray-600 text-sm">Loading order summary...</p>
         </div>
       </div>
@@ -224,7 +225,7 @@ export default function CheckoutSummary({
     <div className="sticky top-24">
       <div className="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
         {/* Header with Guest Badge */}
-        <div className="bg-linear-to-r from-[#7C2C78] to-[#A43875] p-6 text-white relative">
+        <div className="bg-linear-to-r from-[#011b54] to-[#022b82] p-6 text-white relative">
           <h3 className="text-xl font-bold mb-2">Order Summary</h3>
           <p className="text-white/80 text-sm">
             {itemCount} item{itemCount !== 1 ? "s" : ""} in your order
@@ -253,12 +254,14 @@ export default function CheckoutSummary({
                 transition={{ delay: index * 0.05 }}
                 className="flex gap-3 py-3 border-b border-gray-100 last:border-0"
               >
-                <div className="h-16 w-16 rounded-lg bg-gray-100 overflow-hidden shrink-0">
+                <div className="h-16 w-16 rounded-lg bg-gray-100 overflow-hidden shrink-0 relative">
                   {item.images?.[0]?.url ? (
-                    <img
+                    <Image
                       src={item.images[0].url}
                       alt={item.name}
-                      className="h-full w-full object-cover"
+                      fill
+                      sizes="64px"
+                      className="object-cover"
                     />
                   ) : (
                     <div className="h-full w-full flex items-center justify-center">
@@ -294,7 +297,7 @@ export default function CheckoutSummary({
           <div className="px-6 py-4 border-t border-gray-200">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <Wallet className="h-5 w-5 text-[#EAB75F]" />
+                <Wallet className="h-5 w-5 text-[#011b54]" />
                 <span className="font-medium text-gray-900">Redeem Points</span>
               </div>
               <span className="text-sm text-gray-600">
@@ -314,7 +317,7 @@ export default function CheckoutSummary({
                     p-2 border rounded-lg text-center transition-all text-sm
                     ${
                       checkoutData.pointsToUse === points
-                        ? "border-[#7C2C78] bg-[#7C2C78]/10 text-[#7C2C78]"
+                        ? "border-[#011b54] bg-[#011b54]/10 text-[#011b54]"
                         : "border-gray-300 hover:border-gray-400"
                     }
                     disabled:opacity-50 disabled:cursor-not-allowed
@@ -382,7 +385,7 @@ export default function CheckoutSummary({
           {!showCouponInput ? (
             <button
               onClick={() => setShowCouponInput(true)}
-              className="w-full flex items-center justify-center gap-2 text-[#A43875] hover:text-[#7C2C78] transition-colors"
+              className="w-full flex items-center justify-center gap-2 text-[#022b82] hover:text-[#011b54] transition-colors"
             >
               <Ticket className="h-4 w-4" />
               <span className="font-medium">Have a coupon code?</span>
@@ -391,7 +394,7 @@ export default function CheckoutSummary({
             <div>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <Ticket className="h-5 w-5 text-[#A43875]" />
+                  <Ticket className="h-5 w-5 text-[#022b82]" />
                   <span className="font-medium text-gray-900">
                     Apply Coupon
                   </span>
@@ -410,13 +413,13 @@ export default function CheckoutSummary({
                   value={couponInput}
                   onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
                   placeholder="Enter coupon code"
-                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#7C2C78] focus:border-transparent"
+                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#011b54] focus:border-transparent"
                   disabled={applyingCoupon}
                 />
                 <button
                   onClick={handleApplyCoupon}
                   disabled={applyingCoupon || !couponInput.trim()}
-                  className="px-4 py-2 bg-[#7C2C78] text-white text-sm rounded-lg hover:bg-[#6A2566] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-[#011b54] text-white text-sm rounded-lg hover:bg-[#022b82] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {applyingCoupon ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -460,13 +463,13 @@ export default function CheckoutSummary({
         {/* Free Delivery Progress */}
         {shippingFee > 0 && amountForFreeDelivery > 0 && (
           <div className="px-6 py-4 border-t border-gray-200">
-            <div className="bg-linear-to-r from-[#7C2C78]/5 to-[#A43875]/5 p-3 rounded-lg border border-[#7C2C78]/20">
+            <div className="bg-linear-to-r from-[#011b54]/5 to-[#022b82]/5 p-3 rounded-lg border border-[#011b54]/20">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm font-medium text-gray-900">
                   Add {formatCurrency(amountForFreeDelivery)} more for FREE
                   delivery!
                 </span>
-                <span className="text-xs font-medium text-[#A43875]">
+                <span className="text-xs font-medium text-[#022b82]">
                   {Math.round(freeDeliveryProgress)}%
                 </span>
               </div>
@@ -478,7 +481,7 @@ export default function CheckoutSummary({
                   animate={{ width: `${freeDeliveryProgress}%` }}
                   transition={{ duration: 1.5, ease: "easeOut" }}
                   style={{
-                    background: "linear-gradient(90deg, #7C2C78, #A43875)",
+                    background: "linear-gradient(90deg, #011b54, #022b82)",
                   }}
                 />
               </div>
@@ -509,7 +512,7 @@ export default function CheckoutSummary({
             )}
 
             {!session?.user?.isGuest && pointsDiscount > 0 && (
-              <div className="flex justify-between text-sm text-[#EAB75F]">
+              <div className="flex justify-between text-sm text-[#011b54]">
                 <span>Points Redeemed</span>
                 <span>-{formatCurrency(pointsDiscount)}</span>
               </div>
@@ -543,11 +546,11 @@ export default function CheckoutSummary({
 
               {/* Points Earned (HIDDEN for guests) */}
               {!session?.user?.isGuest && finalTotal > 0 && (
-                <div className="mt-3 p-2 bg-linear-to-r from-[#EAB75F]/10 to-[#A43875]/10 rounded-lg">
+                <div className="mt-3 p-2 bg-linear-to-r from-[#011b54]/5 to-[#022b82]/10 rounded-lg">
                   <div className="text-sm font-medium text-gray-900 mb-1">
                     You&apos;ll Earn
                   </div>
-                  <div className="text-lg font-bold text-[#EAB75F]">
+                  <div className="text-lg font-bold text-[#011b54]">
                     {Math.floor(finalTotal / 10).toLocaleString()} Points
                   </div>
                   <div className="text-xs text-gray-600 mt-1">

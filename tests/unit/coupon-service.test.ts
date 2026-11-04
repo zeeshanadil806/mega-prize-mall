@@ -176,10 +176,7 @@ describe("validateGlobalCoupon — user restrictions", () => {
     expect(result.message).toMatch(/not eligible/);
   });
 
-  it("DOCUMENTED QUIRK: silently bypasses user restrictions when the user record is missing", async () => {
-    // Coupon is firstOrderOnly with a specific-users list — if checked,
-    // the request should be rejected. But when UserModel.findById returns
-    // null, the entire `if (user) { ... }` block is skipped.
+  it("rejects when the user record is missing", async () => {
     mockFindActiveGlobalCouponByCode.mockResolvedValue(
       makeCoupon({
         firstOrderOnly: true,
@@ -191,9 +188,8 @@ describe("validateGlobalCoupon — user restrictions", () => {
     mockUserFindById.mockResolvedValue(null);
 
     const result = await validateGlobalCoupon("X", 1000, "missing-user");
-    // Bypass: validates as if no user restrictions exist.
-    expect(result.valid).toBe(true);
-    expect(result.couponType).toBe("global");
+    expect(result.valid).toBe(false);
+    expect(result.message).toBe("User not found or invalid account details");
     // Confirm the per-user lookups were never performed.
     expect(mockCountOrdersForUser).not.toHaveBeenCalled();
     expect(mockCountCouponUsagesForUser).not.toHaveBeenCalled();

@@ -1,18 +1,24 @@
+// components/customer/Header.tsx
 import AnnouncementBar from "./AnnouncementBar";
 import HeaderInteractive from "./HeaderInteractive";
-import QuickCategoriesBar from "./QuickCategoriesBar";
-import type { CategoryStat } from "@/features/product/domain";
+import type { CategoryStat, MegaMenuProduct } from "@/features/product/domain";
 
 interface HeaderProps {
   categoryStats?: CategoryStat[];
+  megaMenuProducts?: Record<string, MegaMenuProduct[]>;
 }
 
-export default function Header({ categoryStats = [] }: HeaderProps) {
+export default function Header({
+  categoryStats = [],
+  megaMenuProducts = {},
+}: HeaderProps) {
   return (
     <>
       <AnnouncementBar />
-      <HeaderInteractive categoryStats={categoryStats} />
-      <QuickCategoriesBar categoryStats={categoryStats} />
+      <HeaderInteractive
+        categoryStats={categoryStats}
+        megaMenuProducts={megaMenuProducts}
+      />
     </>
   );
 }

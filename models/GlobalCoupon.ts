@@ -108,7 +108,7 @@ export interface IGlobalCoupon extends Document {
 // 3. Mongoose Schema
 // ==========================================
 const GlobalCouponSchemaMongoose = new Schema<IGlobalCoupon>({
-  code: { type: String, required: true, unique: true, uppercase: true, index: true, trim: true },
+  code: { type: String, required: true, unique: true, uppercase: true, trim: true },
   name: { type: String, required: true, trim: true },
   description: { type: String, trim: true },
   discountType: { type: String, enum: ['percentage', 'fixed', 'free_shipping'], required: true },

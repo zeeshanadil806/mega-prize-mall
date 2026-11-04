@@ -166,7 +166,7 @@ export default function ProductTable({
           <p className="text-gray-600">{total} total products</p>
         </div>
         <Button
-          className="bg-gradient-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] text-white"
+          className="bg-gradient-to-r from-[#011b54] to-[#022b82] hover:from-[#022b82] hover:to-[#03369f] text-white"
           onClick={() => router.push("/admin/products/new")}
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -225,7 +225,7 @@ export default function ProductTable({
           <Button
             onClick={handleSearch}
             disabled={loading}
-            className="bg-gradient-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A]"
+            className="bg-gradient-to-r from-[#011b54] to-[#022b82] hover:from-[#022b82] hover:to-[#03369f]"
           >
             {loading ? "Searching..." : "Search"}
           </Button>
@@ -327,7 +327,7 @@ export default function ProductTable({
                           {product.isActive ? "Active" : "Inactive"}
                         </Badge>
                         {product.isFeatured && (
-                          <Badge className="bg-gradient-to-r from-[#EAB75F] to-[#A43875] text-white border-0">
+                          <Badge className="bg-gradient-to-r from-[#011b54] to-[#022b82] text-white border-0">
                             Featured
                           </Badge>
                         )}

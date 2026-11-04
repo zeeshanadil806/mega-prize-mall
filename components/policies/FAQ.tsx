@@ -2,33 +2,24 @@
 
 import { STORE_CONFIG } from "@/shared/config";
 import {
+  ChevronDown,
+  Search,
+  X,
+  Mail,
+  MessageCircle,
+  Home,
+  CheckCircle,
+  AlertTriangle,
+  BookOpen,
   HelpCircle,
-  ShoppingBag,
   CreditCard,
   Truck,
   RefreshCw,
   Gift,
-  UserPlus,
-  Shield,
-  Mail,
-  MessageCircle,
-  ChevronDown,
-  Search,
-  FileText,
   Users,
+  Shield,
   Wrench,
-  CheckCircle,
-  AlertTriangle,
-  ArrowUp,
-  Home,
-  Star,
-  TrendingUp,
-  Clock,
-  ExternalLink,
-  BookOpen,
-  Package,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import Header from "@/components/customer/Header";
 import CustomerFooter from "@/components/customer/CustomerFooter";
 import {
@@ -83,9 +74,9 @@ export default function FAQPage() {
     mainEntity: [],
   };
 
-  // Initialize with some expanded FAQs for better UX
+  // Initialize with 1 expanded FAQ for clean mobile view without scroll fatigue
   const [expandedFaqs, setExpandedFaqs] = useState<Set<string>>(
-    new Set(["what-is", "shop-win", "payment-methods", "delivery-time"])
+    new Set(["what-is"])
   );
 
   // Wrap categories in useMemo to prevent unnecessary re-renders
@@ -558,89 +549,11 @@ export default function FAQPage() {
     []
   ); // Empty dependency array means this only runs once
 
-  const popularQuestions = useMemo(
-    () => [
-      {
-        id: "shop-win",
-        question: "How does Shop-n-Win work?",
-        category: "Shop-n-Win",
-        popularity: 95,
-        icon: Gift,
-      },
-      {
-        id: "returns",
-        question: "What is the return policy?",
-        category: "Returns",
-        popularity: 90,
-        icon: RefreshCw,
-      },
-      {
-        id: "delivery",
-        question: "How long for delivery?",
-        category: "Shipping",
-        popularity: 92,
-        icon: Truck,
-      },
-      {
-        id: "warranty",
-        question: "Do products have warranty?",
-        category: "Warranty",
-        popularity: 88,
-        icon: Shield,
-      },
-      {
-        id: "payment",
-        question: "What payment methods?",
-        category: "Payments",
-        popularity: 94,
-        icon: CreditCard,
-      },
-      {
-        id: "account",
-        question: "How to create account?",
-        category: "General",
-        popularity: 85,
-        icon: UserPlus,
-      },
-    ],
-    []
-  );
-
-  const contactOptions: ContactOption[] = useMemo(
-    () => [
-      {
-        method: "Email Support",
-        icon: Mail,
-        contact: "support@megaprizemall.com",
-        response: "24-48 hours",
-        color: "bg-blue-100 text-blue-800",
-        description: "For detailed inquiries and documentation",
-      },
-      {
-        method: "WhatsApp Support",
-        icon: MessageCircle,
-        contact: `+${STORE_CONFIG.supportPhone.slice(0, 2)} ${STORE_CONFIG.supportPhone.slice(2, 5)} ${STORE_CONFIG.supportPhone.slice(5)}`,
-        response: "24 hours",
-        color: "bg-green-100 text-green-800",
-        description: "Quick assistance and instant messaging",
-      },
-      {
-        method: "Dashboard Messages",
-        icon: ShoppingBag,
-        contact: "Account Dashboard",
-        response: "24-72 hours",
-        color: "bg-purple-100 text-purple-800",
-        description: "Track and manage all communications",
-      },
-    ],
-    []
-  );
-
   // Search functionality
   const filteredQuestions = useMemo(() => {
     if (!searchQuery.trim()) return categories;
 
-    const query = searchQuery.toLowerCase();
+    const query = searchQuery.toLowerCase().trim();
     return categories
       .map((category) => ({
         ...category,
@@ -649,16 +562,27 @@ export default function FAQPage() {
             faq.question.toLowerCase().includes(query) ||
             (typeof faq.answer === "string" &&
               faq.answer.toLowerCase().includes(query)) ||
-            faq.points?.some((point) => point.toLowerCase().includes(query))
+            faq.points?.some((point) => point.toLowerCase().includes(query)) ||
+            category.title.toLowerCase().includes(query)
         ),
       }))
       .filter((category) => category.questions.length > 0);
   }, [searchQuery, categories]);
 
   // Category selection filtering
-  const displayedCategories = selectedCategory
-    ? filteredQuestions.filter((cat) => cat.id === selectedCategory)
-    : filteredQuestions;
+  const displayedCategories = useMemo(() => {
+    if (selectedCategory) {
+      return filteredQuestions.filter((cat) => cat.id === selectedCategory);
+    }
+    return filteredQuestions;
+  }, [selectedCategory, filteredQuestions]);
+
+  const totalResultCount = useMemo(() => {
+    return filteredQuestions.reduce(
+      (acc, cat) => acc + cat.questions.length,
+      0
+    );
+  }, [filteredQuestions]);
 
   // Toggle FAQ expansion
   const toggleFaq = (faqId: string) => {
@@ -671,6 +595,17 @@ export default function FAQPage() {
       }
       return newSet;
     });
+  };
+
+  const handleSelectCategory = (catId: string | null) => {
+    setSelectedCategory(catId);
+    setSearchQuery("");
+    setTimeout(() => {
+      const contentEl = document.getElementById("faq-content-area");
+      if (contentEl) {
+        contentEl.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 50);
   };
 
   // Generate FAQ Schema
@@ -776,567 +711,259 @@ export default function FAQPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
-      <div className="min-h-screen bg-linear-to-b from-gray-50 to-white">
+      <div className="min-h-screen bg-[#F8FAFC] text-slate-800 antialiased">
         <Header />
 
-        {/* Breadcrumb Navigation */}
-        <div className="container mx-auto px-4 py-4">
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink
-                  href="/"
-                  className="text-[#7C2C78] hover:text-[#A43875]"
+        {/* ── 1. Clean, Compact Navy Header ── */}
+        <section className="bg-[#011b54] text-white py-8 sm:py-10">
+          <div className="container mx-auto px-4 max-w-3xl">
+            {/* Breadcrumb */}
+            <div className="mb-3">
+              <Breadcrumb>
+                <BreadcrumbList className="text-white/70 text-xs">
+                  <BreadcrumbItem>
+                    <BreadcrumbLink
+                      href="/"
+                      className="text-white/70 hover:text-white transition-colors inline-flex items-center gap-1"
+                    >
+                      <Home className="h-3 w-3" />
+                      Home
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator className="text-white/30" />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage className="font-medium text-white text-xs">
+                      FAQ & Help Center
+                    </BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
+            </div>
+
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-1.5 text-white">
+              Help Center & FAQ
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-300 mb-5">
+              Find quick answers about orders, payments, shipping, warranty, and returns.
+            </p>
+
+            {/* Minimal Search Input */}
+            <div className="relative">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <input
+                type="search"
+                placeholder="Search questions (e.g. 'returns', 'cash on delivery', 'warranty')..."
+                className="w-full pl-10 pr-10 py-2.5 sm:py-3 rounded-lg bg-white text-gray-900 placeholder:text-gray-400 text-xs sm:text-sm border border-gray-200 focus:outline-hidden focus:ring-2 focus:ring-white/20 transition-all shadow-xs"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                aria-label="Search FAQ"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600"
+                  aria-label="Clear search"
                 >
-                  <Home className="h-4 w-4 mr-1 inline" />
-                  Home
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage className="font-semibold">
-                  FAQ & Help Center
-                </BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        </div>
-
-        {/* Hero Section */}
-        <header className="bg-linear-to-r from-[#7C2C78] via-[#8A347D] to-[#A43875] text-white">
-          <div className="container mx-auto px-4 py-12 md:py-16">
-            <div className="max-w-5xl mx-auto text-center">
-              <div
-                className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-white/20 backdrop-blur-sm mb-6"
-                role="img"
-                aria-label="Help Center Icon"
-              >
-                <HelpCircle className="h-8 w-8" />
-              </div>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
-                Help Center & Frequently Asked Questions
-              </h1>
-              <p className="text-lg md:text-xl text-white/90 mb-8 max-w-3xl mx-auto">
-                Find answers to common questions about shopping, shipping,
-                returns, warranty, and our exclusive Shop-n-Win program.
-              </p>
-
-              {/* Search Bar */}
-              <div className="max-w-2xl mx-auto">
-                <div className="relative">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 z-10" />
-                  <input
-                    type="search"
-                    placeholder="Search for questions (e.g., 'returns', 'delivery', 'payment')..."
-                    className="w-full pl-12 pr-4 py-3 rounded-xl border-0 focus:ring-2 focus:ring-white/30 bg-white/10 backdrop-blur-sm text-white placeholder-white/70"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    aria-label="Search FAQ questions"
-                  />
-                </div>
-                <p className="text-white/70 text-sm mt-3">
-                  {searchQuery
-                    ? `Found ${filteredQuestions.reduce(
-                        (acc, cat) => acc + cat.questions.length,
-                        0
-                      )} results`
-                    : "Browse categories or search for specific questions"}
-                </p>
-              </div>
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
             </div>
           </div>
-        </header>
+        </section>
 
-        {/* Main Content */}
-        <main className="container mx-auto px-4 py-8 md:py-12">
-          <div className="max-w-5xl mx-auto">
-            {/* Popular Questions */}
-            <section className="mb-12">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">
-                  Most Popular Questions
-                </h2>
-                <div className="flex items-center gap-2 text-gray-600">
-                  <TrendingUp className="h-5 w-5" />
-                  <span className="text-sm font-medium">
-                    Based on customer queries
-                  </span>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {popularQuestions.map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => {
-                      setSelectedCategory(
-                        item.category.toLowerCase().replace(" ", "-")
-                      );
-                      document
-                        .getElementById(
-                          item.category.toLowerCase().replace(" ", "-")
-                        )
-                        ?.scrollIntoView({ behavior: "smooth" });
-                    }}
-                    className="group bg-white rounded-xl p-4 border border-gray-200 hover:border-[#7C2C78] hover:shadow-lg transition-all duration-200 text-left"
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-[#7C2C78]/10 transition-colors">
-                          <item.icon className="h-5 w-5 text-gray-600 group-hover:text-[#7C2C78] transition-colors" />
-                        </div>
-                        <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                          {item.category}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
-                        <span className="text-xs font-semibold">
-                          {item.popularity}%
-                        </span>
-                      </div>
-                    </div>
-                    <h3 className="font-semibold text-gray-900 group-hover:text-[#7C2C78] transition-colors mb-2">
-                      {item.question}
-                    </h3>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-500">
-                        Click to view answer
-                      </span>
-                      <ChevronDown className="h-4 w-4 text-gray-400 group-hover:text-[#7C2C78] transition-colors" />
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </section>
+        {/* ── 2. Clean Horizontal Category Bar (Sticky) ── */}
+        <div className="sticky top-[64px] lg:top-[70px] z-30 bg-white border-b border-gray-200 shadow-xs">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <div className="flex items-center gap-1.5 py-2.5 overflow-x-auto no-scrollbar scroll-smooth">
+              <button
+                onClick={() => handleSelectCategory(null)}
+                className={`shrink-0 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                  selectedCategory === null
+                    ? "bg-[#011b54] text-white"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                }`}
+              >
+                All Topics
+              </button>
 
-            {/* Category Filter */}
-            <div className="mb-8">
-              <div className="flex flex-wrap gap-2">
-                <button
-                  onClick={() => setSelectedCategory(null)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                    selectedCategory === null
-                      ? "bg-[#7C2C78] text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-                >
-                  All Categories
-                </button>
-                {categories.map((category) => (
+              {categories.map((category) => {
+                const isSelected = selectedCategory === category.id;
+                return (
                   <button
                     key={category.id}
-                    onClick={() => setSelectedCategory(category.id)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-2 ${
-                      selectedCategory === category.id
-                        ? "bg-linear-to-r " + category.color + " text-white"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    onClick={() =>
+                      handleSelectCategory(isSelected ? null : category.id)
+                    }
+                    className={`shrink-0 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                      isSelected
+                        ? "bg-[#011b54] text-white"
+                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                     }`}
                   >
-                    <category.icon className="h-4 w-4" />
-                    {category.title}
+                    {category.title.replace(" Questions", "")}
                   </button>
-                ))}
-              </div>
+                );
+              })}
             </div>
+          </div>
+        </div>
 
-            {/* Contact Options */}
-            <section className="mb-12 bg-linear-to-r from-blue-50 to-cyan-50 rounded-2xl border border-blue-200 p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
-                Need Immediate Assistance?
+        {/* ── 3. Compact Questions Section ── */}
+        <main id="faq-content-area" className="container mx-auto px-4 max-w-3xl py-6 sm:py-8">
+          {/* Search Result Info */}
+          {searchQuery && (
+            <div className="mb-4 flex items-center justify-between text-xs text-gray-600">
+              <span>
+                Found <strong>{totalResultCount}</strong> matching question{totalResultCount === 1 ? "" : "s"}
+              </span>
+              <button
+                onClick={() => setSearchQuery("")}
+                className="text-[#011b54] font-medium hover:underline flex items-center gap-1"
+              >
+                Clear filter
+              </button>
+            </div>
+          )}
+
+          {/* Active Category Filter Header */}
+          {selectedCategory && !searchQuery && (
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-gray-900">
+                {categories.find((c) => c.id === selectedCategory)?.title}
               </h2>
-              <p className="text-gray-700 mb-6">
-                Connect with our dedicated support team through these channels:
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {contactOptions.map((option) => (
-                  <div
-                    key={option.method}
-                    className="bg-white rounded-xl p-5 border border-blue-200 hover:border-blue-300 transition-colors shadow-sm"
-                  >
-                    <div className="flex items-center gap-4 mb-4">
-                      <div
-                        className={`h-12 w-12 rounded-lg flex items-center justify-center ${
-                          option.color.split(" ")[0]
-                        }`}
-                      >
-                        <option.icon
-                          className={`h-6 w-6 ${option.color.split(" ")[1]}`}
-                        />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-900">
-                          {option.method}
-                        </h3>
-                        <div className="flex items-center gap-2">
-                          <Clock className="h-3 w-3 text-gray-500" />
-                          <span className="text-sm text-gray-600">
-                            Response: {option.response}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <p className="text-gray-900 font-medium text-sm mb-2">
-                      {option.contact}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      {option.description}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </section>
+              <button
+                onClick={() => setSelectedCategory(null)}
+                className="text-xs text-[#011b54] font-medium hover:underline"
+              >
+                View all topics
+              </button>
+            </div>
+          )}
 
-            {/* FAQ Categories */}
-            <div className="space-y-12">
-              {displayedCategories.map((category) => (
-                <section
-                  key={category.id}
-                  id={category.id}
-                  className="scroll-mt-24"
-                  itemScope
-                  itemType="https://schema.org/FAQPage"
-                >
-                  <div className="flex items-center gap-4 mb-6">
-                    <div
-                      className={`h-12 w-12 rounded-xl bg-linear-to-r ${category.color} flex items-center justify-center`}
-                    >
-                      <category.icon className="h-6 w-6 text-white" />
-                    </div>
-                    <div>
-                      <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-                        {category.title}
-                      </h2>
-                      <p className="text-gray-600 mt-1">
-                        {category.description}
-                      </p>
-                      <div className="w-16 h-1 bg-linear-to-r from-[#7C2C78] to-[#A43875] rounded-full mt-2"></div>
-                    </div>
-                  </div>
+          {/* Questions List */}
+          <div className="space-y-6">
+            {displayedCategories.map((category) => (
+              <section key={category.id} id={category.id} className="scroll-mt-32">
+                {!selectedCategory && !searchQuery && (
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2.5">
+                    {category.title}
+                  </h2>
+                )}
 
-                  <div className="space-y-4">
-                    {category.questions.map((faq) => (
+                <div className="space-y-2">
+                  {category.questions.map((faq) => {
+                    const isExpanded = expandedFaqs.has(faq.id);
+                    return (
                       <div
                         key={faq.id}
                         id={faq.id}
-                        className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:border-gray-300 transition-colors"
-                        itemScope
-                        itemType="https://schema.org/Question"
+                        className="bg-white rounded-lg border border-gray-200 overflow-hidden transition-colors"
                       >
                         <button
                           onClick={() => toggleFaq(faq.id)}
-                          className="w-full p-6 text-left flex items-start justify-between hover:bg-gray-50 transition-colors"
-                          aria-expanded={expandedFaqs.has(faq.id)}
-                          aria-controls={`answer-${faq.id}`}
+                          className="w-full px-4 py-3 text-left flex items-center justify-between gap-3 text-xs sm:text-sm font-medium text-gray-900 hover:text-[#011b54] transition-colors"
+                          aria-expanded={isExpanded}
                         >
-                          <div className="flex items-start gap-4">
-                            <div className="h-8 w-8 rounded-full bg-[#7C2C78]/10 flex items-center justify-center shrink-0 mt-1">
-                              <span className="text-[#7C2C78] font-bold text-sm">
-                                Q
-                              </span>
-                            </div>
-                            <div>
-                              <h3
-                                className="text-lg font-semibold text-gray-900 mb-2"
-                                itemProp="name"
-                              >
-                                {faq.question}
-                              </h3>
-                              {faq.popularity && faq.popularity > 80 && (
-                                <div className="inline-flex items-center gap-1 bg-amber-50 text-amber-800 text-xs font-medium px-2 py-1 rounded-full">
-                                  <Star className="h-3 w-3 fill-amber-500" />
-                                  <span>
-                                    Popular Question ({faq.popularity}%)
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                          </div>
+                          <span>{faq.question}</span>
                           <ChevronDown
-                            className={`h-5 w-5 text-gray-400 transition-transform ${
-                              expandedFaqs.has(faq.id) ? "rotate-180" : ""
+                            className={`h-4 w-4 text-gray-400 shrink-0 transition-transform duration-200 ${
+                              isExpanded ? "rotate-180 text-[#011b54]" : ""
                             }`}
                           />
                         </button>
 
-                        {expandedFaqs.has(faq.id) && (
-                          <div
-                            id={`answer-${faq.id}`}
-                            className="px-6 pb-6"
-                            itemScope
-                            itemProp="acceptedAnswer"
-                            itemType="https://schema.org/Answer"
-                          >
-                            <div className="flex gap-4">
-                              <div className="h-8 w-8 shrink-0"></div>
-                              <div className="flex-1">
-                                <div itemProp="text">
-                                  {typeof faq.answer === "string" ? (
-                                    <p className="text-gray-700 leading-relaxed mb-4">
-                                      {faq.answer}
-                                    </p>
-                                  ) : faq.points ? (
-                                    <div className="space-y-4">
-                                      <p className="text-gray-700 leading-relaxed">
-                                        {faq.answer}
-                                      </p>
-                                      <ul className="space-y-3">
-                                        {faq.points.map((point, pointIdx) => (
-                                          <li
-                                            key={pointIdx}
-                                            className="flex items-start gap-3"
-                                          >
-                                            <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 shrink-0" />
-                                            <span className="text-gray-700 leading-relaxed">
-                                              {point}
-                                            </span>
-                                          </li>
-                                        ))}
-                                      </ul>
-                                    </div>
-                                  ) : (
-                                    <p className="text-gray-700 leading-relaxed">
-                                      {faq.answer}
-                                    </p>
-                                  )}
-
-                                  {faq.note && (
-                                    <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                                      <div className="flex items-start gap-2">
-                                        <BookOpen className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
-                                        <p className="text-sm text-gray-700">
-                                          {faq.note}
-                                        </p>
-                                      </div>
-                                    </div>
-                                  )}
-
-                                  {faq.warning && (
-                                    <div className="mt-4 p-3 bg-amber-50 rounded-lg border border-amber-200">
-                                      <div className="flex items-start gap-2">
-                                        <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
-                                        <p className="text-sm text-amber-700">
-                                          {faq.warning}
-                                        </p>
-                                      </div>
-                                    </div>
-                                  )}
-
-                                  {faq.important && (
-                                    <div className="mt-4 p-3 bg-red-50 rounded-lg border border-red-200">
-                                      <div className="flex items-start gap-2">
-                                        <AlertTriangle className="h-4 w-4 text-red-600 shrink-0 mt-0.5" />
-                                        <p className="text-sm text-red-700 font-medium">
-                                          ⚠️ Important Information
-                                        </p>
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
+                        {isExpanded && (
+                          <div className="px-4 pb-3.5 pt-1 border-t border-gray-100 bg-gray-50/50 text-xs sm:text-sm text-gray-600 leading-relaxed">
+                            {typeof faq.answer === "string" ? (
+                              <p>{faq.answer}</p>
+                            ) : faq.points ? (
+                              <div className="space-y-2">
+                                <p>{faq.answer}</p>
+                                <ul className="space-y-1.5 pl-1">
+                                  {faq.points.map((point, idx) => (
+                                    <li key={idx} className="flex items-start gap-2">
+                                      <div className="w-1.5 h-1.5 rounded-full bg-[#011b54] mt-1.5 shrink-0" />
+                                      <span>{point}</span>
+                                    </li>
+                                  ))}
+                                </ul>
                               </div>
-                            </div>
+                            ) : (
+                              <p>{faq.answer}</p>
+                            )}
+
+                            {faq.note && (
+                              <div className="mt-2.5 p-2.5 bg-blue-50/70 border border-blue-100 rounded text-xs text-blue-900">
+                                <strong>Note:</strong> {faq.note}
+                              </div>
+                            )}
+
+                            {faq.warning && (
+                              <div className="mt-2.5 p-2.5 bg-amber-50 border border-amber-200 rounded text-xs text-amber-900">
+                                <strong>Warning:</strong> {faq.warning}
+                              </div>
+                            )}
+
+                            {faq.important && (
+                              <div className="mt-2.5 p-2.5 bg-red-50 border border-red-200 rounded text-xs text-red-900">
+                                <strong>Important:</strong> Please review before ordering.
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
-                    ))}
-                  </div>
-                </section>
-              ))}
-
-              {/* No Results State */}
-              {searchQuery && displayedCategories.length === 0 && (
-                <div className="text-center py-12">
-                  <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    No Results Found
-                  </h3>
-                  <p className="text-gray-600 mb-6">
-                    We couldn&apos;t find any FAQs matching &quot;{searchQuery}
-                    &quot;
-                  </p>
-                  <Button
-                    onClick={() => setSearchQuery("")}
-                    variant="outline"
-                    className="border-[#7C2C78] text-[#7C2C78] hover:bg-[#7C2C78]/10"
-                  >
-                    Clear Search
-                  </Button>
-                </div>
-              )}
-
-              {/* Contact Section */}
-              <section className="bg-linear-to-r from-[#7C2C78] to-[#A43875] rounded-2xl p-8 text-white">
-                <div className="max-w-3xl">
-                  <h3 className="text-2xl font-bold mb-6">Still Need Help?</h3>
-                  <div className="grid md:grid-cols-2 gap-8">
-                    <div>
-                      <h4 className="font-semibold mb-4">
-                        📞 Contact Information
-                      </h4>
-                      <ul className="space-y-3">
-                        <li className="flex items-center gap-3">
-                          <Mail className="h-5 w-5" />
-                          <div>
-                            <p className="font-medium">Email Support</p>
-                            <Link
-                              href="mailto:support@megaprizemall.com"
-                              className="text-white/90 hover:text-white"
-                            >
-                              support@megaprizemall.com
-                            </Link>
-                          </div>
-                        </li>
-                        <li className="flex items-center gap-3">
-                          <MessageCircle className="h-5 w-5" />
-                          <div>
-                            <p className="font-medium">WhatsApp</p>
-                            <Link
-                              href={STORE_CONFIG.whatsappLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-white/90 hover:text-white inline-flex items-center gap-1"
-                            >
-                              +{STORE_CONFIG.supportPhone}
-                              <ExternalLink className="h-3 w-3" />
-                            </Link>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold mb-4">
-                        💡 Tips for Quick Resolution
-                      </h4>
-                      <ul className="space-y-2">
-                        <li className="flex items-start gap-2">
-                          <CheckCircle className="h-4 w-4 mt-1 shrink-0" />
-                          <span>Have your order number ready</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <CheckCircle className="h-4 w-4 mt-1 shrink-0" />
-                          <span>Include photos for product issues</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <CheckCircle className="h-4 w-4 mt-1 shrink-0" />
-                          <span>Describe issue with specific details</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <CheckCircle className="h-4 w-4 mt-1 shrink-0" />
-                          <span>Check spam folder for our emails</span>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-
-                  <div className="mt-8 p-4 bg-white/10 rounded-lg">
-                    <p className="text-sm">
-                      <strong>Response Time Commitment:</strong> We aim to
-                      respond to all inquiries within 24 hours during business
-                      days. For urgent matters, please include
-                      &quot;URGENT&quot; in your subject line.
-                    </p>
-                  </div>
+                    );
+                  })}
                 </div>
               </section>
+            ))}
 
-              {/* Related Resources */}
-              <section className="bg-linear-to-r from-gray-50 to-blue-50 rounded-2xl p-6 border border-gray-200">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">
-                  📚 Related Resources & Policies
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <Link href="/privacy-policy" className="group">
-                    <div className="bg-white rounded-xl p-4 border border-gray-200 hover:border-[#7C2C78] transition-colors h-full">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Shield className="h-5 w-5 text-gray-600 group-hover:text-[#7C2C78] transition-colors" />
-                        <span className="font-medium text-gray-900 group-hover:text-[#7C2C78] transition-colors">
-                          Privacy Policy
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        How we protect your personal data and privacy rights
-                      </p>
-                    </div>
-                  </Link>
-                  <Link href="/terms-and-conditions" className="group">
-                    <div className="bg-white rounded-xl p-4 border border-gray-200 hover:border-[#7C2C78] transition-colors h-full">
-                      <div className="flex items-center gap-3 mb-2">
-                        <FileText className="h-5 w-5 text-gray-600 group-hover:text-[#7C2C78] transition-colors" />
-                        <span className="font-medium text-gray-900 group-hover:text-[#7C2C78] transition-colors">
-                          Terms & Conditions
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        Complete terms of service and platform usage guidelines
-                      </p>
-                    </div>
-                  </Link>
-                  <Link href="/warranty-policy" className="group">
-                    <div className="bg-white rounded-xl p-4 border border-gray-200 hover:border-[#7C2C78] transition-colors h-full">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Package className="h-5 w-5 text-gray-600 group-hover:text-[#7C2C78] transition-colors" />
-                        <span className="font-medium text-gray-900 group-hover:text-[#7C2C78] transition-colors">
-                          Warranty Policy
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        Detailed product warranty coverage and claim procedures
-                      </p>
-                    </div>
-                  </Link>
-                  <Link href="/returns-refunds-policy" className="group">
-                    <div className="bg-white rounded-xl p-4 border border-gray-200 hover:border-[#7C2C78] transition-colors h-full">
-                      <div className="flex items-center gap-3 mb-2">
-                        <RefreshCw className="h-5 w-5 text-gray-600 group-hover:text-[#7C2C78] transition-colors" />
-                        <span className="font-medium text-gray-900 group-hover:text-[#7C2C78] transition-colors">
-                          Returns & Refunds
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        Comprehensive return, exchange, and refund procedures
-                      </p>
-                    </div>
-                  </Link>
-                </div>
-              </section>
-
-              {/* Call to Action */}
-              <div className="text-center space-y-6">
-                <div>
-                  <p className="text-gray-600 mb-4">
-                    Didn&apos;t find your answer? Our support team is ready to
-                    help you.
-                  </p>
-                  <div className="flex flex-wrap justify-center gap-4">
-                    <Button
-                      onClick={() =>
-                        document
-                          .querySelector("#contact")
-                          ?.scrollIntoView({ behavior: "smooth" })
-                      }
-                      className="bg-[#7C2C78] hover:bg-[#A43875] text-white px-8"
-                    >
-                      Contact Support Team
-                    </Button>
-                    <Button
-                      onClick={() =>
-                        window.scrollTo({ top: 0, behavior: "smooth" })
-                      }
-                      variant="outline"
-                      className="border-[#7C2C78] text-[#7C2C78] hover:bg-[#7C2C78]/10"
-                    >
-                      <ArrowUp className="h-4 w-4 mr-2" />
-                      Back to Top
-                    </Button>
-                  </div>
-                </div>
-                <p className="text-sm text-gray-500">
-                  Last Updated: January 2026 | Total Questions:{" "}
-                  {categories.reduce(
-                    (acc, cat) => acc + cat.questions.length,
-                    0
-                  )}
+            {/* Empty State */}
+            {searchQuery && displayedCategories.length === 0 && (
+              <div className="text-center py-10 bg-white rounded-lg border border-gray-200 p-6">
+                <p className="text-sm font-semibold text-gray-900 mb-1">
+                  No matching answers found
                 </p>
+                <p className="text-xs text-gray-500 mb-4">
+                  Try searching for something else or ask our support team directly.
+                </p>
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="px-3 py-1.5 text-xs font-semibold text-[#011b54] border border-[#011b54] rounded-md hover:bg-[#011b54]/5 transition-colors"
+                >
+                  Clear Search
+                </button>
               </div>
+            )}
+          </div>
+
+          {/* ── 4. Compact 1-Line Support Strip ── */}
+          <div className="mt-8 p-4 bg-white rounded-xl border border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+            <div>
+              <p className="text-xs sm:text-sm font-semibold text-gray-900">
+                Still have questions?
+              </p>
+              <p className="text-xs text-gray-500">
+                Karachi support desk is active Mon – Sat (10:00 AM – 8:00 PM PKT).
+              </p>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <a
+                href={STORE_CONFIG.whatsappLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3 py-1.5 rounded-lg bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-semibold flex items-center gap-1.5 transition-colors"
+              >
+                <MessageCircle className="w-3.5 h-3.5 fill-white" />
+                WhatsApp
+              </a>
+              <a
+                href={`mailto:${STORE_CONFIG.supportEmail}`}
+                className="px-3 py-1.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 text-xs font-medium flex items-center gap-1.5 transition-colors"
+              >
+                <Mail className="w-3.5 h-3.5" />
+                Email
+              </a>
             </div>
           </div>
         </main>

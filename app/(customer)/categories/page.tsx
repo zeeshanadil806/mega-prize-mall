@@ -8,6 +8,7 @@ import { Metadata } from "next";
 // after expiry.
 export const revalidate = 600;
 import Link from "next/link";
+import Image from "next/image";
 import {
   Smartphone,
   Headphones,
@@ -24,11 +25,11 @@ import {
   Tv,
   Wifi,
   Shield,
-  Battery,
   SmartphoneCharging,
   Package,
 } from "lucide-react";
 import { getCategoryStats } from "@/features/product/service";
+import { resolveCategoryQuery } from "@/features/product/domain";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -121,9 +122,9 @@ function getCategoryStyles(categoryName: string) {
   if (matched) return matched[1];
 
   return {
-    color: "from-[#7C2C78] to-[#A43875]",
-    bgColor: "bg-[#7C2C78]/5",
-    borderColor: "border-[#7C2C78]/10",
+    color: "from-[#011b54] to-[#022b82]",
+    bgColor: "bg-[#011b54]/5",
+    borderColor: "border-[#011b54]/10",
     description: `Shop the latest ${categoryName} at Mega Prize Mall.`,
   };
 }
@@ -177,9 +178,9 @@ export default async function CategoriesPage() {
       const styles = getCategoryStyles(catName);
       const IconComp = getCategoryIconComponent(catName);
 
-      // Get featured products for this category
+      // Get featured products for this category using unified query mapping
       const featuredProducts = await ProductModel.find({
-        category: catName,
+        category: resolveCategoryQuery(catName),
         isActive: true,
         isFeatured: true,
       })
@@ -285,7 +286,7 @@ export default async function CategoriesPage() {
         }}
       />
       {/* Hero Section */}
-      <div className="bg-linear-to-r from-[#7C2C78] via-[#8A347D] to-[#A43875] text-white">
+      <div className="bg-linear-to-r from-[#011b54] via-[#022b82] to-[#011b54] text-white">
         <div className="container mx-auto px-4 py-12">
           <div className="max-w-3xl">
             <Badge className="mb-4 bg-white/20 text-white border-0 backdrop-blur-sm">
@@ -304,7 +305,7 @@ export default async function CategoriesPage() {
               <Link href="/products">
                 <Button
                   size="lg"
-                  className="bg-white text-[#7C2C78] hover:bg-white/90"
+                  className="bg-white text-[#011b54] hover:bg-white/90"
                 >
                   <ShoppingBag className="h-4 w-4 mr-2" />
                   View All Products
@@ -375,11 +376,13 @@ export default async function CategoriesPage() {
                         className="flex items-center gap-3 p-2 rounded-lg bg-white/50"
                       >
                         {product.images?.[0]?.url && (
-                          <div className="h-10 w-10 rounded-lg bg-gray-100 overflow-hidden">
-                            <img
+                          <div className="h-10 w-10 rounded-lg bg-gray-100 overflow-hidden relative shrink-0">
+                            <Image
                               src={product.images[0].url}
                               alt={product.name}
-                              className="h-full w-full object-cover"
+                              fill
+                              sizes="40px"
+                              className="object-cover"
                             />
                           </div>
                         )}
@@ -429,7 +432,7 @@ export default async function CategoriesPage() {
             {/* Bargain Zone */}
             <Link href="/products?bargain=true">
               <div className="relative rounded-2xl overflow-hidden group cursor-pointer">
-                <div className="absolute inset-0 bg-linear-to-r from-[#EAB75F] via-[#F6B945] to-[#FF9F45] opacity-90 z-10" />
+                <div className="absolute inset-0 bg-linear-to-r from-[#011b54] via-[#F6B945] to-[#022b82] opacity-90 z-10" />
                 <div className="absolute inset-0 bg-black/20 z-20 group-hover:opacity-0 transition-opacity" />
                 <div className="relative z-30 p-8 text-white">
                   <div className="h-14 w-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-6">
@@ -452,7 +455,7 @@ export default async function CategoriesPage() {
             {/* Featured Products */}
             <Link href="/products?sortBy=popular">
               <div className="relative rounded-2xl overflow-hidden group cursor-pointer">
-                <div className="absolute inset-0 bg-linear-to-r from-[#7C2C78] via-[#8A347D] to-[#A43875] opacity-90 z-10" />
+                <div className="absolute inset-0 bg-linear-to-r from-[#011b54] via-[#022b82] to-[#011b54] opacity-90 z-10" />
                 <div className="absolute inset-0 bg-black/20 z-20 group-hover:opacity-0 transition-opacity" />
                 <div className="relative z-30 p-8 text-white">
                   <div className="h-14 w-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-6">
@@ -475,7 +478,7 @@ export default async function CategoriesPage() {
             {/* Best Sellers */}
             <Link href="/products?sortBy=popular">
               <div className="relative rounded-2xl overflow-hidden group cursor-pointer">
-                <div className="absolute inset-0 bg-linear-to-r from-[#2E297D] via-[#4A3FAD] to-[#7C2C78] opacity-90 z-10" />
+                <div className="absolute inset-0 bg-linear-to-r from-[#011b54] via-[#022b82] to-[#011b54] opacity-90 z-10" />
                 <div className="absolute inset-0 bg-black/20 z-20 group-hover:opacity-0 transition-opacity" />
                 <div className="relative z-30 p-8 text-white">
                   <div className="h-14 w-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-6">
@@ -535,7 +538,7 @@ export default async function CategoriesPage() {
               <Link href="/products?search=">
                 <Button
                   size="lg"
-                  className="bg-linear-to-r from-[#7C2C78] to-[#A43875]"
+                  className="bg-linear-to-r from-[#011b54] to-[#022b82]"
                 >
                   Use Advanced Search
                 </Button>

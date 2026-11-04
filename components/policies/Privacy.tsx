@@ -291,7 +291,7 @@ export default function PrivacyPolicyPage() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   href="/"
-                  className="text-[#7C2C78] hover:text-[#A43875]"
+                  className="text-[#011b54] hover:text-[#022b82]"
                 >
                   Home
                 </BreadcrumbLink>
@@ -307,7 +307,7 @@ export default function PrivacyPolicyPage() {
         </div>
 
         {/* Hero Section with Semantic HTML */}
-        <header className="bg-linear-to-r from-[#7C2C78] via-[#8A347D] to-[#A43875] text-white">
+        <header className="bg-linear-to-r from-[#011b54] via-[#022b82] to-[#011b54] text-white">
           <div className="container mx-auto px-4 py-12 md:py-16">
             <div className="max-w-4xl mx-auto text-center">
               <div
@@ -425,7 +425,7 @@ export default function PrivacyPolicyPage() {
                       >
                         {section.title}
                       </h2>
-                      <div className="w-16 h-1 bg-linear-to-r from-[#7C2C78] to-[#A43875] rounded-full mt-2"></div>
+                      <div className="w-16 h-1 bg-linear-to-r from-[#011b54] to-[#022b82] rounded-full mt-2"></div>
                       <meta
                         itemProp="description"
                         content={section.description}
@@ -448,7 +448,7 @@ export default function PrivacyPolicyPage() {
                             <div key={idx} className="flex gap-4">
                               {hasIcon(item) && (
                                 <div className="h-10 w-10 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
-                                  <item.icon className="h-5 w-5 text-[#7C2C78]" />
+                                  <item.icon className="h-5 w-5 text-[#011b54]" />
                                 </div>
                               )}
                               <div>
@@ -468,7 +468,7 @@ export default function PrivacyPolicyPage() {
                         <ul className="space-y-3">
                           {section.items.map((item, idx) => (
                             <li key={idx} className="flex items-start gap-3">
-                              <div className="h-2 w-2 rounded-full bg-[#7C2C78] mt-2 shrink-0"></div>
+                              <div className="h-2 w-2 rounded-full bg-[#011b54] mt-2 shrink-0"></div>
                               <span className="text-gray-700 leading-relaxed">
                                 {typeof item === "string"
                                   ? item
@@ -486,18 +486,18 @@ export default function PrivacyPolicyPage() {
               {/* Contact Section */}
               <section id="contact" className="scroll-mt-24">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="h-12 w-12 rounded-xl bg-linear-to-r from-[#2E297D] to-[#7C2C78] flex items-center justify-center">
+                  <div className="h-12 w-12 rounded-xl bg-linear-to-r from-[#011b54] to-[#022b82] flex items-center justify-center">
                     <Mail className="h-6 w-6 text-white" />
                   </div>
                   <div>
                     <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
                       Contact Our Privacy Team
                     </h2>
-                    <div className="w-16 h-1 bg-linear-to-r from-[#7C2C78] to-[#A43875] rounded-full mt-2"></div>
+                    <div className="w-16 h-1 bg-linear-to-r from-[#011b54] to-[#022b82] rounded-full mt-2"></div>
                   </div>
                 </div>
 
-                <div className="bg-linear-to-r from-[#7C2C78] to-[#A43875] rounded-2xl p-8 text-white">
+                <div className="bg-linear-to-r from-[#011b54] to-[#022b82] rounded-2xl p-8 text-white">
                   <div className="max-w-2xl">
                     <h3 className="text-xl font-bold mb-4">
                       Data Protection Officer
@@ -573,7 +573,7 @@ export default function PrivacyPolicyPage() {
 
               {/* Important Notes with Warning Schema */}
               <div
-                className="bg-linear-to-r from-[#EAB75F]/10 to-[#FF9F45]/10 rounded-2xl p-6 md:p-8 border border-[#EAB75F]/20"
+                className="bg-linear-to-r from-[#011b54]/10 to-[#022b82]/10 rounded-2xl p-6 md:p-8 border border-[#011b54]/20"
                 itemScope
                 itemType="https://schema.org/Warning"
               >
@@ -582,7 +582,7 @@ export default function PrivacyPolicyPage() {
                 </h3>
                 <div className="space-y-4">
                   <div className="flex gap-3">
-                    <div className="h-6 w-6 rounded-full bg-[#EAB75F] flex items-center justify-center shrink-0">
+                    <div className="h-6 w-6 rounded-full bg-[#011b54] flex items-center justify-center shrink-0">
                       <span className="text-white text-sm font-bold">!</span>
                     </div>
                     <p className="text-gray-700">
@@ -597,7 +597,7 @@ export default function PrivacyPolicyPage() {
                     </p>
                   </div>
                   <div className="flex gap-3">
-                    <div className="h-6 w-6 rounded-full bg-[#EAB75F] flex items-center justify-center shrink-0">
+                    <div className="h-6 w-6 rounded-full bg-[#011b54] flex items-center justify-center shrink-0">
                       <span className="text-white text-sm font-bold">!</span>
                     </div>
                     <p className="text-gray-700">
@@ -609,7 +609,7 @@ export default function PrivacyPolicyPage() {
                     </p>
                   </div>
                   <div className="flex gap-3">
-                    <div className="h-6 w-6 rounded-full bg-[#EAB75F] flex items-center justify-center shrink-0">
+                    <div className="h-6 w-6 rounded-full bg-[#011b54] flex items-center justify-center shrink-0">
                       <span className="text-white text-sm font-bold">!</span>
                     </div>
                     <p className="text-gray-700">
@@ -621,7 +621,7 @@ export default function PrivacyPolicyPage() {
                     </p>
                   </div>
                   <div className="flex gap-3">
-                    <div className="h-6 w-6 rounded-full bg-[#EAB75F] flex items-center justify-center shrink-0">
+                    <div className="h-6 w-6 rounded-full bg-[#011b54] flex items-center justify-center shrink-0">
                       <span className="text-white text-sm font-bold">!</span>
                     </div>
                     <p className="text-gray-700">
@@ -648,7 +648,7 @@ export default function PrivacyPolicyPage() {
                         .getElementById("contact")
                         ?.scrollIntoView({ behavior: "smooth" })
                     }
-                    className="bg-[#7C2C78] hover:bg-[#A43875] text-white px-8"
+                    className="bg-[#011b54] hover:bg-[#022b82] text-white px-8"
                   >
                     Contact Privacy Team
                   </Button>
@@ -659,7 +659,7 @@ export default function PrivacyPolicyPage() {
                       window.scrollTo({ top: 0, behavior: "smooth" })
                     }
                     variant="outline"
-                    className="border-[#7C2C78] text-[#7C2C78] hover:bg-[#7C2C78]/10"
+                    className="border-[#011b54] text-[#011b54] hover:bg-[#011b54]/10"
                   >
                     <ArrowUp className="h-4 w-4 mr-2" />
                     Back to Top

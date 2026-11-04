@@ -12,6 +12,7 @@ import type {
   ProductListingFilters,
   ListingProductForSchema,
   CategoryStat,
+  MegaMenuProduct,
 } from "./domain";
 
 // ─── Reads scoped to "active product catalog" ──────────────────────
@@ -111,3 +112,74 @@ export async function findProductsForListing(
 
   return { products, totalCount };
 }
+
+// ─── Real Mega Menu Product Showcase ──────────────────────────────
+export async function findHeaderMegaMenuProducts(): Promise<Record<string, MegaMenuProduct[]>> {
+  const groups: Record<string, string[]> = {
+    audio: ["Audio and Multimedia", "Earphones and Headphones"],
+    watches: ["Smart Wearables", "Smart Watches"],
+    powerbanks: ["Power Banks"],
+    chargers: ["Chargers and Cables", "Chargers & Cables"],
+    holders: ["Mobile Holders"],
+    gaming: ["Gaming Accessories"],
+  };
+
+  const results: Record<string, MegaMenuProduct[]> = {};
+
+  await Promise.all(
+    Object.entries(groups).map(async ([key, categories]) => {
+      const docs = await ProductModel.find({
+        isActive: true,
+        category: { $in: categories },
+      })
+        .select("name slug price discountedPrice images bargainEnabled category brand isBestSeller isNewArrival isFeatured")
+        .sort({ isFeatured: -1, purchaseCount: -1, createdAt: -1 })
+        .limit(4)
+        .lean<{
+          _id: unknown;
+          name: string;
+          slug: string;
+          price: number;
+          discountedPrice?: number;
+          images?: Array<{ url: string }>;
+          bargainEnabled?: boolean;
+          category?: string;
+          brand?: string;
+          isBestSeller?: boolean;
+          isNewArrival?: boolean;
+          isFeatured?: boolean;
+        }[]>();
+
+      results[key] = docs.map((doc) => {
+        const finalPrice = doc.discountedPrice || doc.price;
+        const hasDiscount = !!doc.discountedPrice && doc.discountedPrice < doc.price;
+        const discountPercentage = hasDiscount
+          ? Math.round(((doc.price - doc.discountedPrice!) / doc.price) * 100)
+          : 0;
+
+        let tag: string | undefined;
+        if (doc.isBestSeller) tag = "Best Seller";
+        else if (doc.isNewArrival) tag = "New Launch";
+        else if (discountPercentage >= 15) tag = `${discountPercentage}% OFF`;
+
+        return {
+          id: String(doc._id),
+          name: doc.name,
+          slug: doc.slug,
+          price: finalPrice,
+          originalPrice: hasDiscount ? doc.price : undefined,
+          discountPercentage: discountPercentage > 0 ? discountPercentage : undefined,
+          imageUrl: doc.images?.[0]?.url || "/placeholder.png",
+          bargainEnabled: !!doc.bargainEnabled,
+          category: doc.category,
+          brand: doc.brand,
+          tag,
+          rating: 5,
+        };
+      });
+    })
+  );
+
+  return results;
+}
+

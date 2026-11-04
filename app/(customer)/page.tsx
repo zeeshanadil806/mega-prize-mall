@@ -1,7 +1,7 @@
-// app/page.tsx
+// app/(customer)/page.tsx
 import { Metadata } from "next";
 import HeroSection from "@/components/home/HeroSection";
-import CategoriesSection from "@/components/home/CategoriesSection";
+import CategoryCapsules from "@/components/home/CategoryCapsules";
 import HowItWorks from "@/components/home/HowItWorks";
 import LuckyDrawPopup from "@/components/home/LuckyDrawPopup";
 import FeaturedProducts from "@/components/home/FeaturedProducts";
@@ -92,14 +92,28 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen">
+      {/* 1. Promotional Lucky Draw Overlay */}
       <LuckyDrawPopup />
+
+      {/* 2. Ronin-style High-Tech Hero Banner Slider */}
       <HeroSection />
+
+      {/* 3. Circular Category Capsule Bar (Quick Navigation) */}
+      <CategoryCapsules categoryStats={categoryStats} />
+
+      {/* 4. Featured Products Carousel (Instant Product Discovery - Right on First Viewport!) */}
       <FeaturedProducts products={featured} />
-      <NewArrivals products={newArrivals} />
-      <CategoriesSection categoryStats={categoryStats} />
-      <HowItWorks />
+
+      {/* 5. Live Bargain Zone Showcase */}
       <BargainZone products={bargain} />
+
+      {/* 6. Fresh New Arrivals Grid */}
+      <NewArrivals products={newArrivals} />
+
+      {/* 7. Gamification Guide - How Bargain & Lucky Draw Works */}
+      <HowItWorks />
     </div>
   );
 }
+
 

@@ -117,8 +117,12 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html,
   body {
     @apply bg-background text-foreground;
+    max-width: 100%;
+    overflow-x: hidden;
+    position: relative;
   }
 }
 
@@ -169,7 +173,7 @@
 
 /* Gradient text animation */
 .gradient-text {
-  background: linear-gradient(90deg, #7C2C78, #EAB75F, #2E297D, #A43875);
+  background: linear-gradient(90deg, #011b54, #022b82, #00133d, #011b54);
   background-size: 300% 300%;
   animation: gradient 8s ease infinite;
   -webkit-background-clip: text;
@@ -206,4 +210,199 @@ html {
 
 .animate-pulse-glow {
   animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* ── Periodic CTA Attention Grabber (Vibration / Nudge / Shimmer every 2.8s) ── */
+@keyframes cta-vibrate {
+  0%, 72%, 100% {
+    transform: scale(1) rotate(0deg);
+    box-shadow: 0 4px 15px rgba(1, 27, 84, 0.25);
+  }
+  75% {
+    transform: scale(1.03) rotate(-1.5deg);
+    box-shadow: 0 8px 25px rgba(1, 27, 84, 0.45), 0 0 15px rgba(2, 43, 130, 0.35);
+  }
+  78% {
+    transform: scale(1.04) rotate(1.5deg);
+    box-shadow: 0 10px 30px rgba(1, 27, 84, 0.55), 0 0 20px rgba(2, 43, 130, 0.45);
+  }
+  81% {
+    transform: scale(1.03) rotate(-1deg);
+    box-shadow: 0 8px 25px rgba(1, 27, 84, 0.45), 0 0 15px rgba(2, 43, 130, 0.35);
+  }
+  84% {
+    transform: scale(1.02) rotate(1deg);
+  }
+  87% {
+    transform: scale(1.01) rotate(0deg);
+  }
+  90% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes cta-sheen {
+  0%, 70% {
+    transform: translateX(-100%) skewX(-20deg);
+    opacity: 0;
+  }
+  75% {
+    opacity: 0.7;
+  }
+  85% {
+    transform: translateX(250%) skewX(-20deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(250%) skewX(-20deg);
+    opacity: 0;
+  }
+}
+
+.animate-cta-attention {
+  animation: cta-vibrate 2.8s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+}
+
+.animate-cta-sheen {
+  animation: cta-sheen 2.8s ease-in-out infinite;
+}
+
+/* ── Header Gradient Bottom Border ── */
+.header-gradient-border {
+  position: relative;
+}
+.header-gradient-border::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(1, 27, 84, 0.4) 20%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(1, 27, 84, 0.4) 80%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+/* ── Logo Sheen / Metallic Pulse ── */
+@keyframes logo-sheen-breathe {
+  0%, 100% {
+    background-position: 0% 50%;
+    filter: drop-shadow(0 0 0px transparent);
+  }
+  50% {
+    background-position: 100% 50%;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+  }
+}
+
+.logo-gold-pulse,
+.logo-sheen {
+  background: linear-gradient(90deg, #FFFFFF, #E2E8F0, #93C5FD, #FFFFFF);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: logo-sheen-breathe 3.5s ease-in-out infinite;
+}
+
+/* ── Mega-menu Card Shine Sweep ── */
+@keyframes card-shine {
+  0% {
+    transform: translateX(-120%) skewX(-18deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.5;
+  }
+  40% {
+    transform: translateX(220%) skewX(-18deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(220%) skewX(-18deg);
+    opacity: 0;
+  }
+}
+
+.mega-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.mega-card-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.07) 50%,
+    transparent 70%
+  );
+  transform: translateX(-120%) skewX(-18deg);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.mega-card:hover .mega-card-shine {
+  animation: card-shine 0.65s ease forwards;
+}
+
+/* ── Marquee Ticker ── */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  animation: marquee 22s linear infinite;
+  will-change: transform;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* ── Hover background utility ── */
+.hover\:bg-white\/8:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+.bg-white\/\[0\.04\] {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+.bg-white\/\[0\.03\] {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+.bg-white\/8 {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+.border-white\/8 {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.bg-white\/6 {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+.border-white\/6 {
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+/* ── Hide scrollbar for clean horizontal snap carousels ── */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ── Prevent Next.js dev portal / indicators from obscuring mobile bottom action bars ── */
+@media (max-width: 640px) {
+  nextjs-portal {
+    display: none !important;
+  }
 }

@@ -568,7 +568,7 @@ interface ActionResponse {
                     <TableRow key={account.id} className="hover:bg-muted/50">
                       <TableCell>
                         <div className="flex items-center gap-3">
-                          <div className="h-10 w-10 rounded-full bg-linear-to-br from-[#EAB75F] to-[#A43875] flex items-center justify-center text-white font-bold">
+                          <div className="h-10 w-10 rounded-full bg-linear-to-br from-[#011b54] to-[#022b82] flex items-center justify-center text-white font-bold">
                             {account.name.charAt(0).toUpperCase()}
                           </div>
                           <div>

@@ -218,7 +218,7 @@ export default function UsersTable({
                 <TableRow key={user._id} className="hover:bg-gray-50">
                   <TableCell>
                     <div className="flex items-center space-x-3">
-                      <div className="h-10 w-10 rounded-full bg-linear-to-br from-[#EAB75F] to-[#A43875] flex items-center justify-center text-white font-bold">
+                      <div className="h-10 w-10 rounded-full bg-linear-to-br from-[#011b54] to-[#022b82] flex items-center justify-center text-white font-bold">
                         {user.name?.charAt(0).toUpperCase() || 'U'}
                       </div>
                       <div>
@@ -239,7 +239,7 @@ export default function UsersTable({
                   <TableCell>{getRoleBadge(user.role)}</TableCell>
                   <TableCell>
                     <div className="flex items-center">
-                      <Gift className="h-4 w-4 mr-2 text-[#EAB75F]" />
+                      <Gift className="h-4 w-4 mr-2 text-[#011b54]" />
                       <span className="font-bold text-gray-900">{user.points}</span>
                       <span className="text-sm text-gray-500 ml-1">
                         (Rs {getPointsValue(user.points).toFixed(2)})
@@ -248,7 +248,7 @@ export default function UsersTable({
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center">
-                      <Users className="h-4 w-4 mr-2 text-[#7C2C78]" />
+                      <Users className="h-4 w-4 mr-2 text-[#011b54]" />
                       <span className="font-medium">{user.totalReferrals}</span>
                     </div>
                   </TableCell>

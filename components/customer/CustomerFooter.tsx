@@ -3,10 +3,9 @@
 import { motion } from "framer-motion";
 import {
   Facebook,
-  Twitter,
   Instagram,
-  Youtube,
   Shield,
+  ShieldCheck,
   Truck,
   CreditCard,
   HelpCircle,
@@ -50,55 +49,57 @@ export default function CustomerFooter() {
 
   const features = [
     {
-      icon: Shield,
-      title: "Secure Payments",
-      desc: "100% secure transactions",
+      icon: ShieldCheck,
+      title: "100% Authentic",
+      desc: "Verified genuine & warranty",
     },
     {
       icon: Truck,
-      title: "Fast Shipping",
-      desc: "3-5 business days across Pakistan",
+      title: "Express Shipping",
+      desc: "Cash on delivery nationwide",
     },
     {
-      icon: CreditCard,
+      icon: RefreshCw,
       title: "Easy Returns",
-      desc: "72-hour return window",
+      desc: "Hassle-free 72h window",
     },
     {
       icon: Gift,
       title: "Shop & Win",
-      desc: "Win prizes with every purchase",
+      desc: "Draw entries on every order",
     },
   ];
 
   const socialLinks = [
     { icon: Facebook, href: "https://www.facebook.com/share/185WjBxPwM/", label: "Facebook" },
-    // { icon: Twitter, href: "https://www.tiktok.com/@mega.prize.mall?_r=1&_t=ZS-92NZ1rNTia5", label: "Tiktok" },
     { icon: Instagram, href: "https://www.instagram.com/megaprizemall?igsh=MWZzdDAwOHB2bTkyMQ==", label: "Instagram" },
-    // { icon: Youtube, href: "#", label: "YouTube" },
   ];
 
   return (
-    <footer className="bg-linear-to-b from-white to-gray-50 border-t border-gray-200 mt-10">
-      {/* Features Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <footer className="bg-linear-to-b from-white to-gray-50 border-t border-gray-200 mt-4 sm:mt-6">
+      {/* Features Bar - Sleek 2x2 App Grid on Mobile, 4-col on Desktop */}
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8 border-b border-gray-150/70">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3.5 md:gap-5">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ delay: index * 0.06 }}
               viewport={{ once: true }}
-              whileHover={{ y: -5 }}
-              className="flex items-center space-x-4 p-4 rounded-2xl bg-white shadow-sm hover:shadow-md transition-shadow border border-gray-100"
+              whileHover={{ y: -3 }}
+              className="flex items-center gap-2.5 sm:gap-3.5 p-2.5 sm:p-3.5 md:p-4 rounded-xl sm:rounded-2xl bg-white shadow-2xs hover:shadow-xs transition-all border border-gray-150/80 hover:border-[#011b54]/25"
             >
-              <div className="p-3 rounded-xl bg-linear-to-br from-[#7C2C78]/10 to-[#EAB75F]/10">
-                <feature.icon className="h-6 w-6 text-[#7C2C78]" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-[#011b54]/8 text-[#011b54] flex items-center justify-center shrink-0">
+                <feature.icon className="h-4 w-4 sm:h-5 sm:w-5 stroke-[1.9]" />
               </div>
-              <div>
-                <h3 className="font-semibold text-gray-900">{feature.title}</h3>
-                <p className="text-sm text-gray-600">{feature.desc}</p>
+              <div className="min-w-0 flex-1">
+                <h3 className="text-[11.5px] sm:text-xs md:text-sm font-bold text-gray-900 leading-tight truncate">
+                  {feature.title}
+                </h3>
+                <p className="text-[9.5px] sm:text-[11px] md:text-xs text-gray-500 font-medium leading-tight mt-0.5 sm:mt-1 truncate">
+                  {feature.desc}
+                </p>
               </div>
             </motion.div>
           ))}
@@ -106,36 +107,31 @@ export default function CustomerFooter() {
       </div>
 
       {/* Main Footer */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-24 sm:pb-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <div className="flex items-center space-x-3 mb-6">
+            <div className="mb-6">
               <motion.div
-                whileHover={{ scale: 1.05 }}
-                className="relative h-10 w-10 sm:h-12 sm:w-12"
+                whileHover={{ scale: 1.02 }}
+                className="relative h-10 sm:h-12 w-44 sm:w-52 mb-3"
               >
                 <Image
-                  src="/logo.png"
+                  src="/logo-dark.png"
                   alt="Mega Prize Mall"
                   fill
-                  className="object-contain"
-                  sizes="(max-width: 640px) 40px, 48px"
+                  className="object-contain object-left"
+                  sizes="(max-width: 640px) 176px, 208px"
                 />
               </motion.div>
-              <div>
-                <h2 className="text-2xl font-bold bg-linear-to-r from-[#7C2C78] to-[#A43875] bg-clip-text text-transparent">
-                  Mega Prize Mall
-                </h2>
-                <p className="text-gray-600 text-sm">
-                  Unbeatable Deals Every Day!
-                </p>
-              </div>
+              <p className="text-gray-600 text-sm font-medium">
+                Your Luck, Your Price, Your Mall
+              </p>
             </div>
-            <p className="text-gray-600 mb-6 max-w-md">
+            <p className="text-gray-600 mb-6 max-w-md text-sm leading-relaxed">
               Your one-stop destination for premium mobile accessories, gadgets,
               and tech products with exciting deals, bargains, and lucky draw
-              promotions.
+              promotions across Pakistan.
             </p>
             <div className="flex space-x-4">
               {socialLinks.map((social) => (
@@ -145,7 +141,7 @@ export default function CustomerFooter() {
                   whileTap={{ scale: 0.95 }}
                   href={social.href}
                   aria-label={social.label}
-                  className="p-2 rounded-full bg-gray-100 hover:bg-linear-to-r hover:from-[#7C2C78] hover:to-[#A43875] group transition-all"
+                  className="p-2.5 rounded-full bg-gray-100 hover:bg-[#011b54] group transition-all"
                 >
                   <social.icon className="h-5 w-5 text-gray-600 group-hover:text-white" />
                 </motion.a>
@@ -168,10 +164,10 @@ export default function CustomerFooter() {
                   >
                     <Link
                       href={link.href}
-                      className="flex items-center space-x-2 text-gray-600 hover:text-[#7C2C78] transition-colors text-sm group"
+                      className="flex items-center space-x-2 text-gray-600 hover:text-[#011b54] transition-colors text-sm group"
                     >
                       {link.icon && (
-                        <link.icon className="h-4 w-4 opacity-70 group-hover:opacity-100" />
+                        <link.icon className="h-4 w-4 opacity-70 group-hover:opacity-100 group-hover:text-[#011b54]" />
                       )}
                       <span>{link.name}</span>
                     </Link>
@@ -183,12 +179,12 @@ export default function CustomerFooter() {
         </div>
 
         {/* Legal Notice */}
-        <div className="mt-6 mb-2 border-t border-gray-100">
+        <div className="mt-6 mb-2 border-t border-gray-100 pt-4">
           <p className="text-xs text-gray-500 text-center">
             Mega Prize Mall operates as an independent e-commerce platform.
             Shop-n-Win is a promotional program, not a lottery or gambling
             activity. No purchase guarantees winning. See our{" "}
-            <Link href="/disclaimer" className="text-[#7C2C78] hover:underline">
+            <Link href="/disclaimer" className="text-[#011b54] font-medium hover:underline">
               Disclaimer
             </Link>{" "}
             for full details.
@@ -207,7 +203,7 @@ export default function CustomerFooter() {
                 href="https://alphaintellisense.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#7C2C78] hover:underline font-medium"
+                className="text-[#011b54] hover:underline font-medium"
               >
                 Alpha Intellisense
               </Link>
@@ -217,13 +213,13 @@ export default function CustomerFooter() {
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link
               href="/privacy-policy"
-              className="text-gray-600 hover:text-[#7C2C78] text-sm transition-colors"
+              className="text-gray-600 hover:text-[#011b54] text-sm transition-colors"
             >
               Privacy Policy
             </Link>
             <Link
               href="/terms-and-conditions"
-              className="text-gray-600 hover:text-[#7C2C78] text-sm transition-colors"
+              className="text-gray-600 hover:text-[#011b54] text-sm transition-colors"
             >
               Terms & Conditions
             </Link>

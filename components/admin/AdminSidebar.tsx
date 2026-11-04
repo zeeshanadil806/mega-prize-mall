@@ -169,7 +169,7 @@ const getFilteredNavItems = (): NavItem[] => {
       <div className="flex items-center justify-center h-20 px-6 border-b border-gray-200 shrink-0">
         <Link href={"/"} className="flex items-center space-x-3">
           <div className="relative w-10 h-10">
-            <div className="absolute inset-0 bg-linear-to-br from-[#7C2C78] to-[#A43875] rounded-lg flex items-center justify-center">
+            <div className="absolute inset-0 bg-linear-to-br from-[#011b54] to-[#022b82] rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">M</span>
             </div>
           </div>
@@ -211,7 +211,7 @@ const getFilteredNavItems = (): NavItem[] => {
                   className={cn(
                     "w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 group",
                     isChildActive
-                      ? "bg-gray-50 text-[#7C2C78]"
+                      ? "bg-gray-50 text-[#011b54]"
                       : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                   )}
                 >
@@ -220,7 +220,7 @@ const getFilteredNavItems = (): NavItem[] => {
                       className={cn(
                         "mr-3 h-5 w-5",
                         isChildActive
-                          ? "text-[#7C2C78]"
+                          ? "text-[#011b54]"
                           : "text-gray-400 group-hover:text-gray-500"
                       )}
                     />
@@ -239,7 +239,7 @@ const getFilteredNavItems = (): NavItem[] => {
                   className={cn(
                     "flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 group",
                     isActive
-                      ? "bg-linear-to-r from-[#7C2C78]/10 to-[#A43875]/10 text-[#7C2C78] border-l-4 border-[#7C2C78]"
+                      ? "bg-linear-to-r from-[#011b54]/10 to-[#022b82]/10 text-[#011b54] border-l-4 border-[#011b54]"
                       : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                   )}
                 >
@@ -247,7 +247,7 @@ const getFilteredNavItems = (): NavItem[] => {
                     className={cn(
                       "mr-3 h-5 w-5",
                       isActive
-                        ? "text-[#7C2C78]"
+                        ? "text-[#011b54]"
                         : "text-gray-400 group-hover:text-gray-500"
                     )}
                   />
@@ -269,7 +269,7 @@ const getFilteredNavItems = (): NavItem[] => {
                         className={cn(
                           "flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200",
                           isChildLinkActive
-                            ? "text-[#7C2C78] bg-[#7C2C78]/5"
+                            ? "text-[#011b54] bg-[#011b54]/5"
                             : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
                         )}
                       >
@@ -277,7 +277,7 @@ const getFilteredNavItems = (): NavItem[] => {
                           className={cn(
                             "mr-3 h-4 w-4",
                             isChildLinkActive
-                              ? "text-[#7C2C78]"
+                              ? "text-[#011b54]"
                               : "text-gray-400"
                           )}
                         />

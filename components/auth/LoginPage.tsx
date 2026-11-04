@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-[#2E297D]/5 via-white to-[#EAB75F]/5 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-[#011b54]/5 via-white to-[#011b54]/5 p-4">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -15,8 +15,8 @@ export default function LoginPage() {
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
           {/* Logo/Brand Header */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-linear-to-r from-[#7C2C78]/10 to-[#A43875]/10 mb-4">
-              <span className="text-[#7C2C78] font-bold text-sm">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-linear-to-r from-[#011b54]/10 to-[#022b82]/10 mb-4">
+              <span className="text-[#011b54] font-bold text-sm">
                 Mega Prize Mall
               </span>
             </div>
@@ -35,7 +35,7 @@ export default function LoginPage() {
               Don&apos;t have an account?{" "}
               <Link 
                 href="/register" 
-                className="text-[#7C2C78] hover:text-[#A43875] font-semibold transition-colors"
+                className="text-[#011b54] hover:text-[#022b82] font-semibold transition-colors"
               >
                 Create Account
               </Link>
@@ -51,8 +51,8 @@ export default function LoginPage() {
         </div>
 
         {/* Decorative Elements */}
-        <div className="absolute top-0 left-0 w-64 h-64 rounded-full bg-linear-to-r from-[#2E297D]/10 to-transparent blur-3xl -z-10" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-linear-to-l from-[#EAB75F]/10 to-transparent blur-3xl -z-10" />
+        <div className="absolute top-0 left-0 w-64 h-64 rounded-full bg-linear-to-r from-[#011b54]/10 to-transparent blur-3xl -z-10" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-linear-to-l from-[#011b54]/10 to-transparent blur-3xl -z-10" />
       </motion.div>
     </div>
   )

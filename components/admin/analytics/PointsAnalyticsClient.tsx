@@ -454,7 +454,7 @@ export default function PointsAnalyticsClient() {
                 <CardDescription>Current points balance valuation</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="text-center p-6 bg-linear-to-br from-[#7C2C78] to-[#A43875] rounded-lg">
+                <div className="text-center p-6 bg-linear-to-br from-[#011b54] to-[#022b82] rounded-lg">
                   <div className="text-4xl font-bold text-white mb-2">
                     {formatCurrency((summary?.totalEarned?.value || 0) - (summary?.totalRedeemed?.value || 0))}
                   </div>

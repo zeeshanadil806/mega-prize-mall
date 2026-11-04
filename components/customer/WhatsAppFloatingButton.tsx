@@ -130,12 +130,12 @@ export default function WhatsAppFloatingButton({
             filter: "drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15))" 
           }}
         >
-          {/* Tooltip on hover */}
+          {/* Tooltip on hover (desktop only; hidden on touch/mobile to prevent off-screen overflow) */}
           <div className="relative group">
-            <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-              <div className="bg-gray-900 text-white text-sm px-3 py-2 rounded-lg whitespace-nowrap">
+            <div className="hidden md:block absolute -top-12 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+              <div className="bg-gray-900 text-white text-sm px-3 py-2 rounded-lg whitespace-nowrap shadow-md">
                 Chat with us on WhatsApp
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-gray-900"></div>
+                <div className="absolute bottom-0 right-6 transform translate-y-1/2 rotate-45 w-2 h-2 bg-gray-900"></div>
               </div>
             </div>
 

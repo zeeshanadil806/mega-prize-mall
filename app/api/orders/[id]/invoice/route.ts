@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/auth";
 import { connectToDatabase } from "@/lib/mongodb";
 import { OrderModel } from "@/models/Order";
-import { requireSession, notFound } from "@/shared/http";
+import { UserModel } from "@/models/User";
+import { notFound } from "@/shared/http";
 import { formatCurrency } from "@/shared/format";
 import { Types } from "mongoose";
 import { log } from "@/lib/logger";
@@ -57,39 +59,61 @@ async function getJsPDF() {
   return { jsPDF };
 }
 
-interface InvoiceQuery {
-  _id: string;
-  userId?: string;
-}
-
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await requireSession();
-    if (!session.ok) return session.response;
-
     const { id } = await params;
     await connectToDatabase();
 
-    // Check permissions
-    const UserModel = (await import("@/models/User")).UserModel;
-    const user = await UserModel.findById(session.user.id);
-    const isAdmin = user?.role === "admin";
-
-    const query: InvoiceQuery = { _id: id };
-    if (!isAdmin) {
-      query.userId = session.user.id;
-    }
-
     // Fetch Order
-    const order = (await OrderModel.findOne(
-      query
-    ).lean()) as unknown as InvoiceOrder;
+    const order = (await OrderModel.findById(id).lean()) as unknown as (InvoiceOrder & {
+      guestSessionId?: string;
+      guestPhone?: string;
+    }) | null;
 
     if (!order) {
       return notFound("Order not found");
+    }
+
+    // Check permissions (Admin, Registered Customer, or Verified Guest)
+    const session = await auth();
+    let isAllowed = false;
+
+    if (session?.user?.id) {
+      const user = await UserModel.findById(session.user.id);
+      const isAdmin = user?.role === "admin";
+
+      if (isAdmin || (order.userId && order.userId === session.user.id)) {
+        isAllowed = true;
+      } else if (
+        order.isGuestOrder &&
+        (session.user.id === order.guestSessionId ||
+          session.user.id === order.guestPhone)
+      ) {
+        isAllowed = true;
+      }
+    }
+
+    if (!isAllowed && order.isGuestOrder) {
+      const searchParams = request.nextUrl.searchParams;
+      const phoneVerify = searchParams.get("phone")?.trim();
+      const guestSessionVerify = searchParams.get("guestSessionId")?.trim();
+
+      if (
+        (phoneVerify &&
+          (phoneVerify === order.shippingAddress?.phone ||
+            phoneVerify === order.guestPhone)) ||
+        (guestSessionVerify &&
+          guestSessionVerify === order.guestSessionId)
+      ) {
+        isAllowed = true;
+      }
+    }
+
+    if (!isAllowed) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const orderIdString = order._id.toString();
@@ -116,15 +140,15 @@ export async function GET(
       compress: true,
     });
 
-    // Colors for professional design
-    const primaryColor = [41, 128, 185]; // Blue
-    const secondaryColor = [52, 152, 219]; // Light Blue
+    // Brand Colors for professional invoice design
+    const primaryColor = [1, 27, 84]; // Brand Navy #011b54
+    const secondaryColor = [2, 43, 130]; // Brand Navy Accent #022b82
     const accentColor = [46, 204, 113]; // Green
     const darkColor = [44, 62, 80]; // Dark
     const lightColor = [236, 240, 241]; // Light Gray
 
     // Helper function to add text
-    const addText = (text: string, x: number, y: number, options: any = {}) => {
+    const addText = (text: string, x: number, y: number, options?: Parameters<typeof doc.text>[3]) => {
       doc.text(text, x, y, options);
     };
 

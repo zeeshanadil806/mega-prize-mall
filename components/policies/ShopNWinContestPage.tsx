@@ -672,7 +672,7 @@ export default function ShopNWinContestPage() {
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <Link
               href="/"
-              className="text-[#7C2C78] hover:text-[#A43875] hover:underline flex items-center gap-1"
+              className="text-[#011b54] hover:text-[#022b82] hover:underline flex items-center gap-1"
             >
               <Home className="h-4 w-4" />
               Home
@@ -685,7 +685,7 @@ export default function ShopNWinContestPage() {
         </div>
 
         {/* Hero Section */}
-        <div className="bg-linear-to-r from-[#7C2C78] via-[#8A347D] to-[#A43875] text-white">
+        <div className="bg-linear-to-r from-[#011b54] via-[#022b82] to-[#011b54] text-white">
           <div className="container mx-auto px-4 py-12 md:py-16">
             <div className="max-w-5xl mx-auto text-center">
               <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-white/20 backdrop-blur-sm mb-6">
@@ -754,7 +754,7 @@ export default function ShopNWinContestPage() {
                 {participationSteps.map((step) => (
                   <div key={step.step} className="relative">
                     <div className="bg-white rounded-xl p-4 border border-green-200 h-full">
-                      <div className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-[#7C2C78] text-white flex items-center justify-center text-sm font-bold">
+                      <div className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-[#011b54] text-white flex items-center justify-center text-sm font-bold">
                         {step.step}
                       </div>
                       <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-3">
@@ -871,7 +871,7 @@ export default function ShopNWinContestPage() {
                 ))}
                 <Link
                   href="#contact"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#7C2C78] text-white hover:bg-[#A43875] rounded-full text-sm font-medium transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#011b54] text-white hover:bg-[#022b82] rounded-full text-sm font-medium transition-colors"
                 >
                   <MessageCircle className="h-4 w-4" />
                   Contact Support
@@ -900,7 +900,7 @@ export default function ShopNWinContestPage() {
                       <p className="text-gray-600 mt-1">
                         {section.description}
                       </p>
-                      <div className="w-16 h-1 bg-linear-to-r from-[#7C2C78] to-[#A43875] rounded-full mt-2"></div>
+                      <div className="w-16 h-1 bg-linear-to-r from-[#011b54] to-[#022b82] rounded-full mt-2"></div>
                     </div>
                   </div>
 
@@ -937,7 +937,7 @@ export default function ShopNWinContestPage() {
                         <div className="flex gap-4">
                           {item.icon && (
                             <div className="h-10 w-10 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
-                              <item.icon className="h-5 w-5 text-[#7C2C78]" />
+                              <item.icon className="h-5 w-5 text-[#011b54]" />
                             </div>
                           )}
                           <div className="flex-1">
@@ -989,7 +989,7 @@ export default function ShopNWinContestPage() {
                                     ) : section.id === "eligibility" ? (
                                       <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 shrink-0" />
                                     ) : (
-                                      <div className="h-2 w-2 rounded-full bg-[#7C2C78] mt-2 shrink-0"></div>
+                                      <div className="h-2 w-2 rounded-full bg-[#011b54] mt-2 shrink-0"></div>
                                     )}
                                     <span className="text-gray-700 leading-relaxed">
                                       {point}
@@ -1024,8 +1024,8 @@ export default function ShopNWinContestPage() {
                                   >
                                     <div className="flex items-start gap-3">
                                       {subpoint.icon && (
-                                        <div className="h-10 w-10 rounded-lg bg-[#7C2C78]/10 flex items-center justify-center shrink-0">
-                                          <subpoint.icon className="h-5 w-5 text-[#7C2C78]" />
+                                        <div className="h-10 w-10 rounded-lg bg-[#011b54]/10 flex items-center justify-center shrink-0">
+                                          <subpoint.icon className="h-5 w-5 text-[#011b54]" />
                                         </div>
                                       )}
                                       <div className="flex-1">
@@ -1135,18 +1135,18 @@ export default function ShopNWinContestPage() {
               {/* Contact Section */}
               <section id="contact" className="scroll-mt-24">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="h-12 w-12 rounded-xl bg-linear-to-r from-[#2E297D] to-[#7C2C78] flex items-center justify-center">
+                  <div className="h-12 w-12 rounded-xl bg-linear-to-r from-[#011b54] to-[#022b82] flex items-center justify-center">
                     <MessageCircle className="h-6 w-6 text-white" />
                   </div>
                   <div>
                     <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
                       Contest Support & Contact Information
                     </h2>
-                    <div className="w-16 h-1 bg-linear-to-r from-[#7C2C78] to-[#A43875] rounded-full mt-2"></div>
+                    <div className="w-16 h-1 bg-linear-to-r from-[#011b54] to-[#022b82] rounded-full mt-2"></div>
                   </div>
                 </div>
 
-                <div className="bg-linear-to-r from-[#7C2C78] to-[#A43875] rounded-2xl p-8 text-white">
+                <div className="bg-linear-to-r from-[#011b54] to-[#022b82] rounded-2xl p-8 text-white">
                   <div className="max-w-3xl">
                     <h3 className="text-xl font-bold mb-4">
                       📞 Contact & Support Channels
@@ -1261,7 +1261,7 @@ export default function ShopNWinContestPage() {
                           .getElementById("contact")
                           ?.scrollIntoView({ behavior: "smooth" })
                       }
-                      className="bg-[#7C2C78] hover:bg-[#A43875] text-white px-8"
+                      className="bg-[#011b54] hover:bg-[#022b82] text-white px-8"
                     >
                       Contact Contest Support
                     </Button>
@@ -1270,7 +1270,7 @@ export default function ShopNWinContestPage() {
                         window.scrollTo({ top: 0, behavior: "smooth" })
                       }
                       variant="outline"
-                      className="border-[#7C2C78] text-[#7C2C78] hover:bg-[#7C2C78]/10"
+                      className="border-[#011b54] text-[#011b54] hover:bg-[#011b54]/10"
                     >
                       <ArrowUp className="h-4 w-4 mr-2" />
                       Back to Top

@@ -183,7 +183,7 @@ export function OrderDetailClient({ order }: OrderDetailClientProps) {
         <div className="relative">
           <div className="h-1.5 sm:h-2 bg-gray-200 rounded-full overflow-hidden">
             <div 
-              className="h-full bg-linear-to-r from-[#7C2C78] to-[#A43875] rounded-full"
+              className="h-full bg-linear-to-r from-[#011b54] to-[#022b82] rounded-full"
               style={{ width: `${(currentStepIndex + 1) * 25}%` }}
             />
           </div>
@@ -191,11 +191,11 @@ export function OrderDetailClient({ order }: OrderDetailClientProps) {
             {statusSteps.map((step, index) => (
               <div 
                 key={step.key}
-                className={`flex flex-col items-center ${index <= currentStepIndex ? 'text-[#7C2C78]' : 'text-gray-400'}`}
+                className={`flex flex-col items-center ${index <= currentStepIndex ? 'text-[#011b54]' : 'text-gray-400'}`}
               >
                 <div className={`h-6 w-6 sm:h-8 sm:w-8 rounded-full flex items-center justify-center mb-1 sm:mb-2 ${
                   index <= currentStepIndex 
-                    ? 'bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white' 
+                    ? 'bg-linear-to-r from-[#011b54] to-[#022b82] text-white' 
                     : 'bg-gray-200'
                 }`}>
                   {index === 0 && <Package className="h-3 w-3 sm:h-4 sm:w-4" />}
@@ -259,7 +259,7 @@ export function OrderDetailClient({ order }: OrderDetailClientProps) {
                   <div className="flex flex-col sm:flex-row sm:justify-between gap-2 sm:gap-4">
                     <div className="flex-1 min-w-0">
                       <Link href={`/products/${item.productSlug}`}>
-                        <h4 className="font-semibold text-gray-900 text-sm sm:text-base hover:text-[#7C2C78] transition-colors line-clamp-2">
+                        <h4 className="font-semibold text-gray-900 text-sm sm:text-base hover:text-[#011b54] transition-colors line-clamp-2">
                           {item.productName}
                         </h4>
                       </Link>
@@ -402,8 +402,8 @@ export function OrderDetailClient({ order }: OrderDetailClientProps) {
             </div>
             
             {order.pointsEarned > 0 && (
-              <div className="flex items-center gap-2 p-3 bg-linear-to-r from-[#7C2C78]/5 to-[#A43875]/5 rounded-lg mt-3 sm:mt-4">
-                <Sparkles className="h-4 w-4 text-[#7C2C78]" />
+              <div className="flex items-center gap-2 p-3 bg-linear-to-r from-[#011b54]/5 to-[#022b82]/5 rounded-lg mt-3 sm:mt-4">
+                <Sparkles className="h-4 w-4 text-[#011b54]" />
                 <div>
                   <p className="text-xs sm:text-sm font-medium text-gray-900">Points Earned</p>
                   <p className="text-xs sm:text-sm text-gray-600">
@@ -487,10 +487,10 @@ export function OrderDetailClient({ order }: OrderDetailClientProps) {
 
       {/* Lucky Draw Entry */}
       {order.luckyDrawEntries > 0 && (
-        <div className="bg-linear-to-r from-[#7C2C78]/10 to-[#A43875]/10 rounded-xl sm:rounded-2xl border border-[#7C2C78]/20 shadow-sm overflow-hidden">
+        <div className="bg-linear-to-r from-[#011b54]/10 to-[#022b82]/10 rounded-xl sm:rounded-2xl border border-[#011b54]/20 shadow-sm overflow-hidden">
           <div className="p-4 sm:p-5 lg:p-6">
             <div className="flex items-start gap-2 sm:gap-3">
-              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-[#7C2C78] shrink-0 mt-0.5" />
+              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-[#011b54] shrink-0 mt-0.5" />
               <div>
                 <h3 className="font-semibold text-gray-900 text-base sm:text-lg">Lucky Draw Entries</h3>
                 <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
@@ -498,7 +498,7 @@ export function OrderDetailClient({ order }: OrderDetailClientProps) {
                 </p>
                 <Button 
                   variant="outline" 
-                  className="w-full h-9 sm:h-10 mt-3 text-xs sm:text-sm border-[#7C2C78] text-[#7C2C78] hover:bg-[#7C2C78]/10"
+                  className="w-full h-9 sm:h-10 mt-3 text-xs sm:text-sm border-[#011b54] text-[#011b54] hover:bg-[#011b54]/10"
                   asChild
                 >
                   <Link href="/dashboard/lucky-draw">

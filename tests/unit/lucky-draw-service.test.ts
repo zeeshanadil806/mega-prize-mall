@@ -300,6 +300,56 @@ describe("createLuckyDrawEntry", () => {
     // when no email is on the populated user record.
     expect(entryArg.customerEmail).toBe("+923000000000");
   });
+
+  it("creates an entry for a guest order without userId crashing", async () => {
+    const GUEST_ORDER = {
+      _id: { toString: () => "order-guest" },
+      userId: undefined,
+      guestPhone: "+923001234567",
+      status: "delivered",
+      grandTotal: 4500,
+      createdAt: new Date("2026-01-02"),
+      shippingAddress: {
+        fullName: "Guest Customer",
+        phone: "+923001234567",
+      },
+    };
+    mockFindOrderWithUser.mockResolvedValue(GUEST_ORDER);
+    mockFindLeanOrderById.mockResolvedValue({
+      status: "delivered",
+      grandTotal: 4500,
+    });
+    mockFindEntryByOrderId.mockResolvedValue(null);
+    mockFindActiveDrawForOrderAmount.mockResolvedValue({
+      _id: { toString: () => "draw-guest" },
+    });
+    mockFindLastEntryForDraw.mockResolvedValue({ entryNumber: 7 });
+    mockCreateEntry.mockResolvedValue({
+      _id: { toString: () => "entry-guest" },
+      entryNumber: 8,
+      orderId: "order-guest",
+      orderAmount: 4500,
+      orderDate: GUEST_ORDER.createdAt,
+      drawId: "draw-guest",
+      userId: "+923001234567",
+      customerName: "Guest Customer",
+      customerEmail: "+923001234567",
+      customerPhone: "+923001234567",
+      status: "active",
+      createdAt: new Date(),
+    });
+
+    const result = await createLuckyDrawEntry("order-guest");
+    expect(result.success).toBe(true);
+    expect(mockIncrementDrawEntryCount).toHaveBeenCalledWith(
+      "draw-guest",
+      "+923001234567",
+      expect.anything(),
+    );
+    const entryArg = mockCreateEntry.mock.calls[0][0];
+    expect(entryArg.userId).toBe("+923001234567");
+    expect(entryArg.customerName).toBe("Guest Customer");
+  });
 });
 
 // ─── selectDrawWinner ─────────────────────────────────────────────

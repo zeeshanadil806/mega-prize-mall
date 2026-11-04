@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { 
   Search, 
@@ -600,11 +601,15 @@ console.log(requests)
                         {request.product ? (
                           <div className="flex items-center gap-3">
                             {request.product.image && (
-                              <img 
-                                src={request.product.image.url} 
-                                alt={request.product.name}
-                                className="h-10 w-10 rounded object-cover"
-                              />
+                              <div className="h-10 w-10 rounded overflow-hidden relative shrink-0">
+                                <Image 
+                                  src={request.product.image.url} 
+                                  alt={request.product.name}
+                                  fill
+                                  sizes="40px"
+                                  className="object-cover"
+                                />
+                              </div>
                             )}
                             <div>
                               <p className="font-medium line-clamp-1">{request.product.name}</p>
@@ -750,11 +755,15 @@ console.log(requests)
                                 {request.product && (
                                   <div className="flex items-start gap-4 p-3 border rounded-lg">
                                     {request.product.image && (
-                                      <img 
-                                        src={request.product.image.url} 
-                                        alt={request.product.name}
-                                        className="h-16 w-16 rounded object-cover"
-                                      />
+                                      <div className="h-16 w-16 rounded overflow-hidden relative shrink-0">
+                                        <Image 
+                                          src={request.product.image.url} 
+                                          alt={request.product.name}
+                                          fill
+                                          sizes="64px"
+                                          className="object-cover"
+                                        />
+                                      </div>
                                     )}
                                     <div>
                                       <h4 className="font-semibold">{request.product.name}</h4>

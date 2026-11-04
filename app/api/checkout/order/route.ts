@@ -19,12 +19,27 @@ import {
   sendAdminOrderNotification,
   sendOrderConfirmationEmail,
 } from "@/lib/email-templates";
+import { rateLimit } from "@/lib/rate-limit";
+import { applyRateLimit, ipFromRequest } from "@/shared/http";
+
+const CHECKOUT_RATE_LIMIT = 15; // 15 orders per 5 minutes per IP
+const limiter = rateLimit({
+  interval: 5 * 60 * 1000,
+  uniqueTokenPerInterval: 500,
+});
 
 const isGuestOrder = (data: PlaceOrderInput): boolean => {
   return !data.userId && Boolean(data.guestSessionId || data.guestPhone);
 };
 
 export async function POST(request: NextRequest) {
+  const rl = await applyRateLimit(
+    limiter,
+    CHECKOUT_RATE_LIMIT,
+    ipFromRequest(request),
+  );
+  if (!rl.ok) return rl.response;
+
   const userSession = await auth();
 
   try {

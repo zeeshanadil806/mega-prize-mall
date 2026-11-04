@@ -133,7 +133,7 @@ interface UserUpdates {
           {/* User Info Card */}
           <div className="border rounded-lg p-4 space-y-3">
             <div className="flex items-center space-x-3">
-              <div className="h-12 w-12 rounded-full bg-linear-to-br from-[#EAB75F] to-[#A43875] flex items-center justify-center text-white font-bold text-lg">
+              <div className="h-12 w-12 rounded-full bg-linear-to-br from-[#011b54] to-[#022b82] flex items-center justify-center text-white font-bold text-lg">
                 {user.name?.charAt(0).toUpperCase() || 'U'}
               </div>
               <div>
@@ -284,7 +284,7 @@ interface UserUpdates {
           <Button
             onClick={handleSave}
             disabled={loading}
-            className="bg-[#7C2C78] hover:bg-[#6A2566]"
+            className="bg-[#011b54] hover:bg-[#022b82]"
           >
             {loading ? 'Saving...' : 'Save Changes'}
           </Button>

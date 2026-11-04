@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendBargainExpiryReminders } from "@/lib/bargain-expiry-reminders";
 import { log } from "@/lib/logger";
-import { requireCronQuerySecret } from "@/shared/http";
+import { requireCronBearer, requireCronQuerySecret } from "@/shared/http";
 
 export async function GET(request: NextRequest) {
   try {
-    const cron = requireCronQuerySecret(request);
-    if (!cron.ok) return cron.response;
+    let cron = requireCronBearer(request);
+    if (!cron.ok) {
+      cron = requireCronQuerySecret(request);
+      if (!cron.ok) return cron.response;
+    }
 
     console.log("🔔 Running bargain expiry cron job...");
     await sendBargainExpiryReminders();

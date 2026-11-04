@@ -163,9 +163,9 @@ export async function sendGoogleWelcomeEmail(options: {
   loginMethod?: 'google' | 'credentials';
 }): Promise<boolean> {
   const brandColors = {
-    primary: '#7C2C78',
-    secondary: '#A43875',
-    accent: '#EAB75F',
+    primary: '#011b54',
+    secondary: '#022b82',
+    accent: '#011b54',
     dark: '#1f2937',
     light: '#f9fafb',
     white: '#ffffff'

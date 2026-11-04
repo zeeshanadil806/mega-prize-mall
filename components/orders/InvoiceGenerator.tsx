@@ -13,6 +13,11 @@ export function InvoiceGenerator({ order }: InvoiceGeneratorProps) {
     ? order._id.slice(-8).toUpperCase()
     : String(order._id).slice(-8).toUpperCase();
 
+  const isGuest = Boolean(order.isGuestOrder || !order.userId);
+  const phone = order.shippingAddress?.phone;
+  const guestParam = isGuest && phone ? `?phone=${encodeURIComponent(phone)}` : '';
+  const invoiceHref = `/api/orders/${order._id}/invoice${guestParam}`;
+
   return (
     <Button
       asChild
@@ -20,7 +25,7 @@ export function InvoiceGenerator({ order }: InvoiceGeneratorProps) {
       className="w-full sm:w-auto border-primary/20 hover:bg-primary/5 hover:text-primary transition-colors"
     >
       <a
-        href={`/api/orders/${order._id}/invoice`}
+        href={invoiceHref}
         target="_blank"
         rel="noopener noreferrer"
         download={`Invoice_${invoiceNum}.pdf`}

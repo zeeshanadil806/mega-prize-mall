@@ -74,7 +74,7 @@ export default function OrderSuccessClient({ order }: OrderSuccessClientProps) {
               Order Confirmed!
             </h1>
             <p className="text-gray-600">
-              Your order <span className="font-bold text-[#7C2C78]">#{order._id}</span> has been placed successfully
+              Your order <span className="font-bold text-[#011b54]">#{order._id}</span> has been placed successfully
             </p>
           </motion.div>
           
@@ -85,7 +85,7 @@ export default function OrderSuccessClient({ order }: OrderSuccessClientProps) {
             transition={{ delay: 0.1 }}
             className="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden mb-8"
           >
-            <div className="bg-linear-to-r from-[#7C2C78] to-[#A43875] p-6 text-white">
+            <div className="bg-linear-to-r from-[#011b54] to-[#022b82] p-6 text-white">
               <h2 className="text-xl font-bold mb-2">Order Details</h2>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -110,7 +110,7 @@ export default function OrderSuccessClient({ order }: OrderSuccessClientProps) {
               <div className="grid md:grid-cols-2 gap-6 mb-8">
                 <div>
                   <h3 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
-                    <Truck className="h-5 w-5 text-[#7C2C78]" />
+                    <Truck className="h-5 w-5 text-[#011b54]" />
                     Delivery Information
                   </h3>
                   <div className="text-gray-600">
@@ -127,7 +127,7 @@ export default function OrderSuccessClient({ order }: OrderSuccessClientProps) {
                 
                 <div>
                   <h3 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
-                    <Package className="h-5 w-5 text-[#7C2C78]" />
+                    <Package className="h-5 w-5 text-[#011b54]" />
                     Order Summary
                   </h3>
                   <div className="space-y-2">
@@ -180,10 +180,10 @@ export default function OrderSuccessClient({ order }: OrderSuccessClientProps) {
               
               {/* Points Earned */}
               {order.pointsEarned > 0 && (
-                <div className="mt-6 p-4 bg-linear-to-r from-[#EAB75F]/10 to-[#A43875]/10 rounded-lg">
+                <div className="mt-6 p-4 bg-linear-to-r from-[#011b54]/5 to-[#022b82]/10 rounded-lg">
                   <div className="text-center">
                     <div className="text-sm text-gray-600 mb-1">You&apos;ve Earned</div>
-                    <div className="text-3xl font-bold text-[#EAB75F] mb-2">
+                    <div className="text-3xl font-bold text-[#011b54] mb-2">
                       {order.pointsEarned.toLocaleString()} Points
                     </div>
                     <div className="text-gray-600">
@@ -235,7 +235,7 @@ export default function OrderSuccessClient({ order }: OrderSuccessClientProps) {
             </p>
             <Link
               href="/products"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white rounded-xl hover:from-[#6A2566] hover:to-[#8D2F6A] transition-all shadow-lg hover:shadow-xl"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-linear-to-r from-[#011b54] to-[#022b82] text-white rounded-xl hover:from-[#022b82] hover:to-[#03369f] transition-all shadow-lg hover:shadow-xl"
             >
               <Home className="h-5 w-5" />
               Continue Shopping

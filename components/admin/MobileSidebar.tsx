@@ -52,7 +52,7 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
             <div className="flex items-center space-x-3">
               <div className="relative w-10 h-10">
-                <div className="absolute inset-0 bg-linear-to-br from-[#7C2C78] to-[#A43875] rounded-lg flex items-center justify-center">
+                <div className="absolute inset-0 bg-linear-to-br from-[#011b54] to-[#022b82] rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-lg">M</span>
                 </div>
               </div>
@@ -83,14 +83,14 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                   className={cn(
                     "flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200",
                     isActive
-                      ? "bg-linear-to-r from-[#7C2C78]/10 to-[#A43875]/10 text-[#7C2C78] border-l-4 border-[#7C2C78]"
+                      ? "bg-linear-to-r from-[#011b54]/10 to-[#022b82]/10 text-[#011b54] border-l-4 border-[#011b54]"
                       : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                   )}
                 >
                   <Icon
                     className={cn(
                       "mr-3 h-5 w-5",
-                      isActive ? "text-[#7C2C78]" : "text-gray-400"
+                      isActive ? "text-[#011b54]" : "text-gray-400"
                     )}
                   />
                   {item.name}

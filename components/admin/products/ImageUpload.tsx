@@ -212,8 +212,8 @@ export default function ImageUpload({
             border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer
             transition-all duration-300
             ${isDragActive 
-              ? 'border-[#7C2C78] bg-[#7C2C78]/5' 
-              : 'border-gray-300 hover:border-[#7C2C78] hover:bg-gray-50'
+              ? 'border-[#011b54] bg-[#011b54]/5' 
+              : 'border-gray-300 hover:border-[#011b54] hover:bg-gray-50'
             }
             ${uploading ? 'opacity-50 cursor-not-allowed' : ''}
           `}
@@ -221,13 +221,13 @@ export default function ImageUpload({
           <input {...getInputProps()} />
           
           <div className="flex flex-col items-center justify-center space-y-4">
-            <div className="p-4 rounded-full bg-gradient-to-br from-[#7C2C78]/10 to-[#A43875]/10">
+            <div className="p-4 rounded-full bg-gradient-to-br from-[#011b54]/10 to-[#022b82]/10">
               {uploading ? (
                 <div className="h-12 w-12 flex items-center justify-center">
-                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#7C2C78] border-t-transparent"></div>
+                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#011b54] border-t-transparent"></div>
                 </div>
               ) : (
-                <Upload className="h-12 w-12 text-[#7C2C78]" />
+                <Upload className="h-12 w-12 text-[#011b54]" />
               )}
             </div>
             
@@ -247,7 +247,7 @@ export default function ImageUpload({
               type="button"
               variant="outline"
               disabled={uploading}
-              className="mt-4 border-gray-300 hover:border-[#7C2C78]"
+              className="mt-4 border-gray-300 hover:border-[#011b54]"
             >
               Select Images
             </Button>
@@ -296,7 +296,7 @@ export default function ImageUpload({
                   className="relative group"
                 >
                   {/* Image Card */}
-                  <Card className="overflow-hidden border-gray-200 hover:border-[#7C2C78] transition-colors">
+                  <Card className="overflow-hidden border-gray-200 hover:border-[#011b54] transition-colors">
                     {/* Image */}
                     <div className="aspect-square relative bg-gray-100">
                       <Image
@@ -310,7 +310,7 @@ export default function ImageUpload({
                       {/* Order Badge */}
                       {showPrimaryBadge && index === 0 && (
                         <div className="absolute top-2 left-2">
-                          <span className="px-2 py-1 text-xs font-bold bg-gradient-to-r from-[#7C2C78] to-[#A43875] text-white rounded-full">
+                          <span className="px-2 py-1 text-xs font-bold bg-gradient-to-r from-[#011b54] to-[#022b82] text-white rounded-full">
                             {primaryBadgeLabel}
                           </span>
                         </div>

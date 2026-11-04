@@ -50,7 +50,6 @@ const BargainRequestSchemaMongoose = new Schema<IBargainRequest>({
 // Indexes for efficient queries
 BargainRequestSchemaMongoose.index({ productId: 1, userId: 1, isActive: 1 });
 BargainRequestSchemaMongoose.index({ status: 1, isActive: 1 });
-BargainRequestSchemaMongoose.index({ couponCode: 1 });
 BargainRequestSchemaMongoose.index({ userId: 1, status: 1 });
 BargainRequestSchemaMongoose.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 

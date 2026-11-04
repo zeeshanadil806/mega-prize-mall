@@ -166,20 +166,26 @@ export async function createLuckyDrawEntry(
     const lastEntry = await findLastEntryForDraw(drawId, { session });
     const nextEntryNumber = (lastEntry?.entryNumber || 0) + 1;
 
+    const participantId =
+      order.userId?.toString() ||
+      (order as { guestPhone?: string }).guestPhone ||
+      order.shippingAddress?.phone ||
+      "guest";
+
     // Increment counters before the entry write — matches original ordering.
-    await incrementDrawEntryCount(drawId, order.userId.toString(), { session });
+    await incrementDrawEntryCount(drawId, participantId, { session });
 
     const entry = await createEntry(
       {
         drawId,
-        userId: order.userId.toString(),
+        userId: participantId,
         orderId: (order._id as { toString(): string }).toString(),
         entryNumber: nextEntryNumber,
         orderAmount: order.grandTotal,
         orderDate: order.createdAt,
         customerName: order.shippingAddress.fullName,
         customerEmail:
-          (order.userId as unknown as PopulatedUser)?.email ||
+          (order.userId as unknown as PopulatedUser | undefined)?.email ||
           order.shippingAddress.phone,
         customerPhone: order.shippingAddress.phone,
         status: "active",

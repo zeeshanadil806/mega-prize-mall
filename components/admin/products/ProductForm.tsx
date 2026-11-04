@@ -42,13 +42,18 @@ import { ImageProps, ProductProps } from "@/types"
 
 // Mock data for dropdowns
 const CATEGORIES = [
-  "Mobile Cases",
-  "Screen Protectors",
-  "Chargers and Cables",
-  "Power Banks",
+  "Audio and Multimedia",
+  "Smart Wearables",
+  "Power and Charging",
+  "Mobile Accessories",
+  "Gaming Accessories",
+  "PC and Laptop Accessories",
   "Earphones and Headphones",
   "Smart Watches",
+  "Chargers and Cables",
+  "Power Banks",
   "Mobile Holders",
+  "Screen Protectors",
   "Other Accessories"
 ]
 
@@ -316,7 +321,7 @@ export default function ProductForm({
           <Button
             onClick={handleSubmit}
             disabled={loading}
-            className="bg-linear-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] text-white"
+            className="bg-linear-to-r from-[#011b54] to-[#022b82] hover:from-[#022b82] hover:to-[#03369f] text-white"
           >
             <Save className="mr-2 h-4 w-4" />
             {loading ? "Saving..." : isEditing ? "Update Product" : "Create Product"}
@@ -916,7 +921,7 @@ export default function ProductForm({
       </Tabs>
 
       {/* Summary Card */}
-      <Card className="sticky bottom-6 bg-linear-to-r from-[#7C2C78]/5 to-[#A43875]/5 border-[#7C2C78]/20">
+      <Card className="sticky bottom-6 bg-linear-to-r from-[#011b54]/5 to-[#022b82]/5 border-[#011b54]/20">
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="space-y-1">
@@ -937,7 +942,7 @@ export default function ProductForm({
               <Button
                 onClick={handleSubmit}
                 disabled={loading}
-                className="bg-linear-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] text-white"
+                className="bg-linear-to-r from-[#011b54] to-[#022b82] hover:from-[#022b82] hover:to-[#03369f] text-white"
               >
                 <Save className="mr-2 h-4 w-4" />
                 {loading ? "Saving..." : isEditing ? "Update Product" : "Publish Product"}

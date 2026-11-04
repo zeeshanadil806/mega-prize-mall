@@ -71,7 +71,7 @@ export default function ContactPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight"
           >
-            Contact <span className="bg-linear-to-r from-[#7C2C78] to-[#A43875] bg-clip-text text-transparent">Support Team</span>
+            Contact <span className="bg-linear-to-r from-[#011b54] to-[#022b82] bg-clip-text text-transparent">Support Team</span>
           </motion.h1>
           <p className="text-lg text-gray-600">
             Got questions about your order, bargain deals, or lucky draw entries? We&apos;re here to help. Reach out to us via the contact form or direct channels.
@@ -105,7 +105,7 @@ export default function ContactPage() {
                 <div className="text-sm font-semibold text-gray-800 font-mono">
                   {card.contact}
                 </div>
-                <Button asChild className="w-full bg-linear-to-r from-[#7C2C78] to-[#A43875] hover:from-[#6A2566] hover:to-[#8D2F6A] text-white">
+                <Button asChild className="w-full bg-linear-to-r from-[#011b54] to-[#022b82] hover:from-[#022b82] hover:to-[#03369f] text-white">
                   <Link href={card.actionUrl} target="_blank">
                     {card.actionText}
                   </Link>
@@ -124,7 +124,7 @@ export default function ContactPage() {
               
               <div className="space-y-4">
                 <div className="flex gap-3">
-                  <Clock className="h-5 w-5 text-[#7C2C78] shrink-0 mt-0.5" />
+                  <Clock className="h-5 w-5 text-[#011b54] shrink-0 mt-0.5" />
                   <div>
                     <h4 className="font-semibold text-sm text-gray-900">Operating Hours</h4>
                     <p className="text-xs text-gray-600 mt-0.5">Monday to Saturday: 10:00 AM - 8:00 PM</p>
@@ -133,7 +133,7 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex gap-3">
-                  <MapPin className="h-5 w-5 text-[#7C2C78] shrink-0 mt-0.5" />
+                  <MapPin className="h-5 w-5 text-[#011b54] shrink-0 mt-0.5" />
                   <div>
                     <h4 className="font-semibold text-sm text-gray-900">Headquarters</h4>
                     <p className="text-xs text-gray-600 mt-0.5">Mega Prize Mall, Hall Road, Lahore, Pakistan</p>
@@ -181,7 +181,7 @@ export default function ContactPage() {
                           required
                           value={formState.name}
                           onChange={(e) => setFormState({ ...formState, name: e.target.value })}
-                          className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors"
+                          className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#011b54]/30 focus:border-[#011b54] transition-colors"
                           placeholder="e.g. Ali Ahmed"
                         />
                       </div>
@@ -194,7 +194,7 @@ export default function ContactPage() {
                           required
                           value={formState.email}
                           onChange={(e) => setFormState({ ...formState, email: e.target.value })}
-                          className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors"
+                          className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#011b54]/30 focus:border-[#011b54] transition-colors"
                           placeholder="name@domain.com"
                         />
                       </div>
@@ -209,7 +209,7 @@ export default function ContactPage() {
                           required
                           value={formState.subject}
                           onChange={(e) => setFormState({ ...formState, subject: e.target.value })}
-                          className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors"
+                          className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#011b54]/30 focus:border-[#011b54] transition-colors"
                           placeholder="Support issue, return, question"
                         />
                       </div>
@@ -221,7 +221,7 @@ export default function ContactPage() {
                           type="text"
                           value={formState.orderNumber}
                           onChange={(e) => setFormState({ ...formState, orderNumber: e.target.value })}
-                          className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors"
+                          className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#011b54]/30 focus:border-[#011b54] transition-colors"
                           placeholder="e.g. MPM-12345"
                         />
                       </div>
@@ -235,7 +235,7 @@ export default function ContactPage() {
                         rows={4}
                         value={formState.message}
                         onChange={(e) => setFormState({ ...formState, message: e.target.value })}
-                        className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C2C78]/30 focus:border-[#7C2C78] transition-colors resize-none"
+                        className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#011b54]/30 focus:border-[#011b54] transition-colors resize-none"
                         placeholder="Write details about your question or issue here..."
                       />
                     </div>
@@ -244,7 +244,7 @@ export default function ContactPage() {
                       id="submit-ticket"
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full h-12 sm:h-14 rounded-xl flex items-center justify-center gap-2 bg-gradient-to-r from-[#2E297D] to-[#7C2C78] hover:from-[#211E63] hover:to-[#6A2566] text-white font-semibold text-base shadow-[0_8px_30px_rgba(46,41,125,0.25)] hover:shadow-[0_12px_40px_rgba(124,44,120,0.35)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full h-12 sm:h-14 rounded-xl flex items-center justify-center gap-2 bg-gradient-to-r from-[#011b54] to-[#022b82] hover:from-[#211E63] hover:to-[#6A2566] text-white font-semibold text-base shadow-[0_8px_30px_rgba(46,41,125,0.25)] hover:shadow-[0_12px_40px_rgba(124,44,120,0.35)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isSubmitting ? (
                         <>Processing...</>
@@ -276,7 +276,7 @@ export default function ContactPage() {
                         setFormState({ name: "", email: "", subject: "", message: "", orderNumber: "" });
                         setIsSubmitted(false);
                       }}
-                      className="bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white"
+                      className="bg-linear-to-r from-[#011b54] to-[#022b82] text-white"
                     >
                       Submit Another Query
                     </Button>

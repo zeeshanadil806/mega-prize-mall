@@ -113,7 +113,7 @@ export default function CouponTable({
     switch (coupon.discountType) {
       case 'percentage':
         return (
-          <Badge className="bg-linear-to-r from-[#EAB75F]/20 to-[#A43875]/20 text-[#7C2C78] border border-[#7C2C78]/20">
+          <Badge className="bg-linear-to-r from-[#011b54]/20 to-[#022b82]/20 text-[#011b54] border border-[#011b54]/20">
             <Percent className="h-3 w-3 mr-1" />
             {coupon.discountValue}% OFF
             {coupon.maxDiscountAmount && (
@@ -126,7 +126,7 @@ export default function CouponTable({
       
       case 'fixed':
         return (
-          <Badge className="bg-linear-to-r from-[#7C2C78]/20 to-[#A43875]/20 text-[#7C2C78] border border-[#7C2C78]/20">
+          <Badge className="bg-linear-to-r from-[#011b54]/20 to-[#022b82]/20 text-[#011b54] border border-[#011b54]/20">
             <DollarSign className="h-3 w-3 mr-1" />
             {formatCurrency(coupon.discountValue)} OFF
           </Badge>
@@ -134,7 +134,7 @@ export default function CouponTable({
       
       case 'free_shipping':
         return (
-          <Badge className="bg-linear-to-r from-[#2E297D]/20 to-[#7C2C78]/20 text-[#2E297D] border border-[#2E297D]/20">
+          <Badge className="bg-linear-to-r from-[#011b54]/20 to-[#011b54]/20 text-[#011b54] border border-[#011b54]/20">
             <Truck className="h-3 w-3 mr-1" />
             Free Shipping
           </Badge>
@@ -213,7 +213,7 @@ export default function CouponTable({
 
     return (
       <div className="flex items-center">
-        <Users className="h-4 w-4 mr-2 text-[#A43875]" />
+        <Users className="h-4 w-4 mr-2 text-[#022b82]" />
         <span className="font-bold">{coupon.usedCount}</span>
         <span className="text-sm text-gray-500 ml-1">uses</span>
       </div>
@@ -240,7 +240,7 @@ export default function CouponTable({
               <TableRow>
                 <TableCell colSpan={6} className="text-center py-8">
                   <div className="flex justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#7C2C78]"></div>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#011b54]"></div>
                   </div>
                 </TableCell>
               </TableRow>
@@ -254,12 +254,12 @@ export default function CouponTable({
               coupons.map((coupon) => (
                 <TableRow 
                   key={coupon._id} 
-                  className="hover:bg-linear-to-r hover:from-[#7C2C78]/5 hover:to-[#A43875]/5 transition-colors"
+                  className="hover:bg-linear-to-r hover:from-[#011b54]/5 hover:to-[#022b82]/5 transition-colors"
                 >
                   <TableCell>
                     <div className="space-y-1">
                       <div className="flex items-center space-x-2">
-                        <div className="h-8 w-8 rounded-lg bg-linear-to-br from-[#7C2C78] to-[#A43875] flex items-center justify-center">
+                        <div className="h-8 w-8 rounded-lg bg-linear-to-br from-[#011b54] to-[#022b82] flex items-center justify-center">
                           <Tag className="h-4 w-4 text-white" />
                         </div>
                         <div>
@@ -329,25 +329,25 @@ export default function CouponTable({
                         <Button 
                           variant="ghost" 
                           size="sm"
-                          className="hover:bg-[#7C2C78]/10"
+                          className="hover:bg-[#011b54]/10"
                         >
                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent 
                         align="end" 
-                        className="glass border border-[#7C2C78]/20"
+                        className="glass border border-[#011b54]/20"
                       >
                         <DropdownMenuItem onClick={() => onView(coupon.code)}>
-                          <Eye className="h-4 w-4 mr-2 text-[#7C2C78]" />
+                          <Eye className="h-4 w-4 mr-2 text-[#011b54]" />
                           View Details
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => onEdit(coupon.code)}>
-                          <Edit className="h-4 w-4 mr-2 text-[#2E297D]" />
+                          <Edit className="h-4 w-4 mr-2 text-[#011b54]" />
                           Edit
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => onCopyCode(coupon.code)}>
-                          <Copy className="h-4 w-4 mr-2 text-[#A43875]" />
+                          <Copy className="h-4 w-4 mr-2 text-[#022b82]" />
                           Copy Code
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => onToggleStatus(coupon.code, coupon.isActive)}>
@@ -394,7 +394,7 @@ export default function CouponTable({
               size="sm"
               onClick={() => onPageChange(pagination.page - 1)}
               disabled={!pagination.hasPrev}
-              className="border-[#7C2C78]/30 hover:bg-[#7C2C78]/10"
+              className="border-[#011b54]/30 hover:bg-[#011b54]/10"
             >
               <ChevronLeft className="h-4 w-4 mr-1" />
               Previous
@@ -420,8 +420,8 @@ export default function CouponTable({
                     onClick={() => onPageChange(pageNum)}
                     className={`w-8 h-8 p-0 ${
                       pagination.page === pageNum 
-                        ? 'bg-linear-to-r from-[#7C2C78] to-[#A43875] text-white border-0' 
-                        : 'border-[#7C2C78]/30 hover:bg-[#7C2C78]/10'
+                        ? 'bg-linear-to-r from-[#011b54] to-[#022b82] text-white border-0' 
+                        : 'border-[#011b54]/30 hover:bg-[#011b54]/10'
                     }`}
                   >
                     {pageNum}
@@ -434,7 +434,7 @@ export default function CouponTable({
               size="sm"
               onClick={() => onPageChange(pagination.page + 1)}
               disabled={!pagination.hasNext}
-              className="border-[#7C2C78]/30 hover:bg-[#7C2C78]/10"
+              className="border-[#011b54]/30 hover:bg-[#011b54]/10"
             >
               Next
               <ChevronRight className="h-4 w-4 ml-1" />
